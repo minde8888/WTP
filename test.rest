@@ -1,0 +1,31 @@
+#####
+POST https://localhost:44395/api/Manager HTTP/1.1
+content-type: application/json
+
+{
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
+      "name": "e",
+      "surname": "e",
+      "occupation": "e",
+      "mobileNumber": 99999999,
+      "email": "e",
+      "imageName": "e",
+      "address": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
+            "isActive": true,
+            "street": "e",
+            "city": "e",
+            "phone": 99999999,
+            "zip": "e",
+            "country": "e"
+       }
+}
+
+#####
+
+GET https://localhost:44395/api/Manager HTTP/1.1
+content-type: application/json
+####
+
+DELETE  https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa1 HTTP/1.1
+content-type: application/json
