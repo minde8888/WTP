@@ -107,7 +107,7 @@ namespace WTP.Api.Controllers
             return NoContent();
         }
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<Employee>>> Search(string name, string surname)
+        public async Task<ActionResult<IEnumerable<Manager>>> Search(string name, string surname)
         {
             try
             {

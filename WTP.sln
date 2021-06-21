@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTP.Api", "WTP.Api\WTP.Api.csproj", "{E483DF85-D03F-4D88-80EC-F2E9BB1712D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTP.Api", "WTP.Api\WTP.Api.csproj", "{E483DF85-D03F-4D88-80EC-F2E9BB1712D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTP.Data", "WTP.Data\WTP.Data.csproj", "{3C8DB2D6-9333-44A7-B782-309751E9361B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTP.Data", "WTP.Data\WTP.Data.csproj", "{3C8DB2D6-9333-44A7-B782-309751E9361B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTP.Domain", "WTP.Domain\WTP.Domain.csproj", "{18931205-A5F3-4711-B469-A8098FDFB82C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WTP.Domain", "WTP.Domain\WTP.Domain.csproj", "{18931205-A5F3-4711-B469-A8098FDFB82C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
