@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
@@ -16,13 +14,12 @@ namespace WTP.Data.Repositorys
     public class ManagerRepository : IManager
     {
         private readonly AppDbContext _context;
-        //private readonly IMapper _mapper;
 
         public ManagerRepository(AppDbContext context)
         {
             _context = context;
-            //_mapper = mapper;
         }
+
         public async Task<IActionResult> AddItem(Manager manager)
         {
             await _context.AddAsync(manager);
@@ -108,6 +105,5 @@ namespace WTP.Data.Repositorys
             if (System.IO.File.Exists(imagePath))
                 System.IO.File.Delete(imagePath);
         }
-
     }
 }
