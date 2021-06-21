@@ -16,5 +16,6 @@ namespace WTP.Data.Interfaces
         Task<IActionResult> DeleteItem(Guid Id);
         Task<IActionResult> UpdateItem(Guid Id, Manager manager);
         public void DeleteImage(string imagePath);
+        Task<IEnumerable<Manager>> Search(string name, string surname);
     }
 }

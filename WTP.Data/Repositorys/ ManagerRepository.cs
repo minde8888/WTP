@@ -68,18 +68,6 @@ namespace WTP.Data.Repositorys
              .ToListAsync();
             }
             return null;
-            //return await (from p in db.Post
-            //              from c in db.Category
-            //              where p.CategoryId == c.Id
-            //              select new PostViewModel
-            //              {
-            //                  PostId = p.PostId,
-            //                  Title = p.Title,
-            //                  Description = p.Description,
-            //                  CategoryId = p.CategoryId,
-            //                  CategoryName = c.Name,
-            //                  CreatedDate = p.CreatedDate
-            //              }).ToListAsync();
         }
 
         public async Task<IActionResult> UpdateItem(Guid Id, Manager manager)
@@ -98,9 +86,22 @@ namespace WTP.Data.Repositorys
             }
             return new NoContentResult();
         }
-        public async Task Search(string name, string surname)
+        public async Task<IEnumerable<Manager>> Search(string name, string surname)
         {
-            _context.Manager.Where(n => n.Name == name);
+            IQueryable<Manager> query = _context.Manager;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(e => e.Name.Contains(name)
+                            || e.Surname.Contains(name));
+            }
+
+            if (surname != null)
+            {
+                query = query.Where(e => e.Surname == surname);
+            }
+
+            return await query.ToListAsync();
         }
         public void DeleteImage(string imagePath)
         {
