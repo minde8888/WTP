@@ -1,38 +1,47 @@
-﻿using AutoMapper;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
-using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 
 namespace WTP.Data.Repositorys
 {
-    public class ManagerRepository : IManagerRepository
+    public class ManagerRepository : IManager
     {
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
 
-        public ManagerRepository(AppDbContext context, IMapper mapper)
+        public ManagerRepository(AppDbContext context)
         {
             _context = context;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
-        public async Task AddItem(Manager manager)
+        public async Task<IActionResult> AddItem(Manager manager)
         {
-            _context.Add(manager);
+            await _context.AddAsync(manager);
             await _context.SaveChangesAsync();
+            return new NoContentResult();
         }
 
-        public async Task DeleteItem(Guid Id)
+        public async Task<IActionResult> DeleteItem(Guid Id)
         {
-            var manager = _context.Manager.Include(x => x.Address).Single(x => x.Id == Id);
+            var manager = await _context.Manager.FindAsync(Id);
+            var address = await _context.Address.FindAsync(Id);
+            if (manager == null && address == null)
+                return new NotFoundResult();
+
             _context.Manager.Remove(manager);
-            _context.Address.Remove(manager.Address);
+            _context.Address.Remove(address);
             await _context.SaveChangesAsync();
+
+            return new NoContentResult();
         }
 
         public async Task<List<Manager>> GetItemIdAsync(Guid Id)
@@ -40,46 +49,64 @@ namespace WTP.Data.Repositorys
             return await _context.Manager.Include(maneger => maneger.Address).Where(x => x.Id == Id).ToListAsync(); ;
         }
 
-        public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
+        public async Task<List<Manager>> GetItemAsync(string ImageSrc)
         {
-            var manager = await _context.Manager.Select(x => new Manager()
+            if (_context != null)
             {
-                Id = x.Id,
-                Name = x.Name,
-                Surname = x.Surname,
-                Occupation = x.Occupation,
-                Email = x.Email,
-                ImageName = x.ImageName,
-                ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, x.ImageName),
-                Address = x.Address
-            })
+                return await _context.Manager.Include(maneger => maneger.Address)
+             .Select(x => new Manager()
+             {
+                 Id = x.Id,
+                 Name = x.Name,
+                 Surname = x.Surname,
+                 Occupation = x.Occupation,
+                 Email = x.Email,
+                 ImageName = x.ImageName,
+                 ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, x.ImageName),
+                 Address = x.Address
+             })
              .ToListAsync();
-            var manegerDto = _mapper.Map<List<ManagerDto>>(manager);
-
-            return manegerDto;
+            }
+            return null;
+            //return await (from p in db.Post
+            //              from c in db.Category
+            //              where p.CategoryId == c.Id
+            //              select new PostViewModel
+            //              {
+            //                  PostId = p.PostId,
+            //                  Title = p.Title,
+            //                  Description = p.Description,
+            //                  CategoryId = p.CategoryId,
+            //                  CategoryName = c.Name,
+            //                  CreatedDate = p.CreatedDate
+            //              }).ToListAsync();
         }
 
-        public async Task UpdateItem(Guid Id, Manager manager)
+        public async Task<IActionResult> UpdateItem(Guid Id, Manager manager)
         {
             _context.Entry(manager).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-        }
-        public async Task<IEnumerable<Manager>> Search(string name)
-        {
-            IQueryable<Manager> query = _context.Manager;
-
-            if (!string.IsNullOrEmpty(name))
+            try
             {
-                query = query.Where(e => e.Name.Contains(name)
-                            || e.Surname.Contains(name));
+                await _context.SaveChangesAsync();
+                var manegeUpdate = await GetItemIdAsync(Id);
+                if (manegeUpdate == null)
+                    return new NotFoundResult();
             }
-            return await query.ToListAsync();
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+            return new NoContentResult();
+        }
+        public async Task Search(string name, string surname)
+        {
+            _context.Manager.Where(n => n.Name == name);
         }
         public void DeleteImage(string imagePath)
         {
             if (System.IO.File.Exists(imagePath))
                 System.IO.File.Delete(imagePath);
         }
+
     }
 }

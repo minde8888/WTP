@@ -7,9 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Domain.Entities;
+using WTP.Data.Repositorys;
 using WTP.Data.Interfaces;
-using WTP.Domain.Dtos;
-using AutoMapper;
+using WTP.Data.Context;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Net.Http;
+using System.Net;
 
 namespace WTP.Api.Controllers
 {
@@ -17,64 +21,38 @@ namespace WTP.Api.Controllers
     [ApiController]
     public class ManagerController : ControllerBase
     {
-        private readonly IManagerRepository _employeeServices;
+        private readonly IManager _employeeServices;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ManagerController(IManagerRepository itemServices, IWebHostEnvironment hostEnvironment, IMapper maper)
+        public ManagerController(IManager itemServices, IWebHostEnvironment hostEnvironment)
         {
-            _employeeServices = itemServices ?? throw new ArgumentException(nameof(itemServices));
-            _hostEnvironment = hostEnvironment ?? throw new ArgumentException(nameof(hostEnvironment));
+            _employeeServices = itemServices;
+            _hostEnvironment = hostEnvironment;
         }
-
 
         [HttpGet]
-        public async Task<ActionResult<List<ManagerDto>>> GetManager()
+        public async Task<ActionResult<List<Manager>>> GetManager()
         {
-            //var file = Request.Form.Files[0];
-            String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-            var getAll = await _employeeServices.GetItemAsync(ImageSrc);
-            if (getAll == null)
-                return BadRequest(new ArgumentNullException());
-
-            return getAll;
-
-            //try
-            //{
-            //    String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-            //    var getAll = await _employeeServices.GetItemAsync(ImageSrc);
-            //    if (getAll == null)
-            //        return BadRequest(new ArgumentNullException());
-
-            //    return getAll;
-            //}
-            //catch (ArgumentNullException){
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //     "Error Get value is null");
-            //}
-            //catch (NullReferenceException)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //     "Error Get not referance");
-            //}
-            //catch (InvalidOperationException)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //     "Error Get operation");
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //      "Error Get data from the database");
-            //}
+            try
+            {
+                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+                return await _employeeServices.GetItemAsync(ImageSrc);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  "Error Get data from the database");
+            } 
         }
 
+
         [HttpGet("id")]
-        public async Task<ActionResult<List<Manager>>> GetManager(Guid id)
+        public async Task<ActionResult<List<Manager>>> Get(Guid id)
         {
             try
             {
                 if (id == Guid.Empty)
-                    return BadRequest(new ArgumentNullException());
+                    return BadRequest();
 
                 var result = await _employeeServices.GetItemIdAsync(id);
                 if (result == null)
@@ -90,19 +68,23 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Manager>> CreateManager(Manager manager)
+        public async Task<IActionResult> Createmanager([FromForm] Manager manager)
         {
             manager.ImageName = await SaveImage(manager.ImageFile);
             try
             {
-                await _employeeServices.AddItem(manager);
-                return CreatedAtAction("GetManager", new { id = manager.Id }, manager);
+
+                if (!String.IsNullOrEmpty(manager.ImageName))
+                {
+                    return await _employeeServices.AddItem(manager);
+                }
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error post data");
             }
-            //return NoContent();
+
+            return NoContent();
         }
 
         [HttpPut("{id}")]
@@ -112,7 +94,7 @@ namespace WTP.Api.Controllers
                 return BadRequest(ModelState);
 
             if (id != manager.Id)
-                return BadRequest(new ArgumentNullException());
+                return BadRequest();
 
             if (manager.ImageFile != null)
             {
@@ -122,15 +104,14 @@ namespace WTP.Api.Controllers
             }
 
             await _employeeServices.UpdateItem(id, manager);
-            return CreatedAtAction("GetManager", new { id = manager.Id }, manager);
+            return NoContent();
         }
-
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<Employee>>> Search(string name)
+        public async Task<ActionResult<IEnumerable<Employee>>> Search(string name, string surname)
         {
             try
             {
-                var result = await _employeeServices.Search(name);
+                var result = await _employeeServices.Search(name, surname);
 
                 if (result.Any())
                 {
@@ -156,7 +137,7 @@ namespace WTP.Api.Controllers
                 {
                     return NotFound($"Manager with Id = {id} not found");
                 }
-               return Ok();
+                return await _employeeServices.DeleteItem(id);
             }
             catch (Exception)
             {

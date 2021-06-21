@@ -16,7 +16,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WTP.Data.Context;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 
@@ -34,16 +33,13 @@ namespace WTP.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<AppDbContext>(opts =>
             opts.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
-            services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
-            services.AddAutoMapper(typeof(ApplicationMapper));
+            services.AddScoped(typeof(IManager), typeof(ManagerRepository));
 
             services.AddControllers();
-            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WTP.Api", Version = "v1" });
@@ -61,7 +57,6 @@ namespace WTP.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(options => options.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -73,7 +68,6 @@ namespace WTP.Api
 
             app.UseRouting();
 
-            app.UseAuthorization(); 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
