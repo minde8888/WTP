@@ -160,7 +160,7 @@ namespace WTP.Api.Controllers
                 }
                 return imageName;
             }
-            return "1";
+            return null;
         }
     }
 }
