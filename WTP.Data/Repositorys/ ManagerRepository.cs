@@ -27,18 +27,14 @@ namespace WTP.Data.Repositorys
             return new NoContentResult();
         }
 
-        public async Task<IActionResult> DeleteItem(Guid Id)
+        public async Task DeleteItem(Guid Id)
         {
             var manager = await _context.Manager.FindAsync(Id);
             var address = await _context.Address.FindAsync(Id);
-            if (manager == null && address == null)
-                return new NotFoundResult();
 
             _context.Manager.Remove(manager);
             _context.Address.Remove(address);
             await _context.SaveChangesAsync();
-
-            return new NoContentResult();
         }
 
         public async Task<List<Manager>> GetItemIdAsync(Guid Id)
@@ -83,7 +79,7 @@ namespace WTP.Data.Repositorys
             }
             return new NoContentResult();
         }
-        public async Task<IEnumerable<Manager>> Search(string name, string surname)
+        public async Task<IEnumerable<Manager>> Search(string name)
         {
             IQueryable<Manager> query = _context.Manager;
 
@@ -92,12 +88,6 @@ namespace WTP.Data.Repositorys
                 query = query.Where(e => e.Name.Contains(name)
                             || e.Surname.Contains(name));
             }
-
-            if (surname != null)
-            {
-                query = query.Where(e => e.Surname == surname);
-            }
-
             return await query.ToListAsync();
         }
         public void DeleteImage(string imagePath)
