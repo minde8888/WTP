@@ -20,11 +20,10 @@ namespace WTP.Data.Repositorys
             _context = context;
         }
 
-        public async Task<IActionResult> AddItem(Manager manager)
+        public async Task AddItem(Manager manager)
         {
             await _context.AddAsync(manager);
             await _context.SaveChangesAsync();
-            return new NoContentResult();
         }
 
         public async Task DeleteItem(Guid Id)
@@ -63,21 +62,12 @@ namespace WTP.Data.Repositorys
             return null;
         }
 
-        public async Task<IActionResult> UpdateItem(Guid Id, Manager manager)
+        public async Task UpdateItem(Guid Id, Manager manager)
         {
             _context.Entry(manager).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-                var manegeUpdate = await GetItemIdAsync(Id);
-                if (manegeUpdate == null)
-                    return new NotFoundResult();
-            }
-            catch (Exception)
-            {
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-            return new NoContentResult();
+            await _context.SaveChangesAsync();
+            var manegeUpdate = await GetItemIdAsync(Id);
+
         }
         public async Task<IEnumerable<Manager>> Search(string name)
         {

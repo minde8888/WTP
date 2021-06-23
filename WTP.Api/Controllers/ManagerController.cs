@@ -72,7 +72,8 @@ namespace WTP.Api.Controllers
 
                 if (!String.IsNullOrEmpty(manager.ImageName))
                 {
-                    return await _employeeServices.AddItem(manager);
+                    await _employeeServices.AddItem(manager);
+                    return Ok();
                 }
             }
             catch (Exception)
@@ -152,7 +153,7 @@ namespace WTP.Api.Controllers
                 imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
                 var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
 
-                ICompressimage compress =  new Compressimage();
+                ICompressimage compress = new Compressimage();
                 compress.Resize(imagePath, imageName, imageFile);
 
                 return imageName;

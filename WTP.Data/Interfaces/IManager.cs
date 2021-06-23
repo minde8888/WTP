@@ -12,9 +12,9 @@ namespace WTP.Data.Interfaces
     {
         Task<List<Manager>> GetItemAsync(string ImageSrc);
         Task<List<Manager>> GetItemIdAsync(Guid Id);
-        Task<IActionResult> AddItem(Manager manager);
+        Task AddItem(Manager manager);
         Task DeleteItem(Guid Id);
-        Task<IActionResult> UpdateItem(Guid Id, Manager manager);
+        Task UpdateItem(Guid Id, Manager manager);
         public void DeleteImage(string imagePath);
         Task<IEnumerable<Manager>> Search(string name);
     }
