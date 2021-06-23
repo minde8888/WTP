@@ -152,7 +152,8 @@ namespace WTP.Api.Controllers
                 imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
                 var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
 
-                new Compressimage(imagePath, imageName, imageFile);
+                ICompressimage compress =  new Compressimage();
+                compress.Resize(imagePath, imageName, imageFile);
 
                 return imageName;
             }
