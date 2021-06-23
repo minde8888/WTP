@@ -13,9 +13,9 @@ namespace WTP.Data.Interfaces
         Task<List<Manager>> GetItemAsync(string ImageSrc);
         Task<List<Manager>> GetItemIdAsync(Guid Id);
         Task<IActionResult> AddItem(Manager manager);
-        Task<IActionResult> DeleteItem(Guid Id);
+        Task DeleteItem(Guid Id);
         Task<IActionResult> UpdateItem(Guid Id, Manager manager);
         public void DeleteImage(string imagePath);
-        Task<IEnumerable<Manager>> Search(string name, string surname);
+        Task<IEnumerable<Manager>> Search(string name);
     }
 }

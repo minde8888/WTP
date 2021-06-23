@@ -7,13 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Domain.Entities;
-using WTP.Data.Repositorys;
 using WTP.Data.Interfaces;
-using WTP.Data.Context;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Net.Http;
-using System.Net;
+using WTP.Data.Helpers;
+
 
 namespace WTP.Api.Controllers
 {
@@ -42,7 +38,7 @@ namespace WTP.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   "Error Get data from the database");
-            } 
+            }
         }
 
 
@@ -70,7 +66,7 @@ namespace WTP.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Createmanager([FromForm] Manager manager)
         {
-            manager.ImageName = await SaveImage(manager.ImageFile);
+            manager.ImageName = SaveImage(manager.ImageFile);
             try
             {
 
@@ -100,18 +96,18 @@ namespace WTP.Api.Controllers
             {
                 var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", manager.ImageName);
                 _employeeServices.DeleteImage(imagePath);
-                manager.ImageName = await SaveImage(manager.ImageFile);
+                manager.ImageName = SaveImage(manager.ImageFile);
             }
 
             await _employeeServices.UpdateItem(id, manager);
             return NoContent();
         }
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<Manager>>> Search(string name, string surname)
+        public async Task<ActionResult<IEnumerable<Manager>>> Search(string name)
         {
             try
             {
-                var result = await _employeeServices.Search(name, surname);
+                var result = await _employeeServices.Search(name);
 
                 if (result.Any())
                 {
@@ -137,7 +133,8 @@ namespace WTP.Api.Controllers
                 {
                     return NotFound($"Manager with Id = {id} not found");
                 }
-                return await _employeeServices.DeleteItem(id);
+                await _employeeServices.DeleteItem(id);
+                return Ok();
             }
             catch (Exception)
             {
@@ -147,17 +144,16 @@ namespace WTP.Api.Controllers
         }
 
         [NonAction]
-        public async Task<string> SaveImage(IFormFile imageFile)
+        public string SaveImage(IFormFile imageFile)
         {
             if (imageFile != null)
             {
                 string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
                 imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
                 var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-                using (var fileStream = new FileStream(imagePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
+
+                new Compressimage(imagePath, imageName, imageFile);
+
                 return imageName;
             }
             return null;

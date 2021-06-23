@@ -3,7 +3,7 @@ POST https://localhost:44395/api/Manager HTTP/1.1
 content-type: application/json
 
 {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
       "name": "e",
       "surname": "e",
       "occupation": "e",
@@ -11,7 +11,7 @@ content-type: application/json
       "email": "e",
       "imageName": "e",
       "address": {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa3",
             "isActive": true,
             "street": "e",
             "city": "e",

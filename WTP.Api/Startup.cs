@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WTP.Data.Context;
+using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 
@@ -33,7 +34,8 @@ namespace WTP.Api
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
             services.AddScoped(typeof(IManager), typeof(ManagerRepository));
-
+       //     services.AddTransient<ICompressimage, Compressimage>();
+  
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
