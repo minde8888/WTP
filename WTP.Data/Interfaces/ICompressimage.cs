@@ -9,6 +9,6 @@ namespace WTP.Data.Interfaces
 {
     public interface ICompressimage
     {
-        public void Resize();
+        public void Resize(string imagePath, string imageName, IFormFile imageFile);
     }
 }
