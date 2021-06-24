@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using WTP.Domain.Entities;
 using WTP.Data.Interfaces;
 using WTP.Data.Helpers;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WTP.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ManagerController : ControllerBase
     {
         private readonly IManager _employeeServices;
