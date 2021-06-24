@@ -3,19 +3,19 @@ POST https://localhost:44395/api/Manager HTTP/1.1
 content-type: application/json
 
 {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
-      "name": "e",
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa4",
+      "name": "f",
       "surname": "e",
       "occupation": "e",
       "mobileNumber": 99999999,
       "email": "e",
       "imageName": "e",
       "address": {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa3",
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa5",
             "isActive": true,
             "street": "e",
             "city": "e",
-            "phone": 99999999,
+            "phone": 999999995,
             "zip": "e",
             "country": "e"
        }
@@ -23,9 +23,35 @@ content-type: application/json
 
 #####
 
+PUT https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa4 HTTP/1.1
+content-type: application/json
+
+{
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa4",
+      "name": "v",
+      "surname": "aas",
+      "occupation": "e",
+      "mobileNumber": 00009,
+      "email": "e",
+      "imageName": "e",
+      "address": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa5",
+            "isActive": true,
+            "street": "e",
+            "city": "e",
+            "phone":009999,
+            "zip": "e",
+            "country": "e"
+       }
+}
+######
+GET https://localhost:44395/api/Manager/id?id=3fa85f64-5717-4562-b3fc-2c963f66afa4 HTTP/1.1
+content-type: application/json
+#####
+
 GET https://localhost:44395/api/Manager HTTP/1.1
 content-type: application/json
 ####
 
-DELETE  https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa1 HTTP/1.1
+DELETE  https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa5 HTTP/1.1
 content-type: application/json

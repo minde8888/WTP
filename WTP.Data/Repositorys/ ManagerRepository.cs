@@ -19,7 +19,6 @@ namespace WTP.Data.Repositorys
         {
             _context = context;
         }
-
         public async Task AddItem(Manager manager)
         {
             await _context.AddAsync(manager);
@@ -65,9 +64,8 @@ namespace WTP.Data.Repositorys
         public async Task UpdateItem(Guid Id, Manager manager)
         {
             _context.Entry(manager).State = EntityState.Modified;
+            _context.Entry(manager.Address).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            var manegeUpdate = await GetItemIdAsync(Id);
-
         }
         public async Task<IEnumerable<Manager>> Search(string name)
         {

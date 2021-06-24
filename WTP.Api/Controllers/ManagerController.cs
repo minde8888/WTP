@@ -69,11 +69,10 @@ namespace WTP.Api.Controllers
             manager.ImageName = SaveImage(manager.ImageFile);
             try
             {
-
                 if (!String.IsNullOrEmpty(manager.ImageName))
                 {
                     await _employeeServices.AddItem(manager);
-                    return Ok();
+                    return CreatedAtAction("GetManager", new { manager.Id }, manager);
                 }
             }
             catch (Exception)
@@ -87,22 +86,31 @@ namespace WTP.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromForm] Manager manager)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (id != manager.Id)
-                return BadRequest();
-
-            if (manager.ImageFile != null)
+            try
             {
-                var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", manager.ImageName);
-                _employeeServices.DeleteImage(imagePath);
-                manager.ImageName = SaveImage(manager.ImageFile);
-            }
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            await _employeeServices.UpdateItem(id, manager);
-            return NoContent();
+                if (id != manager.Id)
+                    return BadRequest();
+
+                if (manager.ImageFile != null)
+                {
+                    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", manager.ImageName);
+                    _employeeServices.DeleteImage(imagePath);
+                    manager.ImageName = SaveImage(manager.ImageFile);
+                }
+
+                await _employeeServices.UpdateItem(id, manager);
+                return CreatedAtAction("GetManager", new { manager.Id }, manager);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error upadte data");
+            }
         }
+
         [HttpGet("{search}")]
         public async Task<ActionResult<IEnumerable<Manager>>> Search(string name)
         {
@@ -111,9 +119,7 @@ namespace WTP.Api.Controllers
                 var result = await _employeeServices.Search(name);
 
                 if (result.Any())
-                {
                     return Ok(result);
-                }
 
                 return NotFound();
             }
