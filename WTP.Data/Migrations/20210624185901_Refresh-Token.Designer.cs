@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,9 +10,10 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210624185901_Refresh-Token")]
+    partial class RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,10 +229,10 @@ namespace WTP.Data.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateTime>("ExpirysDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<bool>("IsRevoked")
+                    b.Property<bool>("IsRevorked")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsUsed")
