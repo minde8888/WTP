@@ -15,7 +15,6 @@ namespace WTP.Data.Context
         public DbSet<Manager> Manager { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Address> Address { get; set; }
-
         public DbSet<RefreshToken> RefreshToken { get; set; }
 
     }

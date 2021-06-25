@@ -42,29 +42,31 @@ namespace WTP.Api
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 
-            var tokenValidationParams = new TokenValidationParameters
+            var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = true,
-                RequireExpirationTime = false,
+                ValidateLifetime = false,
+                RequireExpirationTime = true,
+
+                // Allow to use seconds for expiration of token
+                // Required only when token lifetime less than 5 minutes
+                // THIS ONE
                 ClockSkew = TimeSpan.Zero
             };
 
-            services.AddSingleton(tokenValidationParams);
+            services.AddSingleton(tokenValidationParameters);
 
-            services.AddAuthentication(options =>
-            {
+            services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(jwt =>
-            {
+            .AddJwtBearer(jwt => {
                 jwt.SaveToken = true;
-                jwt.TokenValidationParameters = tokenValidationParams;
+                jwt.TokenValidationParameters = tokenValidationParameters;
             });
 
             services.AddDefaultIdentity<IdentityUser>(opts => opts.SignIn.RequireConfirmedAccount = true)
