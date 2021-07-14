@@ -12,9 +12,11 @@ using System.Text;
 using System.Threading.Tasks;
 using WTP.Api.Configuration;
 using WTP.Api.Configuration.Requests;
+using WTP.Api.Configuration.Roles;
 using WTP.Data.Context;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
+using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
 {
@@ -22,15 +24,16 @@ namespace WTP.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtConfig _jwtConfig;
         private readonly TokenValidationParameters _tokenValidationParams;
         private readonly AppDbContext _context;
 
-        public AuthController(UserManager<IdentityUser> userManager,
+        public AuthController(UserManager<ApplicationUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
-            AppDbContext context)
+            AppDbContext context,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
@@ -58,10 +61,14 @@ namespace WTP.Api.Controllers
                     });
                 }
 
-                var newUser = new IdentityUser() { Email = user.Email, UserName = user.UserName };
+                var newUser = new ApplicationUser() { Email = user.Email, UserName = user.UserName };
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
+
                 if (isCreated.Succeeded)
                 {
+
+                    await  _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+
                     return Ok(await GenerateJwtToken(newUser));
                 }
                 else
@@ -160,7 +167,7 @@ namespace WTP.Api.Controllers
             });
         }
 
-        private async Task<AuthResult> GenerateJwtToken(IdentityUser user)
+        private async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
@@ -320,7 +327,7 @@ namespace WTP.Api.Controllers
             return dtDateTime;
         }
 
-        public string RandomString(int length)
+        private string RandomString(int length)
         {
             var random = new Random();
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -329,5 +336,3 @@ namespace WTP.Api.Controllers
         }
     }
 }
-
-

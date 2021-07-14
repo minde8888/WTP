@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,7 @@ using WTP.Domain.Entities;
 
 namespace WTP.Data.Repositorys
 {
-    public class ManagerRepository : IManager
+    public class ManagerRepository : IManagerRepository
     {
         private readonly AppDbContext _context;
 

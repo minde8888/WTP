@@ -17,9 +17,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using WTP.Api.Configuration;
 using WTP.Data.Context;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
+using WTP.Domain.Entities;
 
 namespace WTP.Api
 {
@@ -40,6 +40,12 @@ namespace WTP.Api
             services.AddDbContext<AppDbContext>(opts =>
             opts.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
 
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("ElevatedRights",
+            //         policy => policy.RequireRole("Manager"));
+            //});
+
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -54,26 +60,31 @@ namespace WTP.Api
                 // Allow to use seconds for expiration of token
                 // Required only when token lifetime less than 5 minutes
                 // THIS ONE
-                ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero,
             };
 
             services.AddSingleton(tokenValidationParameters);
 
-            services.AddAuthentication(options => {
+            services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(jwt => {
+            .AddJwtBearer(jwt =>
+            {
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = tokenValidationParameters;
             });
 
-            services.AddDefaultIdentity<IdentityUser>(opts => opts.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(opts => opts.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<AppDbContext>().AddRoles<IdentityRole>()
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
-            services.AddScoped(typeof(IManager), typeof(ManagerRepository));
+            services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
 
             services.AddControllers();
@@ -111,6 +122,7 @@ namespace WTP.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 

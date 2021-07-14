@@ -18,43 +18,26 @@ namespace WTP.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class EmployeeController : ControllerBase
+    public class BaseController<T> : ControllerBase where T : BaseEntyti
     {
-        private readonly IManagerRepository _employeeServices;
+        private readonly IBaseRepository<T> _baseServices;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public EmployeeController(IManagerRepository itemServices, IWebHostEnvironment hostEnvironment)
+        public BaseController(IBaseRepository<T> itemServices, IWebHostEnvironment hostEnvironment)
         {
-            _employeeServices = itemServices;
+            _baseServices = itemServices;
             _hostEnvironment = hostEnvironment;
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Employee")]
-        public async Task<ActionResult<List<Manager>>> GetManager()
-        {
-            try
-            {
-                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _employeeServices.GetItemAsync(ImageSrc);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get data from the database");
-            }
-        }
-
-
         [HttpGet("id")]
-        public async Task<ActionResult<List<Manager>>> Get(Guid id)
+        public async Task<ActionResult<List<T>>> Get(Guid id)
         {
             try
             {
                 if (id == Guid.Empty)
                     return BadRequest();
 
-                var result = await _employeeServices.GetItemIdAsync(id);
+                var result = await _baseServices.GetItemIdAsync(id);
                 if (result == null)
                     return NotFound();
 
@@ -68,15 +51,15 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Createmanager([FromForm] Manager manager)
+        public async Task<IActionResult> CreateItem([FromForm] T t)
         {
-            manager.ImageName = SaveImage(manager.ImageFile);
+            t.ImageName = SaveImage(t.ImageFile);
             try
             {
-                if (!String.IsNullOrEmpty(manager.ImageName))
+                if (!String.IsNullOrEmpty(t.ImageName))
                 {
-                    await _employeeServices.AddItem(manager);
-                    return CreatedAtAction("GetManager", new { manager.Id }, manager);
+                    await _baseServices.AddItem(t);
+                    return CreatedAtAction("Get", new { t.Id }, t);
                 }
             }
             catch (Exception)
@@ -88,25 +71,25 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] Manager manager)
+        public async Task<IActionResult> Put(Guid id, [FromForm] T t)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (id != manager.Id)
+                if (id != t.Id)
                     return BadRequest();
 
-                if (manager.ImageFile != null)
+                if (t.ImageFile != null)
                 {
-                    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", manager.ImageName);
-                    _employeeServices.DeleteImage(imagePath);
-                    manager.ImageName = SaveImage(manager.ImageFile);
+                    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
+                    _baseServices.DeleteImage(imagePath);
+                    t.ImageName = SaveImage(t.ImageFile);
                 }
 
-                await _employeeServices.UpdateItem(id, manager);
-                return CreatedAtAction("GetManager", new { manager.Id }, manager);
+                await _baseServices.UpdateItem(id, t);
+                return CreatedAtAction("GetManager", new { t.Id }, t);
             }
             catch (Exception)
             {
@@ -116,11 +99,11 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<Manager>>> Search(string name)
+        public async Task<ActionResult<IEnumerable<T>>> Search(string name)
         {
             try
             {
-                var result = await _employeeServices.Search(name);
+                var result = await _baseServices.Search(name);
 
                 if (result.Any())
                     return Ok(result);
@@ -139,12 +122,12 @@ namespace WTP.Api.Controllers
         {
             try
             {
-                var managetToDelete = await _employeeServices.GetItemIdAsync(id);
-                if (managetToDelete == null)
+                var ItemToDelete = await _baseServices.GetItemIdAsync(id);
+                if (ItemToDelete == null)
                 {
                     return NotFound($"Manager with Id = {id} not found");
                 }
-                await _employeeServices.DeleteItem(id);
+                await _baseServices.DeleteItem(id);
                 return Ok();
             }
             catch (Exception)
