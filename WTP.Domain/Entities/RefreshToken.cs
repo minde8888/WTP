@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using WTP.Domain.Entities;
 
 namespace WTP.Api.Configuration
 {
@@ -16,6 +17,6 @@ namespace WTP.Api.Configuration
         public DateTime ExpiryDate { get; set; } // Refresh token is long lived it could last for months.
 
         [ForeignKey(nameof(UserId))]
-        public IdentityUser User { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

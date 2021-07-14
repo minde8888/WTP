@@ -11,12 +11,12 @@ namespace WTP.Data.Interfaces
 {
     public interface IManagerRepository
     {
-        Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
+        Task<List<Manager>> GetItemAsync(string ImageSrc);
         Task<List<Manager>> GetItemIdAsync(Guid Id);
-        Task AddItem(Manager manager);
+        Task AddItem(Manager manager); 
         Task DeleteItem(Guid Id);
         Task UpdateItem(Guid Id, Manager manager);
-        void DeleteImage(string imagePath);
+        public void DeleteImage(string imagePath);
         Task<IEnumerable<Manager>> Search(string name);
     }
 }

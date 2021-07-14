@@ -23,7 +23,7 @@ content-type: application/json
 
 #####
 
-PUT https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa4 HTTP/1.1
+PUT https://localhost:44395/api/Manager/https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa4 HTTP/1.1
 content-type: application/json
 
 {
@@ -31,17 +31,17 @@ content-type: application/json
       "name": "v",
       "surname": "aas",
       "occupation": "e",
-      "mobileNumber": 00009,
+      "mobileNumber": 100009,
       "email": "e",
       "imageName": "e",
       "address": {
             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa5",
             "isActive": true,
-            "street": "e",
-            "city": "e",
-            "phone":009999,
-            "zip": "e",
-            "country": "e"
+            "street": "a",
+            "city": "a",
+            "phone":1009999,
+            "zip": "a",
+            "country": "a"
        }
 }
 ######
@@ -55,3 +55,12 @@ content-type: application/json
 
 DELETE  https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa5 HTTP/1.1
 content-type: application/json
+
+####
+POST https://localhost:44395/api/auth/register HTTP/1.1
+content-type: application/json
+{
+    "username":"mindaugas2",
+    "email":"mindau@gmail.com",
+    "password":"Test123!"
+}
