@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WTP.Domain.Entities;
-using WTP.Data.Interfaces;
 using WTP.Data.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using WTP.Data.Interfaces;
+using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
+    //[Authorize]
+    //[Route("api/[controller]")]
+    //[ApiController]
 
     public class BaseController<T> : ControllerBase where T : BaseEntyti
     {
@@ -27,7 +26,7 @@ namespace WTP.Api.Controllers
         {
             _baseServices = itemServices;
             _hostEnvironment = hostEnvironment;
-        }
+         }
 
         [HttpGet("id")]
         public async Task<ActionResult<List<T>>> Get(Guid id)
@@ -51,16 +50,16 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateItem([FromForm] T t)
+        public async Task<IActionResult> CreateItem(T t)
         {
-            t.ImageName = SaveImage(t.ImageFile);
+            //t.ImageName = SaveImage(t.ImageFile);
             try
             {
-                if (!String.IsNullOrEmpty(t.ImageName))
-                {
-                    await _baseServices.AddItem(t);
-                    return CreatedAtAction("Get", new { t.Id }, t);
-                }
+                //if (!String.IsNullOrEmpty(t.ImageName))
+                //{
+                await _baseServices.AddItem(t);
+                return CreatedAtAction("Get", new { t.Id }, t);
+                //}
             }
             catch (Exception)
             {
@@ -71,7 +70,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] T t)
+        public async Task<IActionResult> Update(Guid id, T t) //[FromForm]
         {
             try
             {

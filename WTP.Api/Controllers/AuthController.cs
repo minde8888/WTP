@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WTP.Api.Configuration;
 using WTP.Api.Configuration.Requests;
-using WTP.Api.Configuration.Roles;
 using WTP.Data.Context;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
@@ -32,8 +31,7 @@ namespace WTP.Api.Controllers
         public AuthController(UserManager<ApplicationUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
-            AppDbContext context,
-            RoleManager<IdentityRole> roleManager)
+            AppDbContext context)
         {
             _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
@@ -57,7 +55,6 @@ namespace WTP.Api.Controllers
                             "Email already in use"
                         },
                         Success = false
-
                     });
                 }
 
@@ -66,8 +63,7 @@ namespace WTP.Api.Controllers
 
                 if (isCreated.Succeeded)
                 {
-
-                    await  _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                    await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
 
                     return Ok(await GenerateJwtToken(newUser));
                 }
@@ -88,7 +84,6 @@ namespace WTP.Api.Controllers
                     "Invalig payloade"
                     },
                 Success = false
-
             });
         }
 
@@ -123,6 +118,10 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
+
+                var id = existingUser.Id;
+                Guid newGuid = Guid.Parse(id);
+                var newUser = await _userManager.GetUserAsync(HttpContext.User);
 
                 return Ok(await GenerateJwtToken(existingUser));
             }
@@ -183,7 +182,7 @@ namespace WTP.Api.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                     }),
                 //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
-                Expires = DateTime.UtcNow.AddSeconds(30), // 5-10 
+                Expires = DateTime.UtcNow.AddSeconds(120), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -215,6 +214,7 @@ namespace WTP.Api.Controllers
                 RefreshToken = refreshToken.Token
             };
         }
+
         private async Task<AuthResult> VerifyToken(TokenRequest tokenRequest)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,6 +25,8 @@ namespace WTP.Domain.Entities
         [NotMapped]
         public string ImageSrc { get; set; }
         public Address Address { get; set; }
+        public ICollection<Post> Posts { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
         //public Guid? UserCreated { get; set; } 
         //public Guid? UserUpdated { get; set; }

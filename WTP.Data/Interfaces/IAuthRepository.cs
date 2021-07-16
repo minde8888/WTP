@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WTP.Api.Controllers
+namespace WTP.Data.Interfaces
 {
-    public class AddressController
+    class IAuthRepository
     {
-        
     }
 }
