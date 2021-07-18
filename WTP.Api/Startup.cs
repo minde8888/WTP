@@ -40,11 +40,20 @@ namespace WTP.Api
             services.AddDbContext<AppDbContext>(opts =>
             opts.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("ElevatedRights",
-            //         policy => policy.RequireRole("Manager"));
-            //});
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
+                o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
+                o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
+                o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
+                o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));               
+                o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
+            });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(opts => opts.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<AppDbContext>().AddRoles<IdentityRole>()
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<AppDbContext>();
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 
@@ -75,19 +84,15 @@ namespace WTP.Api
             {
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = tokenValidationParameters;
+                jwt.TokenValidationParameters.NameClaimType = "sub";
+                jwt.TokenValidationParameters.RoleClaimType = "role";
             });
-
-            services.AddIdentity<ApplicationUser, IdentityRole>(opts => opts.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<AppDbContext>().AddRoles<IdentityRole>()
-            .AddDefaultTokenProviders()
-            .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
             services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IAdminRepository, AdminRepository>();
             //services.AddScoped(typeof(IAdminRepository), typeof(IAdminRepository));
-
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

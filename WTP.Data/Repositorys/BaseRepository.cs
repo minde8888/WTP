@@ -24,7 +24,7 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        [Authorize(Roles = "Manager, Administrator")]
+ 
         public async Task DeleteItem(Guid Id)
         {
             var t = await _context.Set<T>().FindAsync(Id);
@@ -34,7 +34,7 @@ namespace WTP.Data.Repositorys
             _context.Address.Remove(address);
             await _context.SaveChangesAsync();
         }
-        [Authorize(Roles = "Manager, Administrator")]
+
         public async Task<List<T>> GetItemIdAsync(Guid Id)
         {
             return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync(); 

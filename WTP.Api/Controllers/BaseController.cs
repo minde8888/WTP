@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -97,7 +98,8 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpGet("{search}")]
+        [HttpGet("Search")]
+        [Authorize(Roles = "Manager, Administrator")]
         public async Task<ActionResult<IEnumerable<T>>> Search(string name)
         {
             try

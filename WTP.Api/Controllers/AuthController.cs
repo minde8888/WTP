@@ -119,9 +119,9 @@ namespace WTP.Api.Controllers
                     });
                 }
 
-                var id = existingUser.Id;
-                Guid newGuid = Guid.Parse(id);
-                var newUser = await _userManager.GetUserAsync(HttpContext.User);
+                //var id = existingUser.Id;
+                //Guid newGuid = Guid.Parse(id);
+                //var newUser = await _userManager.GetUserAsync(HttpContext.User);
 
                 return Ok(await GenerateJwtToken(existingUser));
             }
@@ -168,6 +168,15 @@ namespace WTP.Api.Controllers
 
         private async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
         {
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var roleClaims = new List<Claim>();
+            for (int i = 0; i < roles.Count; i++)
+            {
+                roleClaims.Add(new Claim("Roles", roles[i]));
+            }
+        
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
@@ -179,10 +188,11 @@ namespace WTP.Api.Controllers
             new Claim("Id", user.Id),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                    }),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("uid", user.Id)
+                }.Union(roleClaims)), 
                 //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
-                Expires = DateTime.UtcNow.AddSeconds(120), // 5-10
+                Expires =  DateTime.UtcNow.AddSeconds(120), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
