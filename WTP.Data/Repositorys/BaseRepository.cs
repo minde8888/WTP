@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
+ 
         public async Task DeleteItem(Guid Id)
         {
             var t = await _context.Set<T>().FindAsync(Id);
@@ -37,7 +39,7 @@ namespace WTP.Data.Repositorys
         {
             return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync(); 
         }
-
+        [Authorize(Roles = "Manager, Administrator")]
         public async Task<List<T>> GetItemAsync(string ImageSrc)
         {
   
@@ -61,7 +63,7 @@ namespace WTP.Data.Repositorys
                 return items;       
             
         }
-
+        [Authorize(Roles = "Manager, Administrator")]
         public async Task UpdateItem(Guid Id, T t)
         {
             _context.Entry(t).State = EntityState.Modified;

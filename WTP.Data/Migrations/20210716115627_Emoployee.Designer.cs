@@ -10,8 +10,8 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210713141707_update-Roless")]
-    partial class updateRoless
+    [Migration("20210716115627_Emoployee")]
+    partial class Emoployee
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -192,44 +192,17 @@ namespace WTP.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AddressId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("City")
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ImageName")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
-
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Occupation")
-                        .HasColumnType("text");
 
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");
@@ -237,15 +210,10 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Street")
                         .HasColumnType("text");
 
-                    b.Property<string>("Surname")
-                        .HasColumnType("text");
-
                     b.Property<string>("Zip")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
 
                     b.HasIndex("EmployeeId")
                         .IsUnique();
@@ -407,6 +375,42 @@ namespace WTP.Data.Migrations
                     b.ToTable("Manager");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.Post", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Context")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ManagerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("PostId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("Posts");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -469,10 +473,6 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.Address", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId");
-
                     b.HasOne("WTP.Domain.Entities.Employee", "Employee")
                         .WithOne("Address")
                         .HasForeignKey("WTP.Domain.Entities.Address", "EmployeeId");
@@ -480,8 +480,6 @@ namespace WTP.Data.Migrations
                     b.HasOne("WTP.Domain.Entities.Manager", "Manager")
                         .WithOne("Address")
                         .HasForeignKey("WTP.Domain.Entities.Address", "ManagerId");
-
-                    b.Navigation("Address");
 
                     b.Navigation("Employee");
 
@@ -495,9 +493,22 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.Post", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Employee", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("WTP.Domain.Entities.Manager", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("ManagerId");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("Address");
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
@@ -505,6 +516,8 @@ namespace WTP.Data.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Employees");
+
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

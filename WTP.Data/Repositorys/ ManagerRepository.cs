@@ -17,69 +17,22 @@ namespace WTP.Data.Repositorys
         {
             _context = context;
         }
-        public async Task AddItem(Manager manager)
-        {
-            await _context.AddAsync(manager);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteItem(Guid Id)
-        {
-            var manager = await _context.Manager.FindAsync(Id);
-            var address = await _context.Address.FindAsync(Id);
-
-            _context.Manager.Remove(manager);
-            _context.Address.Remove(address);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<Manager>> GetItemIdAsync(Guid Id)
-        {
-            return await _context.Manager.Include(maneger => maneger.Address).Where(x => x.Id == Id).ToListAsync(); ;
-        }
 
         public async Task<List<Manager>> GetItemAsync(string ImageSrc)
         {
-            if (_context != null)
+            var items = await _context.Manager.Include(manager => manager.Address).Include(employee => employee.Employees)
+                .ToListAsync();
+            if (items != null)
             {
-                return await _context.Manager.Include(maneger => maneger.Address)
-             .Select(x => new Manager()
-             {
-                 Id = x.Id,
-                 Name = x.Name,
-                 Surname = x.Surname,
-                 Occupation = x.Occupation,
-                 Email = x.Email,
-                 ImageName = x.ImageName,
-                 ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, x.ImageName),
-                 Address = x.Address
-             })
-             .ToListAsync();
+                foreach (var item in items)
+                {
+                    item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
+                }
+                return items;
             }
             return null;
         }
 
-        public async Task UpdateItem(Guid Id, Manager manager)
-        {
-            _context.Entry(manager).State = EntityState.Modified;
-            _context.Entry(manager.Address).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
-        public async Task<IEnumerable<Manager>> Search(string name)
-        {
-            IQueryable<Manager> query = _context.Manager;
 
-            if (!string.IsNullOrEmpty(name))
-            {
-                query = query.Where(e => e.Name.Contains(name)
-                            || e.Surname.Contains(name));
-            }
-            return await query.ToListAsync();
-        }
-        public void DeleteImage(string imagePath)
-        {
-            if (System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
-        }
     }
 }

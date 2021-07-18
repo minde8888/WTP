@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos
 {
-    public class ManagerDto : BaseDto
+    public class EmployeeDto: BaseDto
     {
-        public ICollection<EmployeeDto> Employees { get; set; }
+        public Guid? ManagerId { get; set; }
     }
 }

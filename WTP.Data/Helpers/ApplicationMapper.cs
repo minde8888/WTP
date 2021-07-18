@@ -10,6 +10,8 @@ namespace WTP.Data.Helpers
         {
             CreateMap<Manager, ManagerDto> ().ReverseMap();
             CreateMap<AddressDto, Address>().ReverseMap();
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<Post, PostDto>().ReverseMap();
         }
     }
 }
