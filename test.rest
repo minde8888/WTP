@@ -23,7 +23,7 @@ content-type: application/json
 
 #####
 
-PUT https://localhost:44395/api/Manager/https://localhost:44395/api/Manager/3fa85f64-5717-4562-b3fc-2c963f66afa4 HTTP/1.1
+PUT https://localhost:44395/api/Manager HTTP/1.1
 content-type: application/json
 
 {
@@ -62,5 +62,13 @@ content-type: application/json
 {
     "username":"mindaugas2",
     "email":"mindau@gmail.com",
-    "password":"Test123!"
+    "password":"Test123!",
+     "roles": "Manager"
+}
+####
+POST  https://localhost:44395/api/auth/loginHTTP/1.1
+content-type: application/json
+{
+  "email": "admin@example.com",
+  "password": "Sstring1-"
 }

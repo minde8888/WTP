@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -135,6 +136,27 @@ namespace WTP.Api.Controllers
             });
         }
 
+        [Authorize]
+        [HttpDelete("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            string rawUserId = HttpContext.User.FindFirstValue("id");
+
+            if (!Guid.TryParse(rawUserId, out Guid userId))
+            {
+                return Unauthorized();
+            }
+
+            IEnumerable<RefreshToken> refreshTokens = await _context.RefreshToken
+               .Where(t => t.UserId == rawUserId)
+               .ToListAsync();
+
+            _context.RefreshToken.RemoveRange(refreshTokens);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpPost]
         [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
@@ -185,14 +207,14 @@ namespace WTP.Api.Controllers
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim("Id", user.Id),
+                new Claim("Id", user.Id),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("uid", user.Id)
+                    new Claim("guid", user.Id)
                 }.Union(roleClaims)), 
                 //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
-                Expires =  DateTime.UtcNow.AddSeconds(120), // 5-10
+                Expires =  DateTime.UtcNow.AddSeconds(30), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

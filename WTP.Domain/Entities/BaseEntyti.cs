@@ -26,9 +26,6 @@ namespace WTP.Domain.Entities
         public string ImageSrc { get; set; }
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
 
-        //public Guid? UserCreated { get; set; } 
-        //public Guid? UserUpdated { get; set; }
     }
 }

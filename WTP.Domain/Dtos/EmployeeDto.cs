@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos
 {
-    public class EmployeeDto: BaseDto
+    public class EmployeeDto: BaseEntityDto
     {
         public Guid? ManagerId { get; set; }
     }
