@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WTP.Domain.Dtos
 {
-    public class ManagerDto : BaseDto
+    public class ManagerDto : BaseEntityDto
     {
         public ICollection<EmployeeDto> Employees { get; set; }
     }

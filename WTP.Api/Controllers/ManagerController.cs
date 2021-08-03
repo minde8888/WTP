@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
+using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
@@ -24,13 +26,14 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "Administrator")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<List<Manager>>> GetAllEmployees()
         {
             try
             {
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _managerServices.GetItemAsync(ImageSrc);
+                var a = await _managerServices.GetItemAsync(ImageSrc);
+                return a;
             }
             catch (Exception)
             {

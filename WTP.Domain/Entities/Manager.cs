@@ -6,6 +6,6 @@ namespace WTP.Domain.Entities
 {
     public class Manager : BaseEntyti
     {
-        public List<Employee> Employees { get; set; }
+        public ICollection<Employee> Employees { get; set; }
     }
 }

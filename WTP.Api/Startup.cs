@@ -17,6 +17,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using WTP.Api.Configuration;
 using WTP.Data.Context;
+using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 using WTP.Domain.Entities;
@@ -35,25 +36,34 @@ namespace WTP.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(ApplicationMapper));
+
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
-            services.AddDbContext<AppDbContext>(opts =>
-            opts.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
+            services.AddDbContext<AppDbContext>(o =>
+            o.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
 
-            services.AddAuthorization(o =>
-            {
-                o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
-                o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
-                o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
-                o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
-                o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));               
-                o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
-            });
-
-            services.AddIdentity<ApplicationUser, IdentityRole>(opts => opts.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<AppDbContext>().AddRoles<IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(o => o.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddEntityFrameworkStores<AppDbContext>()               
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            //services.AddAuthorization(o =>
+            //{
+            //    o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
+            //    o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
+            //    o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
+            //    o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
+            //    o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));               
+            //    o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
+            //    o.AddPolicy("ElevatedRights", policy =>
+            //    {
+            //        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+            //        policy.RequireRole("Employee", "Manager", "Administrator");
+            //    });
+            //});
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 

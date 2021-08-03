@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
+using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : BaseController<Employee>
@@ -23,7 +25,8 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Manager, Administrator")]
+        [Authorize(Policy = "Employee")]
+        //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<Employee>>> GetAllEmployees()
         {
             try
