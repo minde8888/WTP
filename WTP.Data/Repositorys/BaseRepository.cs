@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,13 +15,17 @@ namespace WTP.Data.Repositorys
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntyti
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BaseRepository(AppDbContext context)
+        public BaseRepository(AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task AddItem(T t)
         {
+            // var userId = t.Id;
+            //_userManager.
             await _context.AddAsync(t);
             await _context.SaveChangesAsync();
         }
@@ -39,30 +45,20 @@ namespace WTP.Data.Repositorys
         {
             return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync(); 
         }
+
         [Authorize(Roles = "Manager, Administrator")]
         public async Task<List<T>> GetItemAsync(string ImageSrc)
         {
   
-               var items =  await _context.Set<T>().Include(t => t.Address)
-             //.Select(x => new T()  //??????????????????????????????
-             //{
-             //    Id = x.Id,
-             //    Name = x.Name,
-             //    Surname = x.Surname,
-             //    Occupation = x.Occupation,
-             //    Email = x.Email,
-             //    ImageName = x.ImageName,
-             //    ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, x.ImageName),
-             //    Address = x.Address
-             //})
+              var items =  await _context.Set<T>().Include(t => t.Address)
              .ToListAsync();
                 foreach (var item in items)
                 {
                     item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
                 }
-                return items;       
-            
+                return items;                   
         }
+
         [Authorize(Roles = "Manager, Administrator")]
         public async Task UpdateItem(Guid Id, T t)
         {

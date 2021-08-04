@@ -50,20 +50,20 @@ namespace WTP.Api
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
 
-            //services.AddAuthorization(o =>
-            //{
-            //    o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
-            //    o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
-            //    o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
-            //    o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
-            //    o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));               
-            //    o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
-            //    o.AddPolicy("ElevatedRights", policy =>
-            //    {
-            //        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-            //        policy.RequireRole("Employee", "Manager", "Administrator");
-            //    });
-            //});
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
+                o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
+                o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
+                o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
+                o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));
+                o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
+                o.AddPolicy("ElevatedRights", policy =>
+                {
+                    //policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireClaim("Employee", "Manager", "Administrator");
+                });
+            });
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 

@@ -28,15 +28,18 @@ namespace WTP.Api.Controllers
         private readonly JwtConfig _jwtConfig;
         private readonly TokenValidationParameters _tokenValidationParams;
         private readonly AppDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
+            RoleManager<IdentityRole> roleManager,
             AppDbContext context)
         {
             _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
             _tokenValidationParams = tokenValidationsParams;
+            _roleManager = roleManager;
             _context = context;
         }
 
@@ -58,7 +61,7 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
-
+                ;
                 var newUser = new ApplicationUser() { Email = user.Email, UserName = user.UserName };
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
@@ -120,10 +123,21 @@ namespace WTP.Api.Controllers
                     });
                 }
 
-                //var id = existingUser.Id;
+                var id = existingUser.Id;
                 //Guid newGuid = Guid.Parse(id);
-                //var newUser = await _userManager.GetUserAsync(HttpContext.User);
+                ApplicationUser applicationUser = await _userManager.GetUserAsync(User);
 
+                var getUser1 = _context.Users.Where(u => u.Id == id).Include(e => e.Manager);
+
+                var getUser = _userManager.Users.FirstOrDefault(u => u.Id == id);
+
+                IList<string> roles = await _userManager.GetRolesAsync(getUser);
+
+                List<string> result = roles.OrderBy(x => x).ToList();
+
+                //List<IdentityRole> roless = _roleManager.Roles.ToList();
+
+                //string userId = User.Claims.First(c => c.Type == "UserID").Value;
                 return Ok(await GenerateJwtToken(existingUser));
             }
 
@@ -190,7 +204,6 @@ namespace WTP.Api.Controllers
 
         private async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
         {
-
             var roles = await _userManager.GetRolesAsync(user);
 
             var roleClaims = new List<Claim>();
@@ -198,7 +211,7 @@ namespace WTP.Api.Controllers
             {
                 roleClaims.Add(new Claim("Roles", roles[i]));
             }
-        
+
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
@@ -211,10 +224,10 @@ namespace WTP.Api.Controllers
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("guid", user.Id)
-                }.Union(roleClaims)), 
+                    new Claim("guid", user.Id),
+                }.Union(roleClaims)),
                 //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
-                Expires =  DateTime.UtcNow.AddSeconds(30), // 5-10
+                Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

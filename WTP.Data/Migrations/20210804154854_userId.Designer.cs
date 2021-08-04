@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,9 +10,10 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210804154854_userId")]
+    partial class userId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,6 +239,41 @@ namespace WTP.Data.Migrations
                     b.ToTable("RefreshToken");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Dtos.Requests.UserRegistrationDto", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("EmployeesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ManagerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Roles")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("EmployeesId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("UserRegistrationDto");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Address", b =>
                 {
                     b.Property<Guid>("Id")
@@ -382,9 +419,6 @@ namespace WTP.Data.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
                     b.ToTable("Employee");
                 });
 
@@ -425,9 +459,6 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Manager");
                 });
@@ -528,6 +559,21 @@ namespace WTP.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Dtos.Requests.UserRegistrationDto", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Employee", "Employees")
+                        .WithMany("UserReg")
+                        .HasForeignKey("EmployeesId");
+
+                    b.HasOne("WTP.Domain.Entities.Manager", "Manager")
+                        .WithMany("UserReg")
+                        .HasForeignKey("ManagerId");
+
+                    b.Navigation("Employees");
+
+                    b.Navigation("Manager");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Address", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Employee", "Employee")
@@ -548,21 +594,6 @@ namespace WTP.Data.Migrations
                     b.HasOne("WTP.Domain.Entities.Manager", null)
                         .WithMany("Employees")
                         .HasForeignKey("ManagerId");
-
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithOne("Employees")
-                        .HasForeignKey("WTP.Domain.Entities.Employee", "UserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithOne("Manager")
-                        .HasForeignKey("WTP.Domain.Entities.Manager", "UserId");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Post", b =>
@@ -576,18 +607,13 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Employees");
-
-                    b.Navigation("Manager");
-                });
-
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("Address");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("UserReg");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
@@ -597,6 +623,8 @@ namespace WTP.Data.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("UserReg");
                 });
 #pragma warning restore 612, 618
         }

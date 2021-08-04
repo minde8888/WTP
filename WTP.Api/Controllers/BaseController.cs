@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
@@ -58,6 +59,8 @@ namespace WTP.Api.Controllers
             {
                 //if (!String.IsNullOrEmpty(t.ImageName))
                 //{
+                string UserId = HttpContext.User.FindFirstValue("id");
+                t.UserId = UserId;
                 await _baseServices.AddItem(t);
                 return CreatedAtAction("Get", new { t.Id }, t);
                 //}
