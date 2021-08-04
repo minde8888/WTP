@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,9 +10,10 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210804160729_userIdsss")]
+    partial class userIdsss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,11 +296,23 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("EmployeesId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("EmployeesId1")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ManagerId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ManagerId1")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -328,6 +342,10 @@ namespace WTP.Data.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeesId1");
+
+                    b.HasIndex("ManagerId1");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -375,15 +393,9 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ManagerId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Employee");
                 });
@@ -421,13 +433,7 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Manager");
                 });
@@ -543,26 +549,26 @@ namespace WTP.Data.Migrations
                     b.Navigation("Manager");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Employee", "Employees")
+                        .WithMany("ApplicationUsers")
+                        .HasForeignKey("EmployeesId1");
+
+                    b.HasOne("WTP.Domain.Entities.Manager", "Manager")
+                        .WithMany("ApplicationUsers")
+                        .HasForeignKey("ManagerId1");
+
+                    b.Navigation("Employees");
+
+                    b.Navigation("Manager");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Manager", null)
                         .WithMany("Employees")
                         .HasForeignKey("ManagerId");
-
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithOne("Employees")
-                        .HasForeignKey("WTP.Domain.Entities.Employee", "UserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithOne("Manager")
-                        .HasForeignKey("WTP.Domain.Entities.Manager", "UserId");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Post", b =>
@@ -576,16 +582,11 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Employees");
-
-                    b.Navigation("Manager");
-                });
-
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("Address");
+
+                    b.Navigation("ApplicationUsers");
 
                     b.Navigation("Posts");
                 });
@@ -593,6 +594,8 @@ namespace WTP.Data.Migrations
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
                 {
                     b.Navigation("Address");
+
+                    b.Navigation("ApplicationUsers");
 
                     b.Navigation("Employees");
 

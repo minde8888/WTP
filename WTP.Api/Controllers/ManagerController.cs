@@ -26,14 +26,14 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult<List<Manager>>> GetAllEmployees()
         {
             try
             {
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                var a = await _managerServices.GetItemAsync(ImageSrc);
-                return a;
+                //var a = await _managerServices.GetItemAsync(ImageSrc);
+                return await _managerServices.GetItemAsync(ImageSrc);
             }
             catch (Exception)
             {

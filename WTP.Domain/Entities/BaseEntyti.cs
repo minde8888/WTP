@@ -1,4 +1,5 @@
 ﻿ using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,9 @@ namespace WTP.Domain.Entities
 {
     public class BaseEntyti
     {
+
         public Guid Id { get; set; }
+        public string UserId { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
@@ -26,6 +29,8 @@ namespace WTP.Domain.Entities
         public string ImageSrc { get; set; }
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
-
+        [ForeignKey(nameof(UserId))]               
+        public ApplicationUser ApplicationUser { get; set; }
     }
+
 }

@@ -23,7 +23,6 @@ namespace WTP.Data.Repositorys
             _context = context;
             _mapper = mapper;
         }
-
   
         public async Task<List<Manager>> GetItemAsync(string ImageSrc)
         {
