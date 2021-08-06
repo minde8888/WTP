@@ -57,11 +57,11 @@ namespace WTP.Api.Controllers
         //    }
         //}
 
-        [HttpPost]
-        public async Task<IActionResult> NewItem(Manager manager)
-        {
-            return await base.CreateItem(manager);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> NewItem(Manager manager)
+        //{
+        //    return await base.CreateItem(manager);
+        //}
 
 
     }    

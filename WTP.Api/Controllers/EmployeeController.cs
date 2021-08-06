@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
-using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
@@ -53,12 +52,13 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateItem(Employee employee)
+        public IActionResult NewItem(Employee employee)
         {
             string UserId = HttpContext.User.FindFirstValue("id");
-            Guid managerId = _employeeServices.getManagerId(UserId);
-            employee.ManagerId = managerId;
-            return await base.CreateItem(employee);
+   
+           _employeeServices.addEmployee(UserId, employee);
+        
+            return CreatedAtAction("Get", new { employee.Id }, employee);
         }
     }
 }

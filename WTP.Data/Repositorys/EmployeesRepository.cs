@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
 using System.Linq;
+using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
@@ -20,10 +20,13 @@ namespace WTP.Data.Repositorys
             //_mapper = mapper;
         }
 
-        public Guid getManagerId(string UserId)
+        public async Task addEmployee(string UserId, Employee employee)
         {
-            var getUser = _userManager.Users.FirstOrDefault(u => u.Id == UserId);
-            return getUser.Manager.Id;
+            Manager manager = _context.Manager.FirstOrDefault(u => u.UserId == UserId);
+            employee.UserId = UserId;
+            employee.ManagerId = manager.Id;
+            await _context.AddAsync(employee);
+            await _context.SaveChangesAsync();
         }
 
         //public async Task<IActionResult> AddItem(Manager manager)

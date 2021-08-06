@@ -131,10 +131,12 @@ namespace WTP.Api.Controllers
                     switch (item)
                     {
                         case "Manager":
-                            return Ok(await _context.Manager.Where(u => u.UserId == existingUser.Id).ToListAsync());
+                            return Ok(await GenerateJwtToken(existingUser));
+                        //  return Ok(await _context.Manager.Where(u => u.UserId == existingUser.Id).ToListAsync());
 
                         case "Employee":
-                            return Ok(await _context.Employee.Where(u => u.UserId == existingUser.Id).ToListAsync());                           
+                            return Ok(await GenerateJwtToken(existingUser));
+                        //   return Ok(await _context.Employee.Where(u => u.UserId == existingUser.Id).ToListAsync());                           
                         default:
                             return Ok(await GenerateJwtToken(existingUser));
                     }
