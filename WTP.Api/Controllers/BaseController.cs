@@ -15,7 +15,7 @@ using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     //[Route("api/[controller]")]
     //[ApiController]
 
@@ -51,27 +51,28 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateItem(T t)
-        {
-            //t.ImageName = SaveImage(t.ImageFile);
-            try
-            {
-                //if (!String.IsNullOrEmpty(t.ImageName))
-                //{
-                string UserId = HttpContext.User.FindFirstValue("id");
-                t.UserId = UserId;
-                await _baseServices.AddItem(t);
-                return CreatedAtAction("Get", new { t.Id }, t);
-                //}
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error post data -> Base -> CreateItem");
-            }
+        //[HttpPost]
+      
+        //public async Task<IActionResult> CreateItem(T t)
+        //{
+        //    //t.ImageName = SaveImage(t.ImageFile);
+        //    try
+        //    {
+        //        //if (!String.IsNullOrEmpty(t.ImageName))
+        //        //{
+        //        string UserId = HttpContext.User.FindFirstValue("id");
+        //        t.UserId = UserId;
+        //        await _baseServices.AddItem(t);
+        //        return CreatedAtAction("Get", new { t.Id }, t);
+        //        //}
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, "Error post data -> Base -> CreateItem");
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, T t) //[FromForm]
