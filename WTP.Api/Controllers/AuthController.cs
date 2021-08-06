@@ -35,6 +35,7 @@ namespace WTP.Api.Controllers
             TokenValidationParameters tokenValidationsParams,
             RoleManager<IdentityRole> roleManager,
             AppDbContext context)
+
         {
             _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
@@ -121,24 +122,23 @@ namespace WTP.Api.Controllers
                             },
                         Success = false
                     });
-                }
+                }        
 
-                var id = existingUser.Id;
-                //Guid newGuid = Guid.Parse(id);
-                ApplicationUser applicationUser = await _userManager.GetUserAsync(User);
+                var role = await _userManager.GetRolesAsync(existingUser);
 
-                var getUser1 = _context.Users.Where(u => u.Id == id).Include(e => e.Manager);
+                foreach (var item in role)
+                {
+                    switch (item)
+                    {
+                        case "Manager":
+                            return Ok(await _context.Manager.Where(u => u.UserId == existingUser.Id).ToListAsync());
 
-                var getUser = _userManager.Users.FirstOrDefault(u => u.Id == id);
-
-                IList<string> roles = await _userManager.GetRolesAsync(getUser);
-
-                List<string> result = roles.OrderBy(x => x).ToList();
-
-                //List<IdentityRole> roless = _roleManager.Roles.ToList();
-
-                //string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                return Ok(await GenerateJwtToken(existingUser));
+                        case "Employee":
+                            return Ok(await _context.Employee.Where(u => u.UserId == existingUser.Id).ToListAsync());                           
+                        default:
+                            return Ok(await GenerateJwtToken(existingUser));
+                    }
+                }              
             }
 
             return BadRequest(new RegistrationResponse()

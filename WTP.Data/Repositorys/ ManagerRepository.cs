@@ -24,7 +24,7 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
         }
   
-        public async Task<List<Manager>> GetItemAsync(string ImageSrc)
+        public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
         {
             var items = await _context.Manager.Include(manager => manager.Address).Include(employee => employee.Employees)
                 .ToListAsync();
@@ -33,11 +33,11 @@ namespace WTP.Data.Repositorys
 
             if (items != null)
             {
-                foreach (var item in items)
+                foreach (var item in i)
                 {
                     item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
                 }
-                return items;
+                return i;
             }
             return null;
         }

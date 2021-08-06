@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace WTP.Data.Interfaces
 {
-    //public interface IEmployeesRepository : IPeopleRepository
-    //{
-
-    //}
+    public interface IEmployeesRepository 
+    {
+        public Guid getManagerId(string UserId);
+    }
 }

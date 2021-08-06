@@ -59,7 +59,6 @@ namespace WTP.Data.Repositorys
                 return items;                   
         }
 
-        [Authorize(Roles = "Manager, Administrator")]
         public async Task UpdateItem(Guid Id, T t)
         {
             _context.Entry(t).State = EntityState.Modified;

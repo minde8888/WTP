@@ -1,17 +1,12 @@
-﻿ using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WTP.Domain.Entities
 {
     public class BaseEntyti
     {
-
         public Guid Id { get; set; }
         public string UserId { get; set; }
         public bool IsActive { get; set; } = true;
@@ -23,14 +18,17 @@ namespace WTP.Domain.Entities
         public long MobileNumber { get; set; }
         public string Email { get; set; }
         public string ImageName { get; set; }
+
         [NotMapped]
         public IFormFile ImageFile { get; set; }
+
         [NotMapped]
         public string ImageSrc { get; set; }
+
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
-        [ForeignKey(nameof(UserId))]               
+
+        [ForeignKey(nameof(UserId))]
         public ApplicationUser ApplicationUser { get; set; }
     }
-
 }
