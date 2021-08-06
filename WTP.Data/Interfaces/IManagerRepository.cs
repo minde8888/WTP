@@ -7,6 +7,6 @@ namespace WTP.Data.Interfaces
 {
     public interface IManagerRepository
     {
-        Task<List<Manager>> GetItemAsync(string ImageSrc);
+        Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
     }
 }

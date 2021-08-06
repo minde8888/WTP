@@ -21,7 +21,7 @@ namespace WTP.Data.Repositorys
 
         public async Task<List<Manager>> GetManagerAsync(string ImageSrc)
         {
-            var items = await _context.Manager.Include(manager => manager.Address)
+            var items = await _context.Manager.Include(manager => manager.Address).ThenInclude(manager => manager.Employee).ThenInclude(manager => manager.Posts)
                 .ToListAsync();
             if (items != null)
             {

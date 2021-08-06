@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
@@ -18,14 +20,22 @@ namespace WTP.Api.Controllers
     public class EmployeeController : BaseController<Employee>
     {
         private readonly IBaseRepository<Employee> _employee;
+        private readonly IEmployeesRepository _employeeServices;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EmployeeController(IManagerRepository employeeServices, IBaseRepository<Employee> employee, IWebHostEnvironment hostEnvironment) : base(employee, hostEnvironment)
+        public EmployeeController(IEmployeesRepository employeeServices, 
+            IBaseRepository<Employee> employee, 
+            IWebHostEnvironment hostEnvironment,
+            UserManager<ApplicationUser> userManager) 
+            : base(employee, hostEnvironment)
         {
             _employee = employee;
+            _employeeServices = employeeServices;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        [Authorize(Policy = "Employee")]
+        //[Authorize(Policy = "Employee")]
         //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<Employee>>> GetAllEmployees()
         {
@@ -39,6 +49,16 @@ namespace WTP.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   "Error Get data from the database");
             }
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "Manager")]
+        public async Task<IActionResult> CreateItem(Employee employee)
+        {
+            string UserId = HttpContext.User.FindFirstValue("id");
+            Guid managerId = _employeeServices.getManagerId(UserId);
+            employee.ManagerId = managerId;
+            return await base.CreateItem(employee);
         }
     }
 }

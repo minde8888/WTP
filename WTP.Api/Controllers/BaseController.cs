@@ -15,7 +15,7 @@ using WTP.Domain.Entities;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     //[Route("api/[controller]")]
     //[ApiController]
 
@@ -47,7 +47,7 @@ namespace WTP.Api.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Get by id data from the database");
+                    "Error Get by id data from the database -> Base -> Get");
             }
         }
 
@@ -67,7 +67,7 @@ namespace WTP.Api.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error post data");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error post data -> Base -> CreateItem");
             }
 
             return NoContent();

@@ -27,7 +27,7 @@ namespace WTP.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<List<Manager>>> GetAllEmployees()
+        public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try
             {

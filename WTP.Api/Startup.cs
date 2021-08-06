@@ -100,8 +100,11 @@ namespace WTP.Api
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
             services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IEmployeesRepository), typeof(EmployeesRepository));
+            //services.AddScoped(typeof(IAuthRepository), typeof(IAuthRepository));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));   
             services.AddTransient<IAdminRepository, AdminRepository>();
+
             //services.AddScoped(typeof(IAdminRepository), typeof(IAdminRepository));
 
             services.AddControllers();
