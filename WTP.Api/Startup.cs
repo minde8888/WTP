@@ -60,10 +60,11 @@ namespace WTP.Api
                 o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
                 o.AddPolicy("ElevatedRights", policy =>
                 {
-                    //policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireClaim("Employee", "Manager", "Administrator");
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireRole("Employee", "Manager", "Administrator");
                 });
             });
+
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 

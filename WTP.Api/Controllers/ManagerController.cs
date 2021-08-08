@@ -26,7 +26,9 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "MyPolicy")]
+        //[Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager, Employee")]
         public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try

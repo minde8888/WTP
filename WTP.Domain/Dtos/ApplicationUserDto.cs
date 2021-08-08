@@ -10,5 +10,6 @@ namespace WTP.Domain.Dtos
     {
         public EmployeeDto Employees { get; set; }
         public ManagerDto Manager { get; set; }
+        public Guid? ManagerId { get; set; }
     }
 }

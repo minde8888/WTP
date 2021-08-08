@@ -9,6 +9,6 @@ namespace WTP.Data.Interfaces
 {
     public interface IEmployeesRepository 
     {
-        public Task addEmployee(string UserId, Employee employee);
+        public Task AddEmployee(string UserId, Employee employee);
     }
 }

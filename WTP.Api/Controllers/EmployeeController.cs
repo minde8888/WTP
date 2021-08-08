@@ -22,10 +22,10 @@ namespace WTP.Api.Controllers
         private readonly IEmployeesRepository _employeeServices;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EmployeeController(IEmployeesRepository employeeServices, 
-            IBaseRepository<Employee> employee, 
+        public EmployeeController(IEmployeesRepository employeeServices,
+            IBaseRepository<Employee> employee,
             IWebHostEnvironment hostEnvironment,
-            UserManager<ApplicationUser> userManager) 
+            UserManager<ApplicationUser> userManager)
             : base(employee, hostEnvironment)
         {
             _employee = employee;
@@ -36,7 +36,7 @@ namespace WTP.Api.Controllers
         [HttpGet]
         //[Authorize(Policy = "Employee")]
         //[Authorize(Roles = "Administrator")]
-        public async Task<ActionResult<List<Employee>>> GetAllEmployees()
+        public async Task<ActionResult<List<Employee>>> GetAllEmployee()
         {
             try
             {
@@ -46,19 +46,25 @@ namespace WTP.Api.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get data from the database");
+                  "Error Get data from the database -> NewItem");
             }
         }
 
         [HttpPost]
-        [Authorize(Policy = "Manager")]
-        public IActionResult NewItem(Employee employee)
+        [Authorize(Policy = "Employee")]
+        public IActionResult AddNewEmployee(Employee employee)
         {
-            string UserId = HttpContext.User.FindFirstValue("id");
-   
-           _employeeServices.addEmployee(UserId, employee);
-        
-            return CreatedAtAction("Get", new { employee.Id }, employee);
+            try
+            {
+                string UserId = HttpContext.User.FindFirstValue("id");
+                _employeeServices.AddEmployee(UserId, employee);
+                return CreatedAtAction("Get", new { employee.Id }, employee);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error Get data from the database -> AddNewEmployee");
+            }
         }
     }
 }
