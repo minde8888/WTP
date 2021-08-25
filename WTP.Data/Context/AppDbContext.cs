@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WTP.Api.Configuration;
 using WTP.Domain.Entities;
+using WTP.Domain.Entities.Auth;
 
 namespace WTP.Data.Context
 {

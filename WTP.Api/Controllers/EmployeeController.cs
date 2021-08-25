@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
+using WTP.Domain.Entities.Auth;
 
 namespace WTP.Api.Controllers
 {
@@ -35,7 +36,7 @@ namespace WTP.Api.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "Employee")]
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<Employee>>> GetAllEmployee()
         {
             try
@@ -51,7 +52,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Employee")]
+        [Authorize(Roles = "Manager")]
         public IActionResult AddNewEmployee(Employee employee)
         {
             try

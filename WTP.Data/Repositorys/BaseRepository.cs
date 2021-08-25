@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
+using WTP.Domain.Entities.Auth;
 
 namespace WTP.Data.Repositorys
 {

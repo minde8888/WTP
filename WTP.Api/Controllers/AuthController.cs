@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -15,9 +17,11 @@ using System.Threading.Tasks;
 using WTP.Api.Configuration;
 using WTP.Api.Configuration.Requests;
 using WTP.Data.Context;
+using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
 using WTP.Domain.Entities;
+using WTP.Domain.Entities.Auth;
 
 namespace WTP.Api.Controllers
 {
@@ -31,13 +35,15 @@ namespace WTP.Api.Controllers
         private readonly AppDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
             RoleManager<IdentityRole> roleManager,
             AppDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            IUserRepository userRepository)
 
         {
             _userManager = userManager;
@@ -46,6 +52,7 @@ namespace WTP.Api.Controllers
             _roleManager = roleManager;
             _context = context;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         [HttpPost]
@@ -66,13 +73,22 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
-                ;
-                var newUser = new ApplicationUser() { Email = user.Email, UserName = user.UserName, ManagerId = user.ManagerId, Roles = user.Roles };
+
+                var newUser = new ApplicationUser()
+                {
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    ManagerId = user.ManagerId,
+                    Roles = user.Roles
+                };
+
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
                 if (isCreated.Succeeded)
                 {
+                    var id = newUser.Id;
                     await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                    await _userRepository.AddManager(user, id);
 
                     return Ok(await GenerateJwtToken(newUser));
                 }
@@ -136,10 +152,10 @@ namespace WTP.Api.Controllers
                     {
                         case "Manager":
                             //var manager = await _context.Manager
-                            //    .Include(employee => employee.Employees)
-                            //    .Include(post => post.Posts)
-                            //    .Where(u => u.UserId == existingUser.Id)
-                            //    .ToListAsync();
+                            //.Include(employee => employee.Employees)
+                            //.Include(post => post.Posts)
+                            //.Where(u => u.UserId == existingUser.Id)
+                            //.ToListAsync();
                             //var managerDto = _mapper.Map<List<ManagerDto>>(manager);
                             //return Ok(managerDto);
                             return Ok(await GenerateJwtToken(existingUser));
@@ -189,6 +205,41 @@ namespace WTP.Api.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
+        [HttpPost("ForgotPassword")]//stvarkyti try cach !!!!!!!!!!!!!!!
+        public async Task<IActionResult> ForgotPassword(ForgotPassword model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.email);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+           
+
+            bool emailHelper = await _userRepository.SendEmailPasswordReset(model, Request.Headers["origin"], token);
+            if (emailHelper)
+            {
+                return Ok();
+            }
+            return null;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("NewPassword")]
+        public async Task<ActionResult> NewPassword( string token)
+        {
+
+            var user = await _userManager.FindByIdAsync(token.Substring(token.Length - 36));
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword(ResetPasswordRequest model)
+        {
+
+            _userRepository.ResetPassword(model);
+            return Ok(new { message = "Password reset successful, you can now login" });
+        }
+
         [HttpPost]
         [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
@@ -227,7 +278,7 @@ namespace WTP.Api.Controllers
             var roleClaims = new List<Claim>();
             for (int i = 0; i < roles.Count; i++)
             {
-                roleClaims.Add(new Claim("Roles", roles[i]));
+                roleClaims.Add(new Claim(ClaimTypes.Role, roles[i]));
             }
 
             var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -264,7 +315,7 @@ namespace WTP.Api.Controllers
                 // Now it's correct
                 ExpiryDate = DateTime.UtcNow.AddYears(1),
                 IsRevoked = false,
-                Token = RandomString(25) + Guid.NewGuid()
+                Token = _userRepository.RandomString(25) + Guid.NewGuid()
             };
 
             await _context.RefreshToken.AddAsync(refreshToken);
@@ -280,7 +331,7 @@ namespace WTP.Api.Controllers
 
         private async Task<AuthResult> VerifyToken(TokenRequest tokenRequest)
         {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
 
             try
             {
@@ -303,7 +354,7 @@ namespace WTP.Api.Controllers
                 var utcExpiryDate = long.Parse(principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
                 // we convert the expiry date from seconds to the date
-                var expDate = UnixTimeStampToDateTime(utcExpiryDate);
+                var expDate = _userRepository.UnixTimeStampToDateTime(utcExpiryDate);
 
                 if (expDate > DateTime.UtcNow)
                 {
@@ -376,26 +427,10 @@ namespace WTP.Api.Controllers
                 var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
                 return await GenerateJwtToken(dbUser);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
-        }
-
-        private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
-            return dtDateTime;
-        }
-
-        private string RandomString(int length)
-        {
-            var random = new Random();
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }
