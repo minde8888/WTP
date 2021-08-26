@@ -208,8 +208,8 @@ namespace WTP.Api.Controllers
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
         {
             var user = await _userManager.FindByEmailAsync(model.email);
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            //token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
             bool emailHelper = await _userRepository.SendEmailPasswordReset(model, Request.Headers["origin"], token);
             if (emailHelper)
@@ -221,10 +221,9 @@ namespace WTP.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("NewPassword")]
-        public async Task<ActionResult> NewPassword(string token)
+        public async Task<ActionResult> NewPassword(string token, string email)
         {
-            var user = await _userManager.FindByIdAsync(token.Substring(token.Length - 36));
-            var newToken = token.Remove(token.Length - 36);
+            var user = await _userManager.FindByEmailAsync(email);
             return Ok();
         }
 

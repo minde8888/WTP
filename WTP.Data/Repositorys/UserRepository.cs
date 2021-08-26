@@ -69,39 +69,35 @@ namespace WTP.Data.Repositorys
                 user.ResetToken = token;
                 user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
                 await _userManager.UpdateAsync(user);
-                _context.SaveChanges();
             }
-            var link = $"{origin}/api/Auth/NewPassword?token={token}{user.Id}";
+            var link = $"{origin}/api/Auth/NewPassword?token={token}&email={user.Email}";
             bool sendEmail = _mail.SendEmailPasswordReset(model, link);
             return sendEmail;
         }
 
         public async Task<bool> ResetPassword(ResetPasswordRequest model)
         {
-            var user = await _userManager.FindByIdAsync(model.Token.Substring(model.Token.Length - 36));
-            var token = model.Token.TrimEnd(model.Token[model.Token.Length - 36]);
-
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null &&
-                user.RefreshTokens.ToString() != token &&
+                user.RefreshTokens.ToString() != model.Token &&
                  user.ResetTokenExpires < DateTime.UtcNow)
             {
                 return false;
             }
             else
-            {             
-                user.PasswordReset = DateTime.UtcNow;
-                user.ResetToken = null;
-                user.ResetTokenExpires = null;
+            {
+                var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (resetPassResult.Succeeded)
+                {
+                    user.PasswordReset = DateTime.UtcNow;
+                    user.ResetToken = null;
+                    user.ResetTokenExpires = null;
+                    await _userManager.UpdateAsync(user);
 
-                await _userManager.UpdateAsync(user);
-                await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-                _context.SaveChanges();
-
-                return true;
+                    return true;
+                }
             }
-
-
-
+            return false;
         }
     }
 }
