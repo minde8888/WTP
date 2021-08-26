@@ -15,6 +15,6 @@ namespace WTP.Data.Interfaces
 
         public Task<bool> SendEmailPasswordReset(ForgotPassword model, string token, string origin);
 
-        public Task ResetPassword(ResetPasswordRequest model);
+        public Task<bool> ResetPassword(ResetPasswordRequest model);
     }
 }

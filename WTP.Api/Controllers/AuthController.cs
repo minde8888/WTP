@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -20,7 +19,6 @@ using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
-using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 
 namespace WTP.Api.Controllers
@@ -212,7 +210,6 @@ namespace WTP.Api.Controllers
             var user = await _userManager.FindByEmailAsync(model.email);
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-           
 
             bool emailHelper = await _userRepository.SendEmailPasswordReset(model, Request.Headers["origin"], token);
             if (emailHelper)
@@ -224,20 +221,31 @@ namespace WTP.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("NewPassword")]
-        public async Task<ActionResult> NewPassword( string token)
+        public async Task<ActionResult> NewPassword(string token)
         {
-
             var user = await _userManager.FindByIdAsync(token.Substring(token.Length - 36));
+            var newToken = token.Remove(token.Length - 36);
             return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public IActionResult ResetPassword(ResetPasswordRequest model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
-
-            _userRepository.ResetPassword(model);
-            return Ok(new { message = "Password reset successful, you can now login" });
+            bool result = await _userRepository.ResetPassword(model);
+            if (result)
+            {
+                return Ok(new { message = "Password reset successful, you can now login" });
+            }
+            else
+            {
+                return BadRequest(new RegistrationResponse()
+                {
+                    Errors = new List<string>() {
+                    "User doesn't exist"
+                    }       
+                });
+            }
         }
 
         [HttpPost]
@@ -254,7 +262,7 @@ namespace WTP.Api.Controllers
                     {
                         Errors = new List<string>() {
                     "Invalid tokens"
-                },
+                    },
                         Success = false
                     });
                 }

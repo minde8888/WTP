@@ -1,18 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Realms.Sync.Exceptions;
 using System;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using WTP.Data.Context;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
-using WTP.Domain.Entities.Settings;
 
 namespace WTP.Data.Repositorys
 {
@@ -25,8 +20,8 @@ namespace WTP.Data.Repositorys
 
         //private readonly MailSettings _mailSettings;
 
-        public UserRepository(IMapper mapper, 
-            AppDbContext context, 
+        public UserRepository(IMapper mapper,
+            AppDbContext context,
             UserManager<ApplicationUser> userManager,
             IEmailPassword mail)
         {
@@ -34,7 +29,7 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _context = context;
             _mail = mail;
-                      //_mailSettings = mailSettings;
+            //_mailSettings = mailSettings;
         }
 
         public async Task AddManager(UserRegistrationDto user, string id)
@@ -66,44 +61,47 @@ namespace WTP.Data.Repositorys
             .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public async Task<bool> SendEmailPasswordReset(ForgotPassword model, string origin, string token )
+        public async Task<bool> SendEmailPasswordReset(ForgotPassword model, string origin, string token)
         {
             var user = await _userManager.FindByEmailAsync(model.email);
             if (token != null)
             {
-                
                 user.ResetToken = token;
+                user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
                 await _userManager.UpdateAsync(user);
                 _context.SaveChanges();
             }
             var link = $"{origin}/api/Auth/NewPassword?token={token}{user.Id}";
             bool sendEmail = _mail.SendEmailPasswordReset(model, link);
             return sendEmail;
-
         }
 
-        public async Task  ResetPassword(ResetPasswordRequest model)
+        public async Task<bool> ResetPassword(ResetPasswordRequest model)
         {
-            var a = model;
-           var b = a;
-            //_userManager.FindFir
-            //var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-            //var account = _context._User. (x =>
-            //      x.ResetToken == model.Token &&
-            //      x.ResetTokenExpires > DateTime.UtcNow);
+            var user = await _userManager.FindByIdAsync(model.Token.Substring(model.Token.Length - 36));
+            var token = model.Token.TrimEnd(model.Token[model.Token.Length - 36]);
 
-            //if (account == null)
-            //    throw new AppException("Invalid token");
+            if (user == null &&
+                user.RefreshTokens.ToString() != token &&
+                 user.ResetTokenExpires < DateTime.UtcNow)
+            {
+                return false;
+            }
+            else
+            {             
+                user.PasswordReset = DateTime.UtcNow;
+                user.ResetToken = null;
+                user.ResetTokenExpires = null;
 
-            //// update password and remove reset token
-            //account.PasswordHash = BC.HashPassword(model.Password);
-            //account.PasswordReset = DateTime.UtcNow;
-            //account.ResetToken = null;
-            //account.ResetTokenExpires = null;
+                await _userManager.UpdateAsync(user);
+                await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                _context.SaveChanges();
 
-            //_context.Accounts.Update(account);
-            //_context.SaveChanges();
+                return true;
+            }
+
+
+
         }
-
     }
 }
