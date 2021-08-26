@@ -20,7 +20,8 @@ using WTP.Data.Context;
 using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
-using WTP.Domain.Entities;
+using WTP.Domain.Entities.Auth;
+using WTP.Domain.Entities.Settings;
 
 namespace WTP.Api
 {
@@ -37,7 +38,6 @@ namespace WTP.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(ApplicationMapper));
-
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
             services.AddDbContext<AppDbContext>(o =>
@@ -46,24 +46,8 @@ namespace WTP.Api
             services.AddIdentity<ApplicationUser, IdentityRole>(o => o.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
-                .AddEntityFrameworkStores<AppDbContext>()               
-                .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<AppDbContext>();
-
-            services.AddAuthorization(o =>
-            {
-                o.AddPolicy("FirstStepCompleted", policy => policy.RequireClaim("FirstStepCompleted"));
-                o.AddPolicy("Authorized", policy => policy.RequireClaim("Authorized"));
-                o.AddPolicy("Administrator", policy => policy.RequireClaim("roles", "Administrator"));
-                o.AddPolicy("Moderator", policy => policy.RequireClaim("roles", "Moderator"));
-                o.AddPolicy("Manager", policy => policy.RequireClaim("roles", "Manager"));
-                o.AddPolicy("Employee", policy => policy.RequireClaim("roles", "Employee"));
-                o.AddPolicy("ElevatedRights", policy =>
-                {
-                    //policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireClaim("Employee", "Manager", "Administrator");
-                });
-            });
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
 
@@ -94,18 +78,23 @@ namespace WTP.Api
             {
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = tokenValidationParameters;
-                jwt.TokenValidationParameters.NameClaimType = "sub";
-                jwt.TokenValidationParameters.RoleClaimType = "role";
             });
+
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+                o.TokenLifespan = TimeSpan.FromHours(1));
+
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailReposidory, MailReposidory>();
 
             services.AddScoped(typeof(DbContext), typeof(AppDbContext));
             services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
             services.AddScoped(typeof(IEmployeesRepository), typeof(EmployeesRepository));
-            //services.AddScoped(typeof(IAuthRepository), typeof(IAuthRepository));
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));   
-            services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
+            services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+            services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));            
 
-            //services.AddScoped(typeof(IAdminRepository), typeof(IAdminRepository));
+            services.AddTransient<IAdminRepository, AdminRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -139,7 +128,10 @@ namespace WTP.Api
                 RequestPath = "/Images"
             });
 
-            app.UseHttpsRedirection();
+            if (env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }         
 
             app.UseRouting();
 
@@ -150,10 +142,6 @@ namespace WTP.Api
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private class TokenValidatedParameters : TokenValidationParameters
-        {
         }
     }
 }

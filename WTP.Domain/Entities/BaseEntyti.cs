@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using WTP.Domain.Entities.Auth;
 
 namespace WTP.Domain.Entities
 {

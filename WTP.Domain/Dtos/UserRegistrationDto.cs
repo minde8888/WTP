@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WTP.Domain.Dtos.Requests
 {
@@ -17,5 +18,7 @@ namespace WTP.Domain.Dtos.Requests
         public string Password { get; set; }
 
         public string Roles { get; set; }
+
+        public string? ManagerId { get; set; }
     }
 }

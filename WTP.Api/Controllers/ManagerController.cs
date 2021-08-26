@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
@@ -20,13 +21,13 @@ namespace WTP.Api.Controllers
     {
         private readonly IManagerRepository _managerServices;
 
-        public ManagerController(IManagerRepository employeeServices, IBaseRepository<Manager> manager, IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
+        public ManagerController(IManagerRepository managerServices, IBaseRepository<Manager> manager, IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
         {
-            _managerServices = employeeServices;
+            _managerServices = managerServices;
         }
 
         [HttpGet]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Roles = "Manager, Employee")]
         public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try
@@ -39,6 +40,23 @@ namespace WTP.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   "Error Get data from the database");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Manager")]
+        public IActionResult AddNewEmployee(Manager manager)
+        {
+            try
+            {
+                string UserId = HttpContext.User.FindFirstValue("id");
+                _managerServices.AddEmployee(manager, UserId);
+                return CreatedAtAction("Get", new { manager.Id }, manager);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error Get data from the database -> AddNewEmployee");
             }
         }
     }

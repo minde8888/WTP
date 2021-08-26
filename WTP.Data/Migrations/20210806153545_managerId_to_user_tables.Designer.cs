@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,15 +10,16 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210806153545_managerId_to_user_tables")]
+    partial class managerId_to_user_tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Identity")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.9")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -212,9 +214,6 @@ namespace WTP.Data.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -226,9 +225,6 @@ namespace WTP.Data.Migrations
 
                     b.Property<string>("JwtId")
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("Revoked")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Token")
                         .HasColumnType("text");
@@ -281,13 +277,10 @@ namespace WTP.Data.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
+            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
-
-                    b.Property<bool>("AcceptTerms")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -295,9 +288,6 @@ namespace WTP.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -312,8 +302,8 @@ namespace WTP.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ManagerId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("ManagerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -326,23 +316,11 @@ namespace WTP.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("PasswordReset")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("ResetToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Roles")
-                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -350,18 +328,9 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<string>("VerificationToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("Verified")
-                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -515,7 +484,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -524,7 +493,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -539,7 +508,7 @@ namespace WTP.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -548,7 +517,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -557,8 +526,8 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Api.Configuration.RefreshToken", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
-                        .WithMany("RefreshTokens")
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("ApplicationUser");
@@ -585,7 +554,7 @@ namespace WTP.Data.Migrations
                         .WithMany("Employees")
                         .HasForeignKey("ManagerId");
 
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithOne("Employees")
                         .HasForeignKey("WTP.Domain.Entities.Employee", "UserId");
 
@@ -594,7 +563,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
+                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithOne("Manager")
                         .HasForeignKey("WTP.Domain.Entities.Manager", "UserId");
 
@@ -612,13 +581,11 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
+            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Employees");
 
                     b.Navigation("Manager");
-
-                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
