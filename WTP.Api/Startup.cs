@@ -22,6 +22,7 @@ using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Settings;
+using WTP.Services.Services;
 
 namespace WTP.Api
 {
@@ -92,7 +93,10 @@ namespace WTP.Api
             services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));            
+            ////services.AddScoped<IEmailPassword, EmailPassword>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+            services.AddScoped<AuthService>();
 
             services.AddTransient<IAdminRepository, AdminRepository>();
 

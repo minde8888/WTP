@@ -14,7 +14,7 @@ namespace WTP.Api
     {
         private static async Task Main(string[] args)
         {
-             var host = CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;

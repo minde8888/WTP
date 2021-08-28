@@ -45,8 +45,7 @@ namespace WTP.Data.Helpers
             catch (Exception ex)
             {
                 throw ex;
-            }
-            return false;
+            }         
         }
     }
 }
