@@ -192,7 +192,7 @@ namespace WTP.Api.Controllers
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]//stvarkyti try cach !!!!!!!!!!!!!!!
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
-        {
+        {        
             var user = await _userManager.FindByEmailAsync(model.email);
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             //token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
