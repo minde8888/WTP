@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
+using WTP.Domain.Dtos;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
@@ -98,6 +100,6 @@ namespace WTP.Data.Repositorys
                 }
             }
             return false;
-        }
+        } 
     }
 }

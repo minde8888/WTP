@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +19,7 @@ using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
 using WTP.Domain.Entities.Auth;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
@@ -35,13 +35,16 @@ namespace WTP.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
 
+        private readonly AuthService _authService;
+
         public AuthController(UserManager<ApplicationUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
             RoleManager<IdentityRole> roleManager,
             AppDbContext context,
             IMapper mapper,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            AuthService authService)
 
         {
             _userManager = userManager;
@@ -51,6 +54,7 @@ namespace WTP.Api.Controllers
             _context = context;
             _mapper = mapper;
             _userRepository = userRepository;
+            _authService = authService;
         }
 
         [HttpPost]
@@ -116,7 +120,7 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
+                ApplicationUser existingUser = await _userManager.FindByEmailAsync(user.Email);
 
                 if (existingUser == null)
                 {
@@ -141,36 +145,18 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
-
-                var role = await _userManager.GetRolesAsync(existingUser);
-
-                foreach (var item in role)
+                try
                 {
-                    switch (item)
-                    {
-                        case "Manager":
-                            //var manager = await _context.Manager
-                            //.Include(employee => employee.Employees)
-                            //.Include(post => post.Posts)
-                            //.Where(u => u.UserId == existingUser.Id)
-                            //.ToListAsync();
-                            //var managerDto = _mapper.Map<List<ManagerDto>>(manager);
-                            //return Ok(managerDto);
-                            return Ok(await GenerateJwtToken(existingUser));
-
-                        case "Employee":
-                            //var employee = await _context.Employee
-                            //    .Include(post => post.Posts)
-                            //    .Where(u => u.UserId == existingUser.Id)
-                            //    .ToListAsync();
-                            //var employeeDto = _mapper.Map<List<EmployeeDto>>(employee);
-                            //return Ok(employee);
-                            return Ok(await GenerateJwtToken(existingUser));
-
-                        default:
-                            return Ok(await GenerateJwtToken(existingUser));
-                    }
+                    var result = await _authService.GetUserInfo(existingUser);
+                    return Ok(result);
                 }
+                catch(ArgumentException ex)
+                {
+                    return BadRequest();
+                }
+
+
+                
             }
 
             return BadRequest(new RegistrationResponse()
@@ -206,7 +192,7 @@ namespace WTP.Api.Controllers
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]//stvarkyti try cach !!!!!!!!!!!!!!!
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
-        {
+        {        
             var user = await _userManager.FindByEmailAsync(model.email);
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             //token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
@@ -241,8 +227,8 @@ namespace WTP.Api.Controllers
                 return BadRequest(new RegistrationResponse()
                 {
                     Errors = new List<string>() {
-                    "User doesn't exist"
-                    }       
+                    "User doesn't exist"///sutrvarkyti normaliai !!!!!!!!!!!!!!!!!!
+                    }
                 });
             }
         }
