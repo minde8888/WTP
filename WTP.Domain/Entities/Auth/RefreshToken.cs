@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 
-namespace WTP.Api.Configuration
+namespace WTP.Domain.Entities.Auth
 {
     public class RefreshToken
     {

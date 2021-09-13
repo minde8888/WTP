@@ -1,12 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using WTP.Api.Configuration;
 using WTP.Data.Context;
-using WTP.Data.Repositorys;
+using WTP.Data.Interfaces;
 using WTP.Domain.Entities.Auth;
 using WTP.Services.Services.Dtos;
 
@@ -17,17 +23,20 @@ namespace WTP.Services.Services
         private AppDbContext _context;
         private IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserRepository _userRepository;
+        private readonly IEmailPassword _mail;
+        private readonly JwtConfig _jwtConfig;
 
-        public AuthService(IMapper mapper, 
+        public AuthService(IMapper mapper,
             AppDbContext context,
-            UserManager<ApplicationUser> userManager
-            )
+            UserManager<ApplicationUser> userManager,
+            IOptionsMonitor<JwtConfig> optionsMonitor,
+            IEmailPassword mail)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _mail = mail;
+            _jwtConfig = optionsMonitor.CurrentValue;
         }
 
         public async Task<List<EmployeeInformationDto>> GetUserInfo(ApplicationUser user)
@@ -54,12 +63,229 @@ namespace WTP.Services.Services
                             .ToListAsync();
                         var employeeDto = _mapper.Map<List<EmployeeInformationDto>>(employee);
                         return employeeDto;
+
                     default:
                         throw new Exception();
                 }
             }
 
             throw new Exception();
+        }
+
+        public string RandomString(int length)
+        {
+            var random = new Random();
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
+            return dtDateTime;
+        }
+
+        public async Task<bool> NewPassword(ResetPasswordRequest model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null &&
+                user.RefreshTokens.ToString() != model.Token &&
+                 user.ResetTokenExpires < DateTime.UtcNow)
+            {
+                return false;
+            }
+            else
+            {
+                var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (resetPassResult.Succeeded)
+                {
+                    user.PasswordReset = DateTime.UtcNow;
+                    user.ResetToken = null;
+                    user.ResetTokenExpires = null;
+                    await _userManager.UpdateAsync(user);
+
+                    return true;
+                }
+            }
+            throw new Exception();
+        }
+
+        public async Task<bool> SendEmailPasswordReset(ForgotPassword model, string origin, string token)
+        {
+            var user = await _userManager.FindByEmailAsync(model.email);
+            if (token != null)
+            {
+                user.ResetToken = token;
+                user.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            var link = $"{origin}/api/Auth/NewPassword?token={token}&email={user.Email}";
+            bool sendEmail = _mail.SendEmailPasswordReset(model, link);
+            return sendEmail;
+        }
+
+        public RefreshToken GetrefreshToken(SecurityToken token, string rand, ApplicationUser user)
+        {
+            var refreshToken = new RefreshToken()
+            {
+                JwtId = token.Id,
+                IsUsed = false,
+                UserId = user.Id,
+                AddedDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddYears(1),
+                IsRevoked = false,
+                Token = rand
+            };
+            return refreshToken;
+        }
+
+        public async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var roleClaims = new List<Claim>();
+            for (int i = 0; i < roles.Count; i++)
+            {
+                roleClaims.Add(new Claim(ClaimTypes.Role, roles[i]));
+            }
+
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim("Id", user.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("guid", user.Id),
+                }.Union(roleClaims)),
+                //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
+                Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = jwtTokenHandler.WriteToken(token);
+
+            string rand = RandomString(25) + Guid.NewGuid();
+            var refreshToken = GetrefreshToken(token, rand, user);
+
+            await _context.RefreshToken.AddAsync(refreshToken);
+            await _context.SaveChangesAsync();
+
+            return new AuthResult()
+            {
+                Token = jwtToken,
+                Success = true,
+                RefreshToken = refreshToken.Token
+            };
+        }
+
+        public async Task<AuthResult> VerifyToken(TokenRequests tokenRequest, ClaimsPrincipal principal, SecurityToken validatedToken)
+        {
+            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            // This validation function will make sure that the token meets the validation parameters
+            // and its an actual jwt token not just a random string
+
+            // Now we need to check if the token has a valid security algorithm
+            if (validatedToken is JwtSecurityToken jwtSecurityToken)
+            {
+                var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+
+                if (result == false)
+                {
+                    return null;
+                }
+            }
+
+            // Will get the time stamp in unix time
+            var utcExpiryDate = long.Parse(principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            // we convert the expiry date from seconds to the date
+            var expDate = UnixTimeStampToDateTime(utcExpiryDate);
+
+            if (expDate > DateTime.UtcNow)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "We cannot refresh this since the token has not expired" },
+                    Success = false
+                };
+            }
+
+            // Check the token we got if its saved in the db
+            var storedRefreshToken = await _context.RefreshToken.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
+
+            if (storedRefreshToken == null)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "refresh token doesnt exist" },
+                    Success = false
+                };
+            }
+
+            // Check the date of the saved token if it has expired
+            if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "token has expired, user needs to relogin" },
+                    Success = false
+                };
+            }
+
+            // check if the refresh token has been used
+            if (storedRefreshToken.IsUsed)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "token has been used" },
+                    Success = false
+                };
+            }
+
+            // Check if the token is revoked
+            if (storedRefreshToken.IsRevoked)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "token has been revoked" },
+                    Success = false
+                };
+            }
+
+            // we are getting here the jwt token id
+            var jti = principal.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+            // check the id that the recieved token has against the id saved in the db
+            if (storedRefreshToken.JwtId != jti)
+            {
+                return new AuthResult()
+                {
+                    Errors = new List<string>() { "the token doenst mateched the saved token" },
+                    Success = false
+                };
+            }
+
+            storedRefreshToken.IsUsed = true;
+            _context.RefreshToken.Update(storedRefreshToken);
+            await _context.SaveChangesAsync();
+
+            var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
+            return await GenerateJwtToken(dbUser);
         }
     }
 }
