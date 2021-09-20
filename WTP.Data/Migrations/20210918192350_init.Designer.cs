@@ -10,8 +10,8 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210804154854_userId")]
-    partial class userId
+    [Migration("20210918192350_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,36 +19,10 @@ namespace WTP.Data.Migrations
             modelBuilder
                 .HasDefaultSchema("Identity")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,70 +35,17 @@ namespace WTP.Data.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims");
+                    b.ToTable("AspNetRoleClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,18 +58,17 @@ namespace WTP.Data.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims");
+                    b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -159,24 +79,40 @@ namespace WTP.Data.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.ToTable("UserLogins");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -185,10 +121,10 @@ namespace WTP.Data.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -201,77 +137,7 @@ namespace WTP.Data.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens");
-                });
-
-            modelBuilder.Entity("WTP.Api.Configuration.RefreshToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("AddedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("JwtId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Token")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshToken");
-                });
-
-            modelBuilder.Entity("WTP.Domain.Dtos.Requests.UserRegistrationDto", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("EmployeesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ManagerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Roles")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("EmployeesId");
-
-                    b.HasIndex("ManagerId");
-
-                    b.ToTable("UserRegistrationDto");
+                    b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Address", b =>
@@ -312,10 +178,41 @@ namespace WTP.Data.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationRole", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AcceptTerms")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -323,6 +220,9 @@ namespace WTP.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -337,6 +237,9 @@ namespace WTP.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ManagerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -348,11 +251,23 @@ namespace WTP.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("PasswordReset")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ResetToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Roles")
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -360,9 +275,18 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Verified")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -374,6 +298,47 @@ namespace WTP.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Auth.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("JwtId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
@@ -409,15 +374,21 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("text");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
+
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ManagerId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Employee");
                 });
@@ -452,13 +423,19 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("text");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
+
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Manager");
                 });
@@ -499,79 +476,55 @@ namespace WTP.Data.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WTP.Api.Configuration.RefreshToken", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("WTP.Domain.Dtos.Requests.UserRegistrationDto", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.Employee", "Employees")
-                        .WithMany("UserReg")
-                        .HasForeignKey("EmployeesId");
-
-                    b.HasOne("WTP.Domain.Entities.Manager", "Manager")
-                        .WithMany("UserReg")
-                        .HasForeignKey("ManagerId");
-
-                    b.Navigation("Employees");
-
-                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Address", b =>
@@ -589,11 +542,41 @@ namespace WTP.Data.Migrations
                     b.Navigation("Manager");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.Auth.RefreshToken", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Manager", null)
                         .WithMany("Employees")
                         .HasForeignKey("ManagerId");
+
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
+                        .WithOne("Employees")
+                        .HasForeignKey("WTP.Domain.Entities.Employee", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationUser", "ApplicationUser")
+                        .WithOne("Manager")
+                        .HasForeignKey("WTP.Domain.Entities.Manager", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Post", b =>
@@ -607,13 +590,20 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
+                {
+                    b.Navigation("Employees");
+
+                    b.Navigation("Manager");
+
+                    b.Navigation("RefreshTokens");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("Address");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("UserReg");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
@@ -623,8 +613,6 @@ namespace WTP.Data.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("UserReg");
                 });
 #pragma warning restore 612, 618
         }

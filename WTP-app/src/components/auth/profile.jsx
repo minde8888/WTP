@@ -6,7 +6,7 @@ class Profile extends Component {
 
   render() {
     const { user: currentUser } = this.props;
-
+console.log(this.props);
     if (!currentUser) {
       return <Redirect to="/login" />;
     }
@@ -19,8 +19,8 @@ class Profile extends Component {
           </h3>
         </header>
         <p>
-          <strong>Token:</strong> {currentUser.accessToken.substring(0, 20)} ...{" "}
-          {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
+          {/* <strong>Token:</strong> {currentUser.Token.substring(0, 412)} ...{" "}
+          {currentUser.Token.substr(currentUser.Token.length - 414)} */}
         </p>
         <p>
           <strong>Id:</strong> {currentUser.id}

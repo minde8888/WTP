@@ -21,6 +21,7 @@ using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 using WTP.Domain.Entities.Auth;
+using WTP.Domain.Entities.Roles;
 using WTP.Domain.Entities.Settings;
 using WTP.Services.Services;
 
@@ -41,12 +42,13 @@ namespace WTP.Api
             services.AddAutoMapper(typeof(ApplicationMapper));
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
-            services.AddDbContext<AppDbContext>(o =>
-            o.UseNpgsql(Configuration.GetConnectionString("sqlConnection")));
+            services.AddEntityFrameworkNpgsql()
+                .AddDbContext<AppDbContext>(options =>
+                    options.UseNpgsql(Configuration["ConnectionStrings:LocalConnectionString"]));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(o => o.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole>()
-                .AddRoleManager<RoleManager<IdentityRole>>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(o => o.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<ApplicationRole>()
+                .AddRoleManager<RoleManager<ApplicationRole>>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -118,6 +120,10 @@ namespace WTP.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options => options.WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -135,7 +141,7 @@ namespace WTP.Api
             if (env.IsDevelopment())
             {
                 app.UseHttpsRedirection();
-            }         
+            }
 
             app.UseRouting();
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router-dom';
+import { Redirect } from "react-router-dom";
 
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
@@ -63,7 +63,7 @@ class Login extends Component {
         })
         .catch(() => {
           this.setState({
-            loading: false
+            loading: false,
           });
         });
     } else {
@@ -139,7 +139,6 @@ class Login extends Component {
               </div>
             )}
             <CheckButton
-              style={{ display: "none" }}
               ref={(c) => {
                 this.checkBtn = c;
               }}
@@ -156,7 +155,7 @@ function mapStateToProps(state) {
   const { message } = state.message;
   return {
     isLoggedIn,
-    message
+    message,
   };
 }
 

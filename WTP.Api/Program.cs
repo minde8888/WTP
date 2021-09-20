@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Domain.Entities.Auth;
+using WTP.Domain.Entities.Roles;
 
 namespace WTP.Api
 {
@@ -23,7 +24,7 @@ namespace WTP.Api
                 {
                     //Seed Default Users
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
                     await ApplicationDbContextSeed.SeedEssentialsAsync(userManager, roleManager);
                 }
                 catch (Exception ex)

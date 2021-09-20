@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WTP.Api.Configuration.Requests;
 using WTP.Data.Interfaces;
@@ -57,11 +58,11 @@ namespace WTP.Api.Controllers
                     });
                 }
 
-                var newUser = new ApplicationUser()
+                var newUser = new ApplicationUser()//sutvarkyti
                 {
                     Email = user.Email,
                     UserName = user.UserName,
-                    ManagerId = user.ManagerId,
+                    //ManagerId = user.ManagerId,
                     Roles = user.Roles
                 };
 
@@ -71,7 +72,7 @@ namespace WTP.Api.Controllers
                 {
                     var id = newUser.Id;
                     await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
-                    await _userRepository.AddUser(user, id);
+                    await _userRepository.AddUser(user, id.ToString());
 
                     return Ok(await _authService.GenerateJwtToken(newUser));
                 }
@@ -128,8 +129,10 @@ namespace WTP.Api.Controllers
                 }
                 try
                 {
-                    var result = await _authService.GetUserInfo(existingUser);
-                    return Ok(result);
+                    var token = await _authService.GenerateJwtToken(existingUser);
+                    var result = await _authService.GetUserInfo(existingUser, token);
+                    var json = JsonSerializer.Serialize(result);
+                    return Ok(json);
                 }
                 catch (Exception)
                 {

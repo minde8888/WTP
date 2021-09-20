@@ -39,7 +39,7 @@ namespace WTP.Services.Services
             _jwtConfig = optionsMonitor.CurrentValue;
         }
 
-        public async Task<List<EmployeeInformationDto>> GetUserInfo(ApplicationUser user)
+        public async Task<List<EmployeeInformationDto>> GetUserInfo(ApplicationUser user, AuthResult token)
         {
             var role = await _userManager.GetRolesAsync(user);
 
@@ -51,17 +51,21 @@ namespace WTP.Services.Services
                         var manager = await _context.Manager
                         .Include(employee => employee.Employees)
                         .Include(post => post.Posts)
-                        .Where(u => u.UserId == user.Id)
+                        .Where(u => u.UserId == new Guid(user.Id.ToString()))
                         .ToListAsync();
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
+                        managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+
                         return managerDto;
 
                     case "Employee":
                         var employee = await _context.Employee
                             .Include(post => post.Posts)
-                            .Where(u => u.UserId == user.Id)
+                            .Where(u => u.UserId == new Guid(user.Id.ToString()))
                             .ToListAsync();
                         var employeeDto = _mapper.Map<List<EmployeeInformationDto>>(employee);
+                        employeeDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+
                         return employeeDto;
 
                     default:
@@ -164,11 +168,11 @@ namespace WTP.Services.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("Id", user.Id),
+                new Claim("Id", user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("guid", user.Id),
+                    new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
                 //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
                 Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
@@ -284,7 +288,7 @@ namespace WTP.Services.Services
             _context.RefreshToken.Update(storedRefreshToken);
             await _context.SaveChangesAsync();
 
-            var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
+            var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId.ToString());
             return await GenerateJwtToken(dbUser);
         }
     }

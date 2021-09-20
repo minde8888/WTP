@@ -46,7 +46,7 @@ namespace WTP.Data.Repositorys
         public async Task AddEmployee(Manager manager, string  UserId)
         {
             var user = await _userManager.FindByIdAsync(UserId);
-            manager.UserId = user.Id;
+            manager.UserId =  new Guid(user.Id.ToString());
             await _context.AddAsync(manager);
             await _context.SaveChangesAsync();   
         }

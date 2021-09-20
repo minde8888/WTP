@@ -1,0 +1,39 @@
+version: '3.8'
+ 
+
+services:
+  wtp-app:
+    image: wtp-app   
+    container_name: wtp-app  
+    build: 
+      context: .
+      dockerfile: WTP-app/Dockerfile
+    ports: 
+      - "3000:3000"
+
+  wtpapi:
+    image: wtpapi
+    container_name: wtpapi 
+    build: 
+      context: .
+      dockerfile: WTP.Api/Dockerfile
+    ports:
+      - "49159:49159"
+    depends_on: 
+      - "postgresql_database"
+
+  postgresql_database:
+    restart: always 
+    image: postgres:latest
+    container_name: 'postgres'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Kvednavegen10-
+      - POSTGRES_DB=DockerDB
+    ports:
+      - "5432:5432"  
+    volumes:
+     - database-data:/var/lib/postgresql/data/
+
+volumes:
+  database-data:

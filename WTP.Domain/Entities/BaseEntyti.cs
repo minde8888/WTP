@@ -9,7 +9,7 @@ namespace WTP.Domain.Entities
     public class BaseEntyti
     {
         public Guid Id { get; set; }
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
@@ -18,14 +18,12 @@ namespace WTP.Domain.Entities
         public string Occupation { get; set; }
         public long MobileNumber { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
         public string ImageName { get; set; }
-
         [NotMapped]
         public IFormFile ImageFile { get; set; }
-
         [NotMapped]
         public string ImageSrc { get; set; }
-
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
 

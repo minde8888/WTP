@@ -3399,6 +3399,11 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
+commander@0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-0.6.1.tgz#fa68a14f6a945d54dbbe50d8cdb3320e9e3b1a06"
+  integrity sha1-+mihT2qUXVTbvlDYzbMyDp47GgY=
+
 commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
@@ -10818,6 +10823,13 @@ toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz"
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
+
+touch-cli@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/touch-cli/-/touch-cli-0.0.1.tgz#6187764ab554e54a23df68ebb4025388af7bff49"
+  integrity sha1-YYd2SrVU5Uoj32jrtAJTiK97/0k=
+  dependencies:
+    commander "0.6.1"
 
 tough-cookie@^2.3.3, tough-cookie@~2.5.0:
   version "2.5.0"

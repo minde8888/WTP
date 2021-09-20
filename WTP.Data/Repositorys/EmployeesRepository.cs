@@ -27,8 +27,8 @@ namespace WTP.Data.Repositorys
             
             if (user != null)
             {
-                employee.UserId = UserId;
-                employee.ManagerId = new Guid(user.ManagerId.ToString()); 
+                employee.UserId = new Guid(UserId.ToString());
+                //employee.ManagerId = new Guid(user.ManagerId.ToString()); 
                 await _context.AddAsync(employee);
                 await _context.SaveChangesAsync();//kodel nesaugo i db ______??????????????????
             }

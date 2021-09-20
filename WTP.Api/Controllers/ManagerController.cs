@@ -16,7 +16,7 @@ namespace WTP.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("v1/api/[controller]")]
     public class ManagerController : BaseController<Manager>
     {
         private readonly IManagerRepository _managerServices;
