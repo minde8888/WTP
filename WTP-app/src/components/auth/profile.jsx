@@ -2,20 +2,32 @@ import React, { Component } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 
-class Profile extends Component {
+class  Profile extends Component {
 
   render() {
-    const { user: currentUser } = this.props;
-console.log(this.props);
-    if (!currentUser) {
+
+    if (!this.props.user) {
       return <Redirect to="/login" />;
     }
+
+    var { 
+      Name,
+      Surname,
+      Role,
+      Email,
+      MobileNumber,
+      Occupation,
+      ImageName,
+      ImageFile,
+      ImageSrc,
+      Id
+    } = this.props.user;
 
     return (
       <div className="container">
         <header className="jumbotron">
           <h3>
-            <strong>{currentUser.username}</strong> Profile
+            <strong>{Name}</strong> Profile
           </h3>
         </header>
         <p>
@@ -23,25 +35,22 @@ console.log(this.props);
           {currentUser.Token.substr(currentUser.Token.length - 414)} */}
         </p>
         <p>
-          <strong>Id:</strong> {currentUser.id}
+          <strong>Id:</strong> {Id}
         </p>
         <p>
-          <strong>Email:</strong> {currentUser.email}
+          <strong>Email:</strong> {Email}
         </p>
-        <strong>Authorities:</strong>
-        <ul>
-          {currentUser.roles &&
-            currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-        </ul>
+        <strong>Authorities:</strong> {Role}
       </div>
     );
+   
   }
 }
 
 function mapStateToProps(state) {
   const { user } = state.auth;
   return {
-    user,
+    user
   };
 }
 

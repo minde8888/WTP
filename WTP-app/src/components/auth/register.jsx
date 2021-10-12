@@ -177,11 +177,11 @@ class Register extends Component {
                 </div>
               </div>
             )}
-            <CheckButton
+            {/* <CheckButton
                       ref={(c) => {
                 this.checkBtn = c;
               }}
-            />
+            /> */}
           </Form>
         </div>
       </div>

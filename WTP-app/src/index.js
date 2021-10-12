@@ -4,16 +4,19 @@ import './index.css';
 import App from './App';
 import store from './store';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 
 let rerenderEntireTree = () => {
 
   ReactDOM.render(
-   
+    <BrowserRouter>
     <Provider store={store}>
-        <App />  
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
     </Provider>
-   ,document.getElementById('root')
+    </BrowserRouter>,document.getElementById('root')
   );
 }
 rerenderEntireTree()

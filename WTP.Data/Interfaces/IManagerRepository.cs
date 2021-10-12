@@ -8,6 +8,6 @@ namespace WTP.Data.Interfaces
     public interface IManagerRepository
     {
         Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
-        public Task AddEmployee(Manager manager, string  UserId);
+        public Task AddManager(Manager manager, string  UserId);
     }
 }

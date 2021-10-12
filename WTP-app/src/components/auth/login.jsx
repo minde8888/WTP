@@ -58,8 +58,9 @@ class Login extends Component {
     if (this.checkBtn.context._errors.length === 0) {
       dispatch(login(this.state.username, this.state.password))
         .then(() => {
-          history.push("/profile");
-          window.location.reload();
+          // history.push("/profile");
+          // console.log(history);
+          // window.location.reload();
         })
         .catch(() => {
           this.setState({
@@ -91,9 +92,9 @@ class Login extends Component {
 
           <Form
             onSubmit={this.handleLogin}
-            ref={(c) => {
-              this.form = c;
-            }}
+            // ref={(c) => {
+            //   this.form = c;
+            // }}
           >
             <div className="form-group">
               <label htmlFor="username">Username</label>
@@ -101,7 +102,7 @@ class Login extends Component {
                 type="text"
                 className="form-control"
                 name="username"
-                value={this.state.username}
+                value={this.state.Name}
                 onChange={this.onChangeUsername}
                 validations={[required]}
               />
@@ -138,11 +139,11 @@ class Login extends Component {
                 </div>
               </div>
             )}
-            <CheckButton
+            {/* <CheckButton
               ref={(c) => {
                 this.checkBtn = c;
               }}
-            />
+            /> */}
           </Form>
         </div>
       </div>

@@ -99,7 +99,8 @@ namespace WTP.Api
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             services.AddScoped<AuthService>();
-
+            services.AddScoped<ImagesService>();
+ 
             services.AddTransient<IAdminRepository, AdminRepository>();
 
             services.AddControllers();

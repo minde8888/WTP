@@ -49,8 +49,7 @@ namespace WTP.Data.Repositorys
 
         [Authorize(Roles = "Manager, Administrator")]
         public async Task<List<T>> GetItemAsync(string ImageSrc)
-        {
-  
+        {  
               var items =  await _context.Set<T>().Include(t => t.Address)
              .ToListAsync();
                 foreach (var item in items)
