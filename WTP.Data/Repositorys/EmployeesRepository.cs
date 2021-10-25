@@ -25,12 +25,19 @@ namespace WTP.Data.Repositorys
         {          
             var user = await _userManager.FindByIdAsync(UserId);
             
-            if (user != null)
+            if (user.Roles == "Manager")
             {
-                employee.UserId = UserId;
-                employee.ManagerId = new Guid(user.ManagerId.ToString()); 
+                Guid id = new Guid(UserId);
+
+                //Manager manager = new Manager();
+                //manager = _context.Manager.F;
+                employee.ManagerId = new Guid(UserId.ToString());
+
+                //employee.ManagerId = new Guid(Manager.Id.ToString());
+                //var a = _context.Manager.Find(UserId);
+                //employee.ManagerId = new Guid();
                 await _context.AddAsync(employee);
-                await _context.SaveChangesAsync();//kodel nesaugo i db ______??????????????????
+                await _context.SaveChangesAsync();
             }
         } 
     }

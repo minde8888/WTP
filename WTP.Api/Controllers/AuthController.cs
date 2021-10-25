@@ -1,20 +1,15 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using WTP.Api.Configuration;
 using WTP.Api.Configuration.Requests;
-using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.Responses;
@@ -28,31 +23,18 @@ namespace WTP.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly JwtConfig _jwtConfig;
         private readonly TokenValidationParameters _tokenValidationParams;
-        private readonly AppDbContext _context;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-
         private readonly AuthService _authService;
 
         public AuthController(UserManager<ApplicationUser> userManager,
-            IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationsParams,
-            RoleManager<IdentityRole> roleManager,
-            AppDbContext context,
-            IMapper mapper,
             IUserRepository userRepository,
             AuthService authService)
 
         {
             _userManager = userManager;
-            _jwtConfig = optionsMonitor.CurrentValue;
             _tokenValidationParams = tokenValidationsParams;
-            _roleManager = roleManager;
-            _context = context;
-            _mapper = mapper;
             _userRepository = userRepository;
             _authService = authService;
         }
@@ -63,14 +45,15 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
-                if (existingUser != null)
+                var exist = _userManager.Users.Any(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email);             
+
+                if (exist)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>()
                         {
-                            "Email already in use"
+                            "Email or phone number is already in use !!!"
                         },
                         Success = false
                     });
@@ -80,19 +63,32 @@ namespace WTP.Api.Controllers
                 {
                     Email = user.Email,
                     UserName = user.UserName,
-                    ManagerId = user.ManagerId,
-                    Roles = user.Roles
+                    PhoneNumber = user.PhoneNumber
                 };
 
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
                 if (isCreated.Succeeded)
                 {
-                    var id = newUser.Id;
-                    await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
-                    await _userRepository.AddManager(user, id);
+                    try
+                    {
+                        await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                        user.UserId = newUser.Id;
+                        await _userRepository.AddUser(user);
 
-                    return Ok(await GenerateJwtToken(newUser));
+                        //return Ok(await _authService.GenerateJwtToken(newUser));
+                        return Ok("Success");
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest(new RegistrationResponse()
+                        {
+                            Errors = new List<string>() {
+                                "Error to add user in the DB !!!"
+                            },
+                            Success = false
+                        });
+                    }
                 }
                 else
                 {
@@ -103,7 +99,6 @@ namespace WTP.Api.Controllers
                     });
                 }
             }
-
             return BadRequest(new RegistrationResponse()
             {
                 Errors = new List<string>()
@@ -147,16 +142,21 @@ namespace WTP.Api.Controllers
                 }
                 try
                 {
-                    var result = await _authService.GetUserInfo(existingUser);
-                    return Ok(result);
+                    var token = await _authService.GenerateJwtToken(existingUser);
+                    var result = await _authService.GetUserInfo(existingUser, token);
+                    var json = JsonSerializer.Serialize(result);
+                    return Ok(json);
                 }
-                catch(ArgumentException ex)
+                catch (Exception)
                 {
-                    return BadRequest();
+                    return BadRequest(new RegistrationResponse()
+                    {
+                        Errors = new List<string>() {
+                                "Error login !!!"
+                            },
+                        Success = false
+                    });
                 }
-
-
-                
             }
 
             return BadRequest(new RegistrationResponse()
@@ -172,40 +172,48 @@ namespace WTP.Api.Controllers
         [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
-            string rawUserId = HttpContext.User.FindFirstValue("id");
-
-            if (!Guid.TryParse(rawUserId, out Guid userId))
+            try
             {
-                return Unauthorized();
+                string rawUserId = HttpContext.User.FindFirstValue("id");
+
+                if (!Guid.TryParse(rawUserId, out Guid userId))
+                {
+                    return Unauthorized();
+                }
+
+                bool result = await _userRepository.removeRefreshToken(rawUserId);
+                if (result)
+                    return NoContent();
             }
-
-            IEnumerable<RefreshToken> refreshTokens = await _context.RefreshToken
-               .Where(t => t.UserId == rawUserId)
-               .ToListAsync();
-
-            _context.RefreshToken.RemoveRange(refreshTokens);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Can not to remove RefreshToken !!!" });
+            }
+            return BadRequest(new { message = "Problems with Logout !!!" });
         }
 
         [AllowAnonymous]
-        [HttpPost("ForgotPassword")]//stvarkyti try cach !!!!!!!!!!!!!!!
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
-        {        
-            var user = await _userManager.FindByEmailAsync(model.email);
-            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            //token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
-            bool emailHelper = await _userRepository.SendEmailPasswordReset(model, Request.Headers["origin"], token);
-            if (emailHelper)
+        {
+            try
             {
-                return Ok();
+                var user = await _userManager.FindByEmailAsync(model.email);
+                string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                bool emailHelper = await _authService.SendEmailPasswordReset(model, Request.Headers["origin"], token);
+                if (emailHelper)
+                {
+                    return Ok();
+                }
             }
-            return null;
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Error PasswordReset !!!" });
+            }
+            return BadRequest(new { message = "Problems with ForgotPasswordToken !!!" });
         }
 
-        [AllowAnonymous]
+        [AllowAnonymous] // nebaigtas reikia fronto 
         [HttpGet("NewPassword")]
         public async Task<ActionResult> NewPassword(string token, string email)
         {
@@ -217,42 +225,49 @@ namespace WTP.Api.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
-            bool result = await _userRepository.ResetPassword(model);
-            if (result)
+            try
             {
-                return Ok(new { message = "Password reset successful, you can now login" });
-            }
-            else
-            {
-                return BadRequest(new RegistrationResponse()
+                bool result = await _authService.NewPassword(model);
+                if (result)
                 {
-                    Errors = new List<string>() {
-                    "User doesn't exist"///sutrvarkyti normaliai !!!!!!!!!!!!!!!!!!
-                    }
-                });
+                    return Ok(new { message = "Password reset successful, you can now login" });
+                }
             }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Error NewPassword !!!" });
+            }
+            return BadRequest(new { message = "Error ResetPassword !!!" });
         }
 
         [HttpPost]
         [Route("RefreshToken")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequests tokenRequest)
         {
             if (ModelState.IsValid)
             {
-                var res = await VerifyToken(tokenRequest);
-
-                if (res == null)
+                try
                 {
-                    return BadRequest(new RegistrationResponse()
+                    JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+                    var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out var validatedToken);
+                    var res = await _authService.VerifyToken(tokenRequest, principal, validatedToken);
+                    if (res == null)
                     {
-                        Errors = new List<string>() {
+                        return BadRequest(new RegistrationResponse()
+                        {
+                            Errors = new List<string>() {
                     "Invalid tokens"
                     },
-                        Success = false
-                    });
-                }
+                            Success = false
+                        });
+                    }
 
-                return Ok(res);
+                    return Ok(res);
+                }
+                catch (Exception)
+                {
+                    return BadRequest(new { message = "ValidateToken or VerifyToken Error !!!" });
+                }
             }
 
             return BadRequest(new RegistrationResponse()
@@ -262,168 +277,6 @@ namespace WTP.Api.Controllers
             },
                 Success = false
             });
-        }
-
-        private async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var roleClaims = new List<Claim>();
-            for (int i = 0; i < roles.Count; i++)
-            {
-                roleClaims.Add(new Claim(ClaimTypes.Role, roles[i]));
-            }
-
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-
-            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim("Id", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("guid", user.Id),
-                }.Union(roleClaims)),
-                //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
-                Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = jwtTokenHandler.WriteToken(token);
-
-            var refreshToken = new RefreshToken()
-            {
-                JwtId = token.Id,
-                IsUsed = false,
-                UserId = user.Id,
-                AddedDate = DateTime.UtcNow,
-                // INVALID DATE, USE UTC
-                // ExpiryDate = DateTime.Now.AddYears(1),
-
-                // Now it's correct
-                ExpiryDate = DateTime.UtcNow.AddYears(1),
-                IsRevoked = false,
-                Token = _userRepository.RandomString(25) + Guid.NewGuid()
-            };
-
-            await _context.RefreshToken.AddAsync(refreshToken);
-            await _context.SaveChangesAsync();
-
-            return new AuthResult()
-            {
-                Token = jwtToken,
-                Success = true,
-                RefreshToken = refreshToken.Token
-            };
-        }
-
-        private async Task<AuthResult> VerifyToken(TokenRequest tokenRequest)
-        {
-            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
-
-            try
-            {
-                // This validation function will make sure that the token meets the validation parameters
-                // and its an actual jwt token not just a random string
-                var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out var validatedToken);
-
-                // Now we need to check if the token has a valid security algorithm
-                if (validatedToken is JwtSecurityToken jwtSecurityToken)
-                {
-                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
-
-                    if (result == false)
-                    {
-                        return null;
-                    }
-                }
-
-                // Will get the time stamp in unix time
-                var utcExpiryDate = long.Parse(principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-                // we convert the expiry date from seconds to the date
-                var expDate = _userRepository.UnixTimeStampToDateTime(utcExpiryDate);
-
-                if (expDate > DateTime.UtcNow)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "We cannot refresh this since the token has not expired" },
-                        Success = false
-                    };
-                }
-
-                // Check the token we got if its saved in the db
-                var storedRefreshToken = await _context.RefreshToken.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
-
-                if (storedRefreshToken == null)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "refresh token doesnt exist" },
-                        Success = false
-                    };
-                }
-
-                // Check the date of the saved token if it has expired
-                if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "token has expired, user needs to relogin" },
-                        Success = false
-                    };
-                }
-
-                // check if the refresh token has been used
-                if (storedRefreshToken.IsUsed)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "token has been used" },
-                        Success = false
-                    };
-                }
-
-                // Check if the token is revoked
-                if (storedRefreshToken.IsRevoked)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "token has been revoked" },
-                        Success = false
-                    };
-                }
-
-                // we are getting here the jwt token id
-                var jti = principal.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-
-                // check the id that the recieved token has against the id saved in the db
-                if (storedRefreshToken.JwtId != jti)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new List<string>() { "the token doenst mateched the saved token" },
-                        Success = false
-                    };
-                }
-
-                storedRefreshToken.IsUsed = true;
-                _context.RefreshToken.Update(storedRefreshToken);
-                await _context.SaveChangesAsync();
-
-                var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId);
-                return await GenerateJwtToken(dbUser);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
     }
 }

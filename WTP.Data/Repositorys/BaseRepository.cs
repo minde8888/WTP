@@ -13,7 +13,7 @@ using WTP.Domain.Entities.Auth;
 
 namespace WTP.Data.Repositorys
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntyti
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntiy
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -49,8 +49,7 @@ namespace WTP.Data.Repositorys
 
         [Authorize(Roles = "Manager, Administrator")]
         public async Task<List<T>> GetItemAsync(string ImageSrc)
-        {
-  
+        {  
               var items =  await _context.Set<T>().Include(t => t.Address)
              .ToListAsync();
                 foreach (var item in items)

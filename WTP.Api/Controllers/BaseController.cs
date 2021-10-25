@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
@@ -19,7 +17,7 @@ namespace WTP.Api.Controllers
     //[Route("api/[controller]")]
     //[ApiController]
 
-    public class BaseController<T> : ControllerBase where T : BaseEntyti
+    public class BaseController<T> : ControllerBase where T : BaseEntiy
     {
         private readonly IBaseRepository<T> _baseServices;
         private readonly IWebHostEnvironment _hostEnvironment;
@@ -28,7 +26,7 @@ namespace WTP.Api.Controllers
         {
             _baseServices = itemServices;
             _hostEnvironment = hostEnvironment;
-         }
+        }
 
         [HttpGet("id")]
         public async Task<ActionResult<List<T>>> Get(Guid id)
@@ -52,7 +50,7 @@ namespace WTP.Api.Controllers
         }
 
         //[HttpPost]
-      
+
         //public async Task<IActionResult> CreateItem(T t)
         //{
         //    //t.ImageName = SaveImage(t.ImageFile);
@@ -75,7 +73,7 @@ namespace WTP.Api.Controllers
         //}
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, T t) //[FromForm]
+        public async Task<IActionResult> Update(Guid id, [FromForm] T t)
         {
             try
             {

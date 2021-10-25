@@ -17,6 +17,7 @@ namespace WTP.Domain.Dtos
         public string Occupation { get; set; }
         public long MobileNumber { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
         public string ImageName { get; set; } 
         [NotMapped]
         public IFormFile ImageFile { get; set; }

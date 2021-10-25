@@ -27,9 +27,9 @@ namespace WTP.Api.Controllers
                 await _mailRepository.SendEmailAsync(request);
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                return BadRequest(new { message = "Problems with Send Email !!!" });
             }
 
         }
@@ -42,9 +42,9 @@ namespace WTP.Api.Controllers
                 await _mailRepository.SendWelcomeEmailAsync(request);
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                return BadRequest(new { message = "Error to send email form !!!" });
             }
         }
     }

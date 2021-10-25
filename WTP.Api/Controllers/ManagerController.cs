@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,24 +15,25 @@ namespace WTP.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("v1/api/[controller]")]
     public class ManagerController : BaseController<Manager>
     {
         private readonly IManagerRepository _managerServices;
 
-        public ManagerController(IManagerRepository managerServices, IBaseRepository<Manager> manager, IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
+        public ManagerController(IManagerRepository managerServices, 
+            IBaseRepository<Manager> manager, 
+            IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
         {
             _managerServices = managerServices;
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager, Employee")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try
             {
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                //var a = await _managerServices.GetItemAsync(ImageSrc);
                 return await _managerServices.GetItemAsync(ImageSrc);
             }
             catch (Exception)
@@ -44,13 +44,13 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
-        public IActionResult AddNewEmployee(Manager manager)
+        [Authorize(Roles = "Admin")]
+        public IActionResult AddNewManagere([FromForm] Manager manager)
         {
             try
             {
                 string UserId = HttpContext.User.FindFirstValue("id");
-                _managerServices.AddEmployee(manager, UserId);
+                _managerServices.AddManager(manager, UserId);
                 return CreatedAtAction("Get", new { manager.Id }, manager);
             }
             catch (Exception)

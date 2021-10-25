@@ -1,0 +1,16 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.8'
+
+services:
+  wtpapi:
+    image: wtpapi
+    build:
+      context: .
+      dockerfile: WTP.Api/Dockerfile
+    ports:
+      - 49159:49159
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw

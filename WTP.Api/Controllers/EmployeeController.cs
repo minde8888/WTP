@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
@@ -20,22 +21,27 @@ namespace WTP.Api.Controllers
     public class EmployeeController : BaseController<Employee>
     {
         private readonly IBaseRepository<Employee> _employee;
-        private readonly IEmployeesRepository _employeeServices;
+        private readonly IEmployeesRepository _employeeRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly ImagesService _imagesService;
 
-        public EmployeeController(IEmployeesRepository employeeServices,
+        public EmployeeController(IEmployeesRepository employeeRepository,
             IBaseRepository<Employee> employee,
             IWebHostEnvironment hostEnvironment,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ImagesService imagesService)
             : base(employee, hostEnvironment)
         {
             _employee = employee;
-            _employeeServices = employeeServices;
+            _employeeRepository = employeeRepository;
             _userManager = userManager;
+            _hostEnvironment = hostEnvironment;
+            _imagesService = imagesService;
         }
 
         [HttpGet]
-        //[Authorize(Policy = "Employee")]
+        [Authorize(Roles = "Manager")]
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<Employee>>> GetAllEmployee()
         {
@@ -52,13 +58,19 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
-        public IActionResult AddNewEmployee(Employee employee)
+        [Authorize(Roles = "Manager, Admin")]
+        public IActionResult AddNewEmployee([FromForm] Employee employee)
         {
             try
             {
+                if (!String.IsNullOrEmpty(employee.ImageName))
+                {
+                    string path = _hostEnvironment.ContentRootPath;
+                    var imageName = _imagesService.SaveImage(employee.ImageFile, path);
+                }
                 string UserId = HttpContext.User.FindFirstValue("id");
-                _employeeServices.AddEmployee(UserId, employee);
+                _employeeRepository.AddEmployee(UserId, employee);
+
                 return CreatedAtAction("Get", new { employee.Id }, employee);
             }
             catch (Exception)

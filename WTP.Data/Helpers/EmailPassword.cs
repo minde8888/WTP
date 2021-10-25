@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
 using System.Net.Mail;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities.Auth;
@@ -37,15 +36,8 @@ namespace WTP.Data.Helpers
             client.Host = _mailSettings.Host;
             client.Port = _mailSettings.Port;
 
-            try
-            {
-                client.Send(mailMessage);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }         
+            client.Send(mailMessage);
+            return true;
         }
     }
 }

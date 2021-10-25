@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="5.2.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.13.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WTP.Data\WTP.Data.csproj" />
     <ProjectReference Include="..\WTP.Domain\WTP.Domain.csproj" />
   </ItemGroup>
