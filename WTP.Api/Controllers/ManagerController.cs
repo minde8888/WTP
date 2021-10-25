@@ -28,7 +28,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager, Employee")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try

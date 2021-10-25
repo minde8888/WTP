@@ -21,12 +21,12 @@ namespace WTP.Api.Controllers
     public class EmployeeController : BaseController<Employee>
     {
         private readonly IBaseRepository<Employee> _employee;
-        private readonly IEmployeesRepository _employeeServices;
+        private readonly IEmployeesRepository _employeeRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
 
-        public EmployeeController(IEmployeesRepository employeeServices,
+        public EmployeeController(IEmployeesRepository employeeRepository,
             IBaseRepository<Employee> employee,
             IWebHostEnvironment hostEnvironment,
             UserManager<ApplicationUser> userManager,
@@ -34,7 +34,7 @@ namespace WTP.Api.Controllers
             : base(employee, hostEnvironment)
         {
             _employee = employee;
-            _employeeServices = employeeServices;
+            _employeeRepository = employeeRepository;
             _userManager = userManager;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
@@ -58,19 +58,19 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Admin")]
         public IActionResult AddNewEmployee([FromForm] Employee employee)
         {
             try
             {
-                string path = _hostEnvironment.ContentRootPath;
-                var imageName = _imagesService.SaveImage(employee.ImageFile, path);
-
                 if (!String.IsNullOrEmpty(employee.ImageName))
                 {
-                    string UserId = HttpContext.User.FindFirstValue("id");
-                    _employeeServices.AddEmployee(UserId, employee);
+                    string path = _hostEnvironment.ContentRootPath;
+                    var imageName = _imagesService.SaveImage(employee.ImageFile, path);
                 }
+                string UserId = HttpContext.User.FindFirstValue("id");
+                _employeeRepository.AddEmployee(UserId, employee);
+
                 return CreatedAtAction("Get", new { employee.Id }, employee);
             }
             catch (Exception)

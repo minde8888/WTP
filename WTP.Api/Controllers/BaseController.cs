@@ -17,7 +17,7 @@ namespace WTP.Api.Controllers
     //[Route("api/[controller]")]
     //[ApiController]
 
-    public class BaseController<T> : ControllerBase where T : BaseEntyti
+    public class BaseController<T> : ControllerBase where T : BaseEntiy
     {
         private readonly IBaseRepository<T> _baseServices;
         private readonly IWebHostEnvironment _hostEnvironment;

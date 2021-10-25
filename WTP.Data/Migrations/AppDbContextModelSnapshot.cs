@@ -17,7 +17,7 @@ namespace WTP.Data.Migrations
             modelBuilder
                 .HasDefaultSchema("Identity")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -333,13 +333,13 @@ namespace WTP.Data.Migrations
                     b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
@@ -382,13 +382,13 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")

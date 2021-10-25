@@ -10,8 +10,8 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210918192350_init")]
-    partial class init
+    [Migration("20211023113713_update")]
+    partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace WTP.Data.Migrations
             modelBuilder
                 .HasDefaultSchema("Identity")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -178,33 +178,6 @@ namespace WTP.Data.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles");
-                });
-
             modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -236,9 +209,6 @@ namespace WTP.Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ManagerId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -365,13 +335,13 @@ namespace WTP.Data.Migrations
                     b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
@@ -414,13 +384,13 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
@@ -476,9 +446,36 @@ namespace WTP.Data.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.Roles.ApplicationRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationRole", null)
+                    b.HasOne("WTP.Domain.Entities.Roles.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -505,7 +502,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Auth.ApplicationRole", null)
+                    b.HasOne("WTP.Domain.Entities.Roles.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace WTP.Data.Migrations
 {
-    public partial class init : Migration
+    public partial class initail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,7 +32,6 @@ namespace WTP.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ManagerId = table.Column<Guid>(type: "uuid", nullable: true),
                     Roles = table.Column<string>(type: "text", nullable: true),
                     AcceptTerms = table.Column<bool>(type: "boolean", nullable: false),
                     VerificationToken = table.Column<string>(type: "text", nullable: true),
@@ -209,6 +208,7 @@ namespace WTP.Data.Migrations
                     MobileNumber = table.Column<long>(type: "bigint", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Role = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     ImageName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -269,6 +269,7 @@ namespace WTP.Data.Migrations
                     MobileNumber = table.Column<long>(type: "bigint", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Role = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     ImageName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

@@ -21,18 +21,39 @@ namespace WTP.Data.Repositorys
             _context = context;
         }
 
-        public async Task AddUser(UserRegistrationDto user, string id)
+        public async Task AddUser(UserRegistrationDto user)
         {
-            Manager manager = new Manager()
+            if (user.Roles == "Manager")
             {
-                Email = user.Email,
-                Name = user.UserName,
-                UserId = new Guid(id.ToString()),
-                Role = user.Roles
-            };
+                Manager manager = new()
+                {
+                    UserId = user.UserId,
+                    Name = user.UserName,
+                    Surname = user.Surname,
+                    Email = user.Email,
+                    Role = user.Roles,
+                    PhoneNumber = user.PhoneNumber
+                };
 
-            await _context.AddAsync(manager);
-            await _context.SaveChangesAsync();
+                await _context.AddAsync(manager);
+                await _context.SaveChangesAsync();
+            }
+            if (user.Roles == "Employee")
+            {
+                Employee employee = new()
+                {
+                    UserId = user.UserId,
+                    Name = user.UserName,
+                    Surname = user.Surname,  
+                    Email = user.Email,        
+                    Role = user.Roles,
+                    PhoneNumber = user.PhoneNumber,
+                    ManagerId = user.ManagerId
+                };
+
+                await _context.AddAsync(employee);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<bool> removeRefreshToken(string rawUserId)

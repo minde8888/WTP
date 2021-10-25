@@ -6,7 +6,7 @@ using WTP.Domain.Entities.Auth;
 
 namespace WTP.Domain.Entities
 {
-    public class BaseEntyti
+    public class BaseEntiy
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -16,9 +16,9 @@ namespace WTP.Domain.Entities
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }
-        public long MobileNumber { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
+        public string PhoneNumber { get; set; }
         public string ImageName { get; set; }
         [NotMapped]
         public IFormFile ImageFile { get; set; }

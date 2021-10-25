@@ -10,8 +10,8 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210919122630_update_user")]
-    partial class update_user
+    [Migration("20211023111248_initail")]
+    partial class initail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace WTP.Data.Migrations
             modelBuilder
                 .HasDefaultSchema("Identity")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -344,6 +344,9 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("text");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
                     b.Property<string>("Role")
                         .HasColumnType("text");
 
@@ -391,6 +394,9 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")

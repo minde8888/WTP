@@ -42,8 +42,7 @@ namespace WTP.Api
             services.AddAutoMapper(typeof(ApplicationMapper));
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
-            services.AddEntityFrameworkNpgsql()
-                .AddDbContext<AppDbContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(Configuration["ConnectionStrings:LocalConnectionString"]));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(o => o.SignIn.RequireConfirmedAccount = true)

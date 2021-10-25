@@ -45,36 +45,50 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
-                if (existingUser != null)
+                var exist = _userManager.Users.Any(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email);             
+
+                if (exist)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>()
                         {
-                            "Email already in use"
+                            "Email or phone number is already in use !!!"
                         },
                         Success = false
                     });
                 }
 
-                var newUser = new ApplicationUser()//sutvarkyti
+                var newUser = new ApplicationUser()
                 {
                     Email = user.Email,
                     UserName = user.UserName,
-                    //ManagerId = user.ManagerId,
-                    Roles = user.Roles
+                    PhoneNumber = user.PhoneNumber
                 };
 
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
                 if (isCreated.Succeeded)
                 {
-                    var id = newUser.Id;
-                    await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
-                    await _userRepository.AddUser(user, id.ToString());
+                    try
+                    {
+                        await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                        user.UserId = newUser.Id;
+                        await _userRepository.AddUser(user);
 
-                    return Ok(await _authService.GenerateJwtToken(newUser));
+                        //return Ok(await _authService.GenerateJwtToken(newUser));
+                        return Ok("Success");
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest(new RegistrationResponse()
+                        {
+                            Errors = new List<string>() {
+                                "Error to add user in the DB !!!"
+                            },
+                            Success = false
+                        });
+                    }
                 }
                 else
                 {
@@ -85,7 +99,6 @@ namespace WTP.Api.Controllers
                     });
                 }
             }
-
             return BadRequest(new RegistrationResponse()
             {
                 Errors = new List<string>()
@@ -200,7 +213,7 @@ namespace WTP.Api.Controllers
             return BadRequest(new { message = "Problems with ForgotPasswordToken !!!" });
         }
 
-        [AllowAnonymous]// nebaigtas reikia fronto
+        [AllowAnonymous] // nebaigtas reikia fronto 
         [HttpGet("NewPassword")]
         public async Task<ActionResult> NewPassword(string token, string email)
         {
