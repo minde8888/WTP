@@ -61,8 +61,9 @@ namespace WTP.Api.Controllers
 
                 var newUser = new ApplicationUser()
                 {
+                    Roles = user.Roles,
                     Email = user.Email,
-                    UserName = user.UserName,
+                    UserName = _authService.StringRandom(),
                     PhoneNumber = user.PhoneNumber
                 };
 
