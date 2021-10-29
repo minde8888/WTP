@@ -291,5 +291,24 @@ namespace WTP.Services.Services
             var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId.ToString());
             return await GenerateJwtToken(dbUser);
         }
+
+        public string StringRandom()
+        {
+            Random random = new();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string unique = new string(Enumerable.Repeat(chars, 36)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            var existName = _userManager.FindByNameAsync(unique);
+            if (existName.Result != null)
+            {
+                StringRandom();
+            }
+            else
+            {
+                return unique;
+            }
+            throw new Exception();
+        }
     }
 }
