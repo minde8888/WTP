@@ -223,7 +223,7 @@ namespace WTP.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("reset-password")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
             try

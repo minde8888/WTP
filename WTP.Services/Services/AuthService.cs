@@ -95,9 +95,12 @@ namespace WTP.Services.Services
         public async Task<bool> NewPassword(ResetPasswordRequest model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null &&
-                user.RefreshTokens.ToString() != model.Token &&
-                 user.ResetTokenExpires < DateTime.UtcNow)
+            if (user == null)
+            {
+                return false;
+            }//+ tokene yra ziureti
+            else if (user.ResetToken.ToString() != model.Token.ToString()) //&&  user.ResetTokenExpires < DateTime.UtcNow //tvarkyti formata
+
             {
                 return false;
             }
