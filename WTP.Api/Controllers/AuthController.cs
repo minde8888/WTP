@@ -214,14 +214,6 @@ namespace WTP.Api.Controllers
             return BadRequest(new { message = "Problems with ForgotPasswordToken !!!" });
         }
 
-        [AllowAnonymous] // nebaigtas reikia fronto 
-        [HttpGet("NewPassword")]
-        public async Task<ActionResult> NewPassword(string token, string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            return Ok();
-        }
-
         [AllowAnonymous]
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
@@ -236,7 +228,7 @@ namespace WTP.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Error NewPassword !!!" });
+                return BadRequest(new { message = "The link you followed has expired !!!" });
             }
             return BadRequest(new { message = "Error ResetPassword !!!" });
         }

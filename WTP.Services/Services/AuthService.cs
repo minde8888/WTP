@@ -55,8 +55,10 @@ namespace WTP.Services.Services
                         .ToListAsync();
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
-
-                        return managerDto;
+                        if (managerDto != null)                  
+                            return managerDto;
+                   
+                        throw new Exception("Manager is emty !!!");
 
                     case "Employee":
                         var employee = await _context.Employee
@@ -66,14 +68,17 @@ namespace WTP.Services.Services
                         var employeeDto = _mapper.Map<List<EmployeeInformationDto>>(employee);
                         employeeDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
 
-                        return employeeDto;
+                        if (employeeDto != null)
+                            return employeeDto;
+
+                        throw new Exception("Employee is emty !!!");
 
                     default:
                         throw new Exception();
                 }
             }
 
-            throw new Exception();
+            throw new Exception("Can not get data from DB. Role dose not exisit");
         }
 
         public string RandomString(int length)
@@ -99,8 +104,8 @@ namespace WTP.Services.Services
             {
                 return false;
             }//+ tokene yra ziureti
-            else if (user.ResetToken.ToString() != model.Token.ToString()) //&&  user.ResetTokenExpires < DateTime.UtcNow //tvarkyti formata
-
+            else if (user.ResetToken != model.Token
+                && user.ResetTokenExpires < DateTime.UtcNow) //&&  user.ResetTokenExpires < DateTime.UtcNow //tvarkyti formata
             {
                 return false;
             }
@@ -177,7 +182,6 @@ namespace WTP.Services.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
-                //  Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
                 Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
