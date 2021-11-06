@@ -20,8 +20,8 @@ namespace WTP.Services.Services
 {
     public class AuthService
     {
-        private AppDbContext _context;
-        private IMapper _mapper;
+        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailPassword _mail;
         private readonly JwtConfig _jwtConfig;
@@ -92,7 +92,7 @@ namespace WTP.Services.Services
         public DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
             return dtDateTime;
         }
@@ -145,7 +145,7 @@ namespace WTP.Services.Services
 
         public RefreshToken GetrefreshToken(SecurityToken token, string rand, ApplicationUser user)
         {
-            var refreshToken = new RefreshToken()
+            RefreshToken refreshToken = new()
             {
                 JwtId = token.Id,
                 IsUsed = false,
@@ -205,7 +205,7 @@ namespace WTP.Services.Services
 
         public async Task<AuthResult> VerifyToken(TokenRequests tokenRequest, ClaimsPrincipal principal, SecurityToken validatedToken)
         {
-            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+            JwtSecurityTokenHandler jwtTokenHandler = new();
 
             // This validation function will make sure that the token meets the validation parameters
             // and its an actual jwt token not just a random string
@@ -303,7 +303,7 @@ namespace WTP.Services.Services
         {
             Random random = new();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            string unique = new string(Enumerable.Repeat(chars, 36)
+            string unique = new(Enumerable.Repeat(chars, 36)
               .Select(s => s[random.Next(s.Length)]).ToArray());
 
             var existName = _userManager.FindByNameAsync(unique);

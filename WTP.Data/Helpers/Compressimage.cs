@@ -12,11 +12,9 @@ namespace WTP.Data.Helpers
             int height = 200;
             Image image = Image.FromStream(imageFile.OpenReadStream(), true, true);
             var newImage = new Bitmap(width, height);
-            using (var a = Graphics.FromImage(newImage))
-            {
-                a.DrawImage(image, 0, 0, width, height);
-                newImage.Save(imagePath);
-            }
+            using var a = Graphics.FromImage(newImage);
+            a.DrawImage(image, 0, 0, width, height);
+            newImage.Save(imagePath);
         }
     }
 }

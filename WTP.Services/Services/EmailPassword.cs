@@ -17,7 +17,7 @@ namespace WTP.Services.Services
 
         public bool SendEmailPasswordReset(ForgotPassword model, string link)
         {
-            MailMessage mailMessage = new MailMessage();
+            MailMessage mailMessage = new();
             mailMessage.From = new MailAddress(_mailSettings.Mail);
             mailMessage.To.Add(new MailAddress(model.email));
 
@@ -26,7 +26,7 @@ namespace WTP.Services.Services
             mailMessage.Body = $"<H1>Try to click the link below<H1/> <br/> <div>{link}<div/>" +
                 $"<div>click link to reset </div>";
 
-            SmtpClient client = new SmtpClient()
+            SmtpClient client = new()
             {
                 EnableSsl = true
             };

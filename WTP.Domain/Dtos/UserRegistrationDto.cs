@@ -21,6 +21,7 @@ namespace WTP.Domain.Dtos.Requests
 
         public string Roles { get; set; }
         public string PhoneNumber { get; set; }
+        public string Occupation { get; set; }
         public Guid? ManagerId { get; set; }
     }
 }

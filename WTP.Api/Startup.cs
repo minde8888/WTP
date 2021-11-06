@@ -94,7 +94,6 @@ namespace WTP.Api
             services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            ////services.AddScoped<IEmailPassword, EmailPassword>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             services.AddScoped<AuthService>();
@@ -120,6 +119,15 @@ namespace WTP.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Codepedia-Custom-Header-Response", "Satinder singh");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                await next();
+            });
+
             app.UseCors(options => options.WithOrigins("http://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader());
