@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
@@ -22,7 +23,9 @@ namespace WTP.Api.Controllers
 
         public ManagerController(IManagerRepository managerServices, 
             IBaseRepository<Manager> manager, 
-            IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
+            IWebHostEnvironment hostEnvironment,
+            ImagesService imagesService) 
+            : base(manager, hostEnvironment, imagesService)
         {
             _managerServices = managerServices;
         }

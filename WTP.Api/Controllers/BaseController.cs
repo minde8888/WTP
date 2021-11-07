@@ -7,25 +7,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize]
-    //[Route("api/[controller]")]
-    //[ApiController]
-
     public class BaseController<T> : ControllerBase where T : BaseEntiy
     {
         private readonly IBaseRepository<T> _baseServices;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly ImagesService _imagesService;
 
-        public BaseController(IBaseRepository<T> itemServices, IWebHostEnvironment hostEnvironment)
+        public BaseController(IBaseRepository<T> itemServices,
+            IWebHostEnvironment hostEnvironment,
+            ImagesService imagesService)
         {
             _baseServices = itemServices;
             _hostEnvironment = hostEnvironment;
+            _imagesService = imagesService;
         }
 
         [HttpGet("id")]
@@ -87,7 +87,7 @@ namespace WTP.Api.Controllers
                 {
                     var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
                     _baseServices.DeleteImage(imagePath);
-                    t.ImageName = SaveImage(t.ImageFile);
+                    t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
                 }
 
                 await _baseServices.UpdateItem(id, t);
@@ -138,23 +138,6 @@ namespace WTP.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error deleting data");
             }
-        }
-
-        [NonAction]
-        public string SaveImage(IFormFile imageFile)
-        {
-            if (imageFile != null)
-            {
-                string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
-                imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-                var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-
-                ICompressimage compress = new Compressimage();
-                compress.Resize(imagePath, imageName, imageFile);
-
-                return imageName;
-            }
-            return null;
         }
     }
 }

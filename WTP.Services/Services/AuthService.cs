@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WTP.Api.Configuration;
 using WTP.Data.Context;
+using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities.Auth;
 using WTP.Services.Services.Dtos;
@@ -55,9 +56,9 @@ namespace WTP.Services.Services
                         .ToListAsync();
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
-                        if (managerDto != null)                  
+                        if (managerDto != null)
                             return managerDto;
-                   
+
                         throw new Exception("Manager is emty !!!");
 
                     case "Employee":
@@ -81,31 +82,15 @@ namespace WTP.Services.Services
             throw new Exception("Can not get data from DB. Role dose not exisit");
         }
 
-        public string RandomString(int length)
-        {
-            var random = new Random();
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        public DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
-            return dtDateTime;
-        }
-
-        public async Task<bool> NewPassword(ResetPasswordRequest model)
+         public async Task<bool> NewPassword(ResetPasswordRequest model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 return false;
-            }//+ tokene yra ziureti
+            }
             else if (user.ResetToken != model.Token
-                && user.ResetTokenExpires < DateTime.UtcNow) //&&  user.ResetTokenExpires < DateTime.UtcNow //tvarkyti formata
+                && user.ResetTokenExpires < DateTime.UtcNow) 
             {
                 return false;
             }
@@ -189,7 +174,7 @@ namespace WTP.Services.Services
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = jwtTokenHandler.WriteToken(token);
 
-            string rand = RandomString(25) + Guid.NewGuid();
+            string rand = RandomString.RandString(25) + Guid.NewGuid();
             var refreshToken = GetrefreshToken(token, rand, user);
 
             await _context.RefreshToken.AddAsync(refreshToken);
@@ -225,7 +210,7 @@ namespace WTP.Services.Services
             var utcExpiryDate = long.Parse(principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
             // we convert the expiry date from seconds to the date
-            var expDate = UnixTimeStampToDateTime(utcExpiryDate);
+            var expDate = UnixTimeStamp.UnixTimeStampToDateTime(utcExpiryDate);
 
             if (expDate > DateTime.UtcNow)
             {
@@ -301,10 +286,12 @@ namespace WTP.Services.Services
 
         public string StringRandom()
         {
-            Random random = new();
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            string unique = new(Enumerable.Repeat(chars, 36)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            string unique = RandomString.RandString(36);
+            //Random random = new();
+            //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            //string unique = new(Enumerable.Repeat(chars, 36)
+            //  .Select(s => s[random.Next(s.Length)]).ToArray());
 
             var existName = _userManager.FindByNameAsync(unique);
             if (existName.Result != null)

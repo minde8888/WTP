@@ -73,7 +73,7 @@ namespace WTP.Api.Controllers
                 {
                     try
                     {
-                        await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                        await _userManager.AddToRoleAsync (newUser, user.Roles.ToString());
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 

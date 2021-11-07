@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WTP.Data.Helpers
 {
-    class RandomString
+    public static class RandomString
     {
         public static string RandString(int length)
         {

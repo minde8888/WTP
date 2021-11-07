@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WTP.Data.Helpers
 {
-    class UnixTimeStamp
+    public static class UnixTimeStamp
     {
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {

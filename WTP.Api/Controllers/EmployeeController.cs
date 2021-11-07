@@ -22,20 +22,17 @@ namespace WTP.Api.Controllers
     {
         private readonly IBaseRepository<Employee> _employee;
         private readonly IEmployeesRepository _employeeRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
 
         public EmployeeController(IEmployeesRepository employeeRepository,
             IBaseRepository<Employee> employee,
             IWebHostEnvironment hostEnvironment,
-            UserManager<ApplicationUser> userManager,
-            ImagesService imagesService)
-            : base(employee, hostEnvironment)
+             ImagesService imagesService)
+            : base(employee, hostEnvironment, imagesService)
         {
             _employee = employee;
             _employeeRepository = employeeRepository;
-            _userManager = userManager;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
         }
