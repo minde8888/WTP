@@ -29,14 +29,15 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet("id")]
-        public async Task<ActionResult<List<T>>> Get(Guid id)
+        public async Task<ActionResult<List<T>>> Get(String id)
         {
             try
             {
-                if (id == Guid.Empty)
+                var userId = new Guid(id);
+                if (userId == Guid.Empty)
                     return BadRequest();
 
-                var result = await _baseServices.GetItemIdAsync(id);
+                var result = await _baseServices.GetItemIdAsync(userId);
                 if (result == null)
                     return NotFound();
 
@@ -45,7 +46,7 @@ namespace WTP.Api.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Get by id data from the database -> Base -> Get");
+                    "Could not find web user account");
             }
         }
 

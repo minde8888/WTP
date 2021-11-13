@@ -49,6 +49,7 @@ namespace WTP.Services.Services
                 switch (item)
                 {
                     case "Manager":
+
                         var manager = await _context.Manager
                         .Include(employee => employee.Employees)
                         .Include(post => post.Posts)
@@ -56,10 +57,12 @@ namespace WTP.Services.Services
                         .ToListAsync();
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
-                        if (managerDto != null)
+                        var managerActive = managerDto.Any(i => i.IsActive == true);
+
+                        if (managerDto != null && managerActive)
                             return managerDto;
 
-                        throw new Exception("Manager is emty !!!");
+                        throw new Exception("User does not exist");
 
                     case "Employee":
                         var employee = await _context.Employee
@@ -68,11 +71,12 @@ namespace WTP.Services.Services
                             .ToListAsync();
                         var employeeDto = _mapper.Map<List<EmployeeInformationDto>>(employee);
                         employeeDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+                        var employeeActive = employeeDto.Any(i => i.IsActive == true);
 
-                        if (employeeDto != null)
+                        if (employeeDto != null && employeeActive)
                             return employeeDto;
 
-                        throw new Exception("Employee is emty !!!");
+                        throw new Exception("User does not exist");
 
                     default:
                         throw new Exception();
@@ -286,12 +290,7 @@ namespace WTP.Services.Services
 
         public string StringRandom()
         {
-
             string unique = RandomString.RandString(36);
-            //Random random = new();
-            //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            //string unique = new(Enumerable.Repeat(chars, 36)
-            //  .Select(s => s[random.Next(s.Length)]).ToArray());
 
             var existName = _userManager.FindByNameAsync(unique);
             if (existName.Result != null)
