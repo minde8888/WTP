@@ -10,7 +10,7 @@ namespace WTP.Data.Interfaces
     {
         public Task AddUser(UserRegistrationDto user);
 
-        public Task<bool> removeRefreshToken(string rawUserId);
+        public Task<bool> RemoveRefreshToken(string rawUserId);
 
     }
 }

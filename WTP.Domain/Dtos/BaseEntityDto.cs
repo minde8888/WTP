@@ -12,6 +12,7 @@ namespace WTP.Domain.Dtos
     public class BaseEntityDto
     {
         public Guid Id { get; set; }
+        public bool IsActive { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }

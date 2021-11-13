@@ -31,7 +31,7 @@ namespace WTP.Api.Controllers
             TokenValidationParameters tokenValidationsParams,
             IUserRepository userRepository,
             AuthService authService)
-
+              
         {
             _userManager = userManager;
             _tokenValidationParams = tokenValidationsParams;
@@ -73,12 +73,12 @@ namespace WTP.Api.Controllers
                 {
                     try
                     {
-                        await _userManager.AddToRoleAsync(newUser, user.Roles.ToString());
+                        await _userManager.AddToRoleAsync (newUser, user.Roles.ToString());
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 
                         //return Ok(await _authService.GenerateJwtToken(newUser));
-                        return Ok("Success");
+                        return Ok();
                     }
                     catch (Exception)
                     {
@@ -123,7 +123,7 @@ namespace WTP.Api.Controllers
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>() {
-                                "Invalid login request"
+                                "The email address is incorrect. Please retry..."
                             },
                         Success = false
                     });
@@ -136,7 +136,7 @@ namespace WTP.Api.Controllers
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>() {
-                                "Invalid login request"
+                                "The password is incorrect. Please try again."
                             },
                         Success = false
                     });
@@ -153,7 +153,7 @@ namespace WTP.Api.Controllers
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>() {
-                                "Error login !!!"
+                                "Server Error. Please contact support."
                             },
                         Success = false
                     });
@@ -182,7 +182,7 @@ namespace WTP.Api.Controllers
                     return Unauthorized();
                 }
 
-                bool result = await _userRepository.removeRefreshToken(rawUserId);
+                bool result = await _userRepository.RemoveRefreshToken(rawUserId);
                 if (result)
                     return NoContent();
             }
@@ -209,21 +209,13 @@ namespace WTP.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Error PasswordReset !!!" });
+                return BadRequest(new { message = "Can’t find that email !!!" });
             }
             return BadRequest(new { message = "Problems with ForgotPasswordToken !!!" });
         }
 
-        [AllowAnonymous] // nebaigtas reikia fronto 
-        [HttpGet("NewPassword")]
-        public async Task<ActionResult> NewPassword(string token, string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            return Ok();
-        }
-
         [AllowAnonymous]
-        [HttpPost("reset-password")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
             try
@@ -236,9 +228,9 @@ namespace WTP.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Error NewPassword !!!" });
+                return BadRequest(new { message = "The link you followed has expired !!!" });
             }
-            return BadRequest(new { message = "Error ResetPassword !!!" });
+            return BadRequest(new { message = "The email you tried to reach does not exist !!!" });
         }
 
         [HttpPost]
@@ -249,7 +241,7 @@ namespace WTP.Api.Controllers
             {
                 try
                 {
-                    JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+                    JwtSecurityTokenHandler jwtTokenHandler = new();
                     var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out var validatedToken);
                     var res = await _authService.VerifyToken(tokenRequest, principal, validatedToken);
                     if (res == null)

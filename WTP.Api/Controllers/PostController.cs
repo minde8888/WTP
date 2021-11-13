@@ -7,22 +7,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-
     public class PostController : ControllerBase
     {
         private readonly IBaseRepository<Post> _post;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly ImagesService _imagesService;
 
-        public PostController(IBaseRepository<Post> post, IWebHostEnvironment hostEnvironment)
+        public PostController(IBaseRepository<Post> post,
+            IWebHostEnvironment hostEnvironment,
+            ImagesService imagesService)
         {
             _post = post;
             _hostEnvironment = hostEnvironment;
+            _imagesService = imagesService;
         }
 
         [HttpGet]
@@ -69,7 +72,9 @@ namespace WTP.Api.Controllers
         [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> Createmanager([FromForm] Post post)
         {
-            post.ImageName = SaveImage(post.ImageFile);
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
+            post.ImageName = _imagesService.SaveImage(post.ImageFile, imagePath);
+
             try
             {
                 if (!String.IsNullOrEmpty(post.ImageName))
@@ -102,7 +107,7 @@ namespace WTP.Api.Controllers
                 {
                     var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
                     _post.DeleteImage(imagePath);
-                    post.ImageName = SaveImage(post.ImageFile);
+                    post.ImageName = _imagesService.SaveImage(post.ImageFile, imagePath);
                 }
 
                 await _post.UpdateItem(id, post);
@@ -114,23 +119,5 @@ namespace WTP.Api.Controllers
                     "Error upadte data");
             }
         }
-
-        [NonAction]
-        public string SaveImage(IFormFile imageFile)
-        {
-            if (imageFile != null)
-            {
-                string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
-                imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-                var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-
-                ICompressimage compress = new Compressimage();
-                compress.Resize(imagePath, imageName, imageFile);
-
-                return imageName;
-            }
-            return null;
-        }
-
     }
 }

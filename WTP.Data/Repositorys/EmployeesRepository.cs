@@ -27,8 +27,7 @@ namespace WTP.Data.Repositorys
             
             if (user.Roles == "Manager")
             {
-                Guid id = new Guid(UserId);
-
+  
                 //Manager manager = new Manager();
                 //manager = _context.Manager.F;
                 employee.ManagerId = new Guid(UserId.ToString());

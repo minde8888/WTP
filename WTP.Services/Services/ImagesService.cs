@@ -9,10 +9,6 @@ namespace WTP.Services.Services
 {
     public class ImagesService
     {
-        public ImagesService()
-        {
-
-        }
         public string SaveImage(IFormFile imageFile, string path)
         {
             if (imageFile != null)
@@ -28,18 +24,15 @@ namespace WTP.Services.Services
             throw new Exception();
         }
 
-        public void ResizeImage(string imagePath, string imageName, IFormFile imageFile)
+        private void ResizeImage(string imagePath, string imageName, IFormFile imageFile)
         {
             int width = 200;
             int height = 200;
             Image image = Image.FromStream(imageFile.OpenReadStream(), true, true);
             var newImage = new Bitmap(width, height);
-            using (var a = Graphics.FromImage(newImage))
-            {
-                a.DrawImage(image, 0, 0, width, height);
-                newImage.Save(imagePath);
-            }
+            using var a = Graphics.FromImage(newImage);
+            a.DrawImage(image, 0, 0, width, height);
+            newImage.Save(imagePath);
         }
-
     }
 }

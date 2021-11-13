@@ -32,7 +32,7 @@ namespace WTP.Data.Repositorys
                     Surname = user.Surname,
                     Email = user.Email,
                     Role = user.Roles,
-                    PhoneNumber = user.PhoneNumber
+                    PhoneNumber = user.PhoneNumber                   
                 };
 
                 await _context.AddAsync(manager);
@@ -48,6 +48,7 @@ namespace WTP.Data.Repositorys
                     Email = user.Email,        
                     Role = user.Roles,
                     PhoneNumber = user.PhoneNumber,
+                    Occupation = user.Occupation,
                     ManagerId = user.ManagerId
                 };
 
@@ -56,7 +57,7 @@ namespace WTP.Data.Repositorys
             }
         }
 
-        public async Task<bool> removeRefreshToken(string rawUserId)
+        public async Task<bool> RemoveRefreshToken(string rawUserId)
         {
             IEnumerable<RefreshToken> refreshTokens = await _context.RefreshToken
            .Where(t => t.UserId.ToString() == rawUserId)

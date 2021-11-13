@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
+using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
@@ -17,7 +18,11 @@ namespace WTP.Api.Controllers
     {
         private readonly IAdminRepository _adminServices;
 
-        public AdminController(IAdminRepository adminServices, IBaseRepository<Manager> manager, IWebHostEnvironment hostEnvironment) : base(manager, hostEnvironment)
+        public AdminController(IAdminRepository adminServices, 
+            IBaseRepository<Manager> manager, 
+            IWebHostEnvironment hostEnvironment,
+            ImagesService imagesService) 
+            : base(manager, hostEnvironment, imagesService)
         {
             _adminServices = adminServices;
         }
