@@ -10,8 +10,7 @@ namespace WTP.Data.Interfaces
         Task<List<T>> GetItemIdAsync(Guid Id);
         Task AddItem(T t);
         Task DeleteItem(Guid Id);
-        Task UpdateItem(Guid Id, T t);
-        public void DeleteImage(string imagePath);
+        //Task UpdateItem( T t);
         Task<IEnumerable<T>> Search(string name);
     }
 }

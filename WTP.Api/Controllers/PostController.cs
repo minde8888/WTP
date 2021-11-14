@@ -106,11 +106,11 @@ namespace WTP.Api.Controllers
                 if (post.ImageFile != null)
                 {
                     var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
-                    _post.DeleteImage(imagePath);
+                    _imagesService.DeleteImage(imagePath);
                     post.ImageName = _imagesService.SaveImage(post.ImageFile, imagePath);
                 }
 
-                await _post.UpdateItem(id, post);
+                //await _post.UpdateItem(id, post);
                 return CreatedAtAction("GetPost", new { post.PostId }, post);
             }
             catch (Exception)

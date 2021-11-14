@@ -101,17 +101,20 @@ namespace WTP.Api
  
             services.AddTransient<IAdminRepository, AdminRepository>();
 
-            services.AddControllers();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WTP.Api", Version = "v1" });
             });
+
             services.AddControllers(options =>
             {
                 options.OutputFormatters.RemoveType<SystemTextJsonOutputFormatter>();
                 options.OutputFormatters.Add(new SystemTextJsonOutputFormatter(new JsonSerializerOptions(JsonSerializerDefaults.Web)
                 {
+                    
                     ReferenceHandler = ReferenceHandler.Preserve,
+           
                 }));
             });
         }

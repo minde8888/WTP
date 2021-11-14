@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-
 namespace WTP.Services.Services
 {
     public class ImagesService
@@ -15,8 +14,11 @@ namespace WTP.Services.Services
             {
                 string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
                 imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-                var imagePath = Path.Combine(path, "Images", imageName);
-
+                var imagePath = Path.Combine( "Images", imageName);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    imageFile.CopyTo(stream);
+                }
                 ResizeImage(imagePath, imageName, imageFile);
 
                 return imageName;
@@ -33,6 +35,12 @@ namespace WTP.Services.Services
             using var a = Graphics.FromImage(newImage);
             a.DrawImage(image, 0, 0, width, height);
             newImage.Save(imagePath);
+        }
+
+        public void DeleteImage(string imagePath)
+        {
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
         }
     }
 }

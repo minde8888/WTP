@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
+using WTP.Domain.Dtos.UpdateDto;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 
@@ -49,6 +51,27 @@ namespace WTP.Data.Repositorys
             manager.UserId =  new Guid(user.Id.ToString());
             await _context.AddAsync(manager);
             await _context.SaveChangesAsync();   
+        }
+
+        public async Task UpdateManager(UpdateManagerDto updateManagerDto)
+        {
+            var manager = _context.Manager.FirstOrDefault(m => m.Id == updateManagerDto.Id);
+     
+            manager.Name = updateManagerDto.Name;
+            //manager.Surname = updateManagerDto.Surname;
+            //entity.Occupation = updateManagerDto.Occupation;
+            //entity.PhoneNumber = updateManagerDto.PhoneNumber;
+            //entity.Email = updateManagerDto.Email;
+
+
+            //Manager user = _mapper.Map<Manager>(updateManagerDto);
+
+            //_context.Entry(user).State = EntityState.Modified;
+            //var user = _context.Manager.FirstOrDefault(m => m.Id == updateManagerDto.Id);
+            _context.Entry(manager).State = EntityState.Modified;
+            //var s=  await _context.AddAsync(manager);
+            //manager.Surname = updateManagerDto.Id.ToString();
+            await _context.SaveChangesAsync();
         }
     }
 }

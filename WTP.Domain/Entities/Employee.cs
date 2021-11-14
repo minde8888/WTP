@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WTP.Domain.Entities
 {
-    public class Employee : BaseEntiy
+    public class Employee : BaseEntity
     {       
         public Guid? ManagerId { get; set; }
     }

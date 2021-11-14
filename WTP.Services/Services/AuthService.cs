@@ -76,14 +76,14 @@ namespace WTP.Services.Services
                         if (employeeDto != null && employeeActive)
                             return employeeDto;
 
-                        throw new Exception("User does not exist");
+                        throw new ArgumentException("User does not exist");
 
                     default:
                         throw new Exception();
                 }
             }
 
-            throw new Exception("Can not get data from DB. Role dose not exisit");
+            throw new ArgumentException("Can not get data from DB. Role dose not exisit");
         }
 
          public async Task<bool> NewPassword(ResetPasswordRequest model)
