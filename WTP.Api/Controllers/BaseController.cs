@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
@@ -50,55 +49,42 @@ namespace WTP.Api.Controllers
             }
         }
 
-        //[HttpPost]
-
-        //public async Task<IActionResult> CreateItem(T t)
-        //{
-        //    //t.ImageName = SaveImage(t.ImageFile);
-        //    try
-        //    {
-        //        //if (!String.IsNullOrEmpty(t.ImageName))
-        //        //{
-        //        string UserId = HttpContext.User.FindFirstValue("id");
-        //        t.UserId = UserId;
-        //        await _baseServices.AddItem(t);
-        //        return CreatedAtAction("Get", new { t.Id }, t);
-        //        //}
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, "Error post data -> Base -> CreateItem");
-        //    }
-
-        //    return NoContent();
-        //}
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromForm] T t)
+        [HttpPost]
+        [Route("Update")]
+        public async Task<ActionResult<List<T>>> Update(IFormCollection formCollection)
         {
-            try
+            foreach (var key in formCollection)
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                if (id != t.Id)
-                    return BadRequest();
-
-                if (t.ImageFile != null)
-                {
-                    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
-                    _baseServices.DeleteImage(imagePath);
-                    t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
-                }
-
-                await _baseServices.UpdateItem(id, t);
-                return CreatedAtAction("GetManager", new { t.Id }, t);
+                var value = formCollection[key.ToString()]; // etc.
             }
-            catch (Exception)
+
+            foreach (var key in formCollection.Keys)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error upadte data");
+                var value = formCollection[key.ToString()]; // etc.
             }
+            return Ok();
+            //try
+            //{
+            //    var userId = new Guid(data["id"]);
+
+            //    if (!ModelState.IsValid)
+            //        return BadRequest(ModelState);
+
+            //    if (t.ImageFile != null)
+            //    {
+            //        var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
+            //        _baseServices.DeleteImage(imagePath);
+            //        t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
+            //    }
+
+            //    await _baseServices.UpdateItem(new Guid(data["id"]), data);
+            //    return CreatedAtAction("GetManager", new { t.Id }, t);
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError,
+            //        "Error upadte data");
+            //}
         }
 
         [HttpGet("Search")]
