@@ -50,20 +50,20 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("Update")]
-        public async Task<ActionResult<List<T>>> Update(IFormCollection formCollection)
-        {
-            foreach (var key in formCollection)
-            {
-                var value = formCollection[key.ToString()]; // etc.
-            }
+        //[HttpPost]
+        //[Route("Update")]
+        //public async Task<ActionResult<List<T>>> Update(IFormCollection formCollection)
+        //{
+        //    foreach (var key in formCollection)
+        //    {
+        //        var value = formCollection[key.ToString()]; // etc.
+        //    }
 
-            foreach (var key in formCollection.Keys)
-            {
-                var value = formCollection[key.ToString()]; // etc.
-            }
-            return Ok();
+        //    foreach (var key in formCollection.Keys)
+        //    {
+        //        var value = formCollection[key.ToString()]; // etc.
+        //    }
+        //    return Ok();
             //try
             //{
             //    var userId = new Guid(data["id"]);
@@ -86,7 +86,7 @@ namespace WTP.Api.Controllers
             //    return StatusCode(StatusCodes.Status500InternalServerError,
             //        "Error upadte data");
             //}
-        }
+        //}
 
         [HttpGet("Search")]
         [Authorize(Roles = "Manager, Administrator")]

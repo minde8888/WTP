@@ -56,21 +56,20 @@ namespace WTP.Data.Repositorys
         public async Task UpdateManager(UpdateManagerDto updateManagerDto)
         {
             var manager = _context.Manager.FirstOrDefault(m => m.Id == updateManagerDto.Id);
-     
+
             manager.Name = updateManagerDto.Name;
-            //manager.Surname = updateManagerDto.Surname;
-            //entity.Occupation = updateManagerDto.Occupation;
-            //entity.PhoneNumber = updateManagerDto.PhoneNumber;
-            //entity.Email = updateManagerDto.Email;
+            manager.Surname = updateManagerDto.Surname;
+            manager.Occupation = updateManagerDto.Occupation;
+            manager.PhoneNumber = updateManagerDto.PhoneNumber;
+            manager.DateUpdated = updateManagerDto.DateUpdated;
+            manager.ImageName = updateManagerDto.ImageName;
+
 
 
             //Manager user = _mapper.Map<Manager>(updateManagerDto);
 
-            //_context.Entry(user).State = EntityState.Modified;
-            //var user = _context.Manager.FirstOrDefault(m => m.Id == updateManagerDto.Id);
             _context.Entry(manager).State = EntityState.Modified;
-            //var s=  await _context.AddAsync(manager);
-            //manager.Surname = updateManagerDto.Id.ToString();
+
             await _context.SaveChangesAsync();
         }
     }

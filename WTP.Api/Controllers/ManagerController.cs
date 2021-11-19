@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
@@ -22,18 +24,21 @@ namespace WTP.Api.Controllers
     public class ManagerController : BaseController<Manager>
     {
         private readonly IManagerRepository _managerRepository;
-        private readonly IWebHostEnvironment _hostEnvironment;  
+        private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
+        private readonly IMapper _mapper;
 
         public ManagerController(IManagerRepository managerRepository,
             IBaseRepository<Manager> manager,
             IWebHostEnvironment hostEnvironment,
-            ImagesService imagesService)
+            ImagesService imagesService,
+            IMapper mapper)
             : base(manager, hostEnvironment, imagesService)
         {
             _managerRepository = managerRepository;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -70,18 +75,8 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> UpdateAddressAsync(string id, [FromForm] UpdateManagerDto updateManagerDto)
+        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] UpdateManagerDto updateManagerDto)
         {
-            
-
-            //var address = _context.Address.FirstOrDefault(a => a.ManagerId == id);
-
-            //address.Street = updateEmployeeAddressDto.Address;
-
-            //_context.Update(address);
-
-
-
             try
             {
                 if (id == null)
@@ -92,17 +87,20 @@ namespace WTP.Api.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                //if (updateManagerDto.ImageFile != null && updateManagerDto.ImageName != null)
-                //{
-                //    string imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", updateManagerDto.ImageName);
-                //    _imagesService.DeleteImage(imagePath);
-                //    updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile, imagePath);
-                //}
+                if (updateManagerDto.ImageFile != null && updateManagerDto.ImageName != null)
+                {
+                    string imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", updateManagerDto.ImageName);
+                    _imagesService.DeleteImage(imagePath);
+                    updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile);
+                }
 
-                 await _managerRepository.UpdateManager(updateManagerDto);
+                await _managerRepository.UpdateManager(updateManagerDto);
 
-                //return CreatedAtAction("Get", new { updateManagerDto.Id }, updateManagerDto);
-                return Ok();
+                var manager = _mapper.Map<ReturnUpdateManagerDto>(updateManagerDto);
+                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+                manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);
+
+                return CreatedAtAction("Get", new { manager.Id }, manager);
             }
             catch (DbUpdateConcurrencyException)
             {

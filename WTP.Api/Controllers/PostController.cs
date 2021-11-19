@@ -73,7 +73,7 @@ namespace WTP.Api.Controllers
         public async Task<IActionResult> Createmanager([FromForm] Post post)
         {
             var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
-            post.ImageName = _imagesService.SaveImage(post.ImageFile, imagePath);
+            post.ImageName = _imagesService.SaveImage(post.ImageFile);
 
             try
             {
@@ -91,33 +91,33 @@ namespace WTP.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Administrator, Manager")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] Post post)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+        //[HttpPut("{id}")]
+        //[Authorize(Roles = "Administrator, Manager")]
+        //public async Task<IActionResult> Put(Guid id, [FromForm] Post post)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //            return BadRequest(ModelState);
 
-                if (id != post.PostId)
-                    return BadRequest();
+        //        if (id != post.PostId)
+        //            return BadRequest();
 
-                if (post.ImageFile != null)
-                {
-                    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
-                    _imagesService.DeleteImage(imagePath);
-                    post.ImageName = _imagesService.SaveImage(post.ImageFile, imagePath);
-                }
+        //        if (post.ImageFile != null)
+        //        {
+        //            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
+        //            _imagesService.DeleteImage(imagePath);
+        //            post.ImageName = _imagesService.SaveImage(post.ImageFile);
+        //        }
 
-                //await _post.UpdateItem(id, post);
-                return CreatedAtAction("GetPost", new { post.PostId }, post);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error upadte data");
-            }
-        }
+        //        //await _post.UpdateItem(id, post);
+        //        return CreatedAtAction("GetPost", new { post.PostId }, post);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            "Error upadte data");
+        //    }
+        //}
     }
 }

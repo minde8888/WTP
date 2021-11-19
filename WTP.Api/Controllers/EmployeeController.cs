@@ -53,14 +53,14 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewEmployee([FromForm] Employee employee)
+        public IActionResult AddNewEmployee([FromForm] EmployeeDto employee)
         {
             try
             {
                 if (!String.IsNullOrEmpty(employee.ImageName))
                 {
                     string path = _hostEnvironment.ContentRootPath;
-                    var imageName = _imagesService.SaveImage(employee.ImageFile, path);
+                    //var imageName = _imagesService.SaveImage(employee.ImageFile);
                 }
                 string UserId = HttpContext.User.FindFirstValue("id");
                 _employeeRepository.AddEmployee(UserId, employee);

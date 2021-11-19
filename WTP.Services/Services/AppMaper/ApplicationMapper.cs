@@ -11,11 +11,16 @@ namespace WTP.Data.Helpers
         public ApplicationMapper()
         {
             CreateMap<Manager, ManagerDto> ().ReverseMap();
-            //CreateMap<Manager, UpdateManagerDto>().ReverseMap();
+            CreateMap<Manager, UpdateManagerDto>().ReverseMap();
+            CreateMap<ReturnUpdateManagerDto, UpdateManagerDto>().ReverseMap();
+
             CreateMap<Manager, EmployeeInformationDto>().ReverseMap();          
             CreateMap<Employee, EmployeeInformationDto>().ReverseMap();
+
             CreateMap<AddressDto, Address>().ReverseMap();
+
             CreateMap<Employee, EmployeeDto>().ReverseMap();
+
             CreateMap<Post, PostDto>().ReverseMap();
         }
     }

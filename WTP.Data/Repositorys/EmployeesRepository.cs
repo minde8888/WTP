@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
+using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 
@@ -12,30 +14,28 @@ namespace WTP.Data.Repositorys
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
-        public EmployeesRepository(AppDbContext context, UserManager<ApplicationUser> userManager)
+        public EmployeesRepository(AppDbContext context, 
+            UserManager<ApplicationUser> userManager,
+            IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
-            //_mapper = mapper;
+            _mapper = mapper;
         }
 
-        public async Task AddEmployee(string UserId, Employee employee)
+        public async Task AddEmployee(string UserId, EmployeeDto employee)
         {          
             var user = await _userManager.FindByIdAsync(UserId);
             
             if (user.Roles == "Manager")
             {
-  
-                //Manager manager = new Manager();
-                //manager = _context.Manager.F;
                 employee.ManagerId = new Guid(UserId.ToString());
 
-                //employee.ManagerId = new Guid(Manager.Id.ToString());
-                //var a = _context.Manager.Find(UserId);
-                //employee.ManagerId = new Guid();
-                await _context.AddAsync(employee);
+                Employee newEmploy = _mapper.Map<Employee>(employee);
+
+                await _context.AddAsync(newEmploy);
                 await _context.SaveChangesAsync();
             }
         } 

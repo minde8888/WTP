@@ -46,7 +46,6 @@ namespace WTP.Data.Repositorys
             return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync();
         }
 
-        [Authorize(Roles = "Manager, Administrator")]
         public async Task<List<T>> GetItemAsync(string ImageSrc)
         {
             var items = await _context.Set<T>().Include(t => t.Address)
@@ -54,7 +53,7 @@ namespace WTP.Data.Repositorys
 
             foreach (var item in items)
             {
-                item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
+                //item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
             }
             return items;
         }

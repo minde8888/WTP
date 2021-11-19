@@ -8,7 +8,7 @@ namespace WTP.Services.Services
 {
     public class ImagesService
     {
-        public string SaveImage(IFormFile imageFile, string path)
+        public string SaveImage(IFormFile imageFile)
         {
             if (imageFile != null)
             {
@@ -19,14 +19,14 @@ namespace WTP.Services.Services
                 {
                     imageFile.CopyTo(stream);
                 }
-                ResizeImage(imagePath, imageName, imageFile);
+                ResizeImage(imagePath, imageFile);
 
                 return imageName;
             }
             throw new Exception();
         }
 
-        private void ResizeImage(string imagePath, string imageName, IFormFile imageFile)
+        private void ResizeImage(string imagePath, IFormFile imageFile)
         {
             int width = 200;
             int height = 200;
