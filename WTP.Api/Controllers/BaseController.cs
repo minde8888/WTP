@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
@@ -51,37 +50,43 @@ namespace WTP.Api.Controllers
             }
         }
 
-        //[HttpPut]
-        //[Route("Update")]
-        //public async Task<ActionResult<List<T>>> Update([FromForm] T t)
-        //{
-        //    try
-        //    {
+        [HttpPost]
+        [Route("Update")]
+        public async Task<ActionResult<List<T>>> Update(IFormCollection formCollection)
+        {
+            foreach (var key in formCollection)
+            {
+                var value = formCollection[key.ToString()]; // etc.
+            }
 
-        //        if (!ModelState.IsValid)
-        //            return BadRequest(ModelState);
+            foreach (var key in formCollection.Keys)
+            {
+                var value = formCollection[key.ToString()]; // etc.
+            }
+            return Ok();
+            //try
+            //{
+            //    var userId = new Guid(data["id"]);
 
-        //        if (t.ImageFile != null && t.ImageName != null)
-        //        {
-        //            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
-        //            _imagesService.DeleteImage(imagePath);
-        //            t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
-        //        }
+            //    if (!ModelState.IsValid)
+            //        return BadRequest(ModelState);
 
-        //        await _baseRepository.UpdateItem( t);
-        //        return CreatedAtAction("GetManager", new { t.Id }, t);
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //           "Error save DB");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            "Error upadte data");
-        //    }
-        //}
+            //    if (t.ImageFile != null)
+            //    {
+            //        var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
+            //        _baseServices.DeleteImage(imagePath);
+            //        t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
+            //    }
+
+            //    await _baseServices.UpdateItem(new Guid(data["id"]), data);
+            //    return CreatedAtAction("GetManager", new { t.Id }, t);
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError,
+            //        "Error upadte data");
+            //}
+        }
 
         [HttpGet("Search")]
         [Authorize(Roles = "Manager, Administrator")]
