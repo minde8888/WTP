@@ -144,7 +144,8 @@ namespace WTP.Api.Controllers
                 try
                 {
                     var token = await _authService.GenerateJwtToken(existingUser);
-                    var result = await _authService.GetUserInfo(existingUser, token);
+                    String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+                    var result = await _authService.GetUserInfo(existingUser, token, ImageSrc);
                     var json = JsonSerializer.Serialize(result);
                     return Ok(json);
                 }

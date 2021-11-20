@@ -12,7 +12,7 @@ namespace WTP.Data.Helpers
         {
             CreateMap<Manager, ManagerDto> ().ReverseMap();
             CreateMap<Manager, UpdateManagerDto>().ReverseMap();
-            CreateMap<ReturnUpdateManagerDto, UpdateManagerDto>().ReverseMap();
+            CreateMap<ReturnManagerDto, UpdateManagerDto>().ReverseMap();
 
             CreateMap<Manager, EmployeeInformationDto>().ReverseMap();          
             CreateMap<Employee, EmployeeInformationDto>().ReverseMap();

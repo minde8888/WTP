@@ -40,7 +40,7 @@ namespace WTP.Services.Services
             _jwtConfig = optionsMonitor.CurrentValue;
         }
 
-        public async Task<List<EmployeeInformationDto>> GetUserInfo(ApplicationUser user, AuthResult token)
+        public async Task<List<EmployeeInformationDto>> GetUserInfo(ApplicationUser user, AuthResult token, string ImageSrc)
         {
             var role = await _userManager.GetRolesAsync(user);
 
@@ -50,13 +50,24 @@ namespace WTP.Services.Services
                 {
                     case "Manager":
 
+                        string imgName = "";
+
                         var manager = await _context.Manager
                         .Include(employee => employee.Employees)
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))
                         .ToListAsync();
+
+                     
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+                       
+                        foreach (var image in managerDto)
+                        {
+                            imgName = image.ImageName;
+                            image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                        }
+                            
                         var managerActive = managerDto.Any(i => i.IsActive == true);
 
                         if (managerDto != null && managerActive)

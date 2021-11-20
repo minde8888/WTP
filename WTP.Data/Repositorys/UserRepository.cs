@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,13 @@ namespace WTP.Data.Repositorys
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
         public UserRepository(
+            IMapper mapper,
             AppDbContext context)
         {
+            _mapper = mapper;
             _context = context;
         }
 
@@ -25,32 +29,35 @@ namespace WTP.Data.Repositorys
         {
             if (user.Roles == "Manager")
             {
-                Manager manager = new()
-                {
-                    UserId = user.UserId,
-                    Name = user.UserName,
-                    Surname = user.Surname,
-                    Email = user.Email,
-                    Role = user.Roles,
-                    PhoneNumber = user.PhoneNumber                   
-                };
+                Manager manager = _mapper.Map<Manager>(user);
+                //Manager manager = new()
+                //{
+                //    UserId = user.UserId,
+                //    Name = user.UserName,
+                //    Surname = user.Surname,
+                //    Email = user.Email,
+                //    Role = user.Roles,
+                //    PhoneNumber = user.PhoneNumber                   
+                //};
 
                 await _context.AddAsync(manager);
                 await _context.SaveChangesAsync();
             }
             if (user.Roles == "Employee")
             {
-                Employee employee = new()
-                {
-                    UserId = user.UserId,
-                    Name = user.UserName,
-                    Surname = user.Surname,  
-                    Email = user.Email,        
-                    Role = user.Roles,
-                    PhoneNumber = user.PhoneNumber,
-                    Occupation = user.Occupation,
-                    ManagerId = user.ManagerId
-                };
+                Employee employee = _mapper.Map<Employee>(user);
+
+                //Employee employee = new()
+                //{
+                //    UserId = user.UserId,
+                //    Name = user.UserName,
+                //    Surname = user.Surname,  
+                //    Email = user.Email,        
+                //    Role = user.Roles,
+                //    PhoneNumber = user.PhoneNumber,
+                //    Occupation = user.Occupation,
+                //    ManagerId = user.ManagerId
+                //};
 
                 await _context.AddAsync(employee);
                 await _context.SaveChangesAsync();

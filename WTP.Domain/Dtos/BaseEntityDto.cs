@@ -16,7 +16,7 @@ namespace WTP.Domain.Dtos
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }
-        public long MobileNumber { get; set; }
+        public string MobileNumber { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
         public string ImageName { get; set; } 
