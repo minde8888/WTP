@@ -57,11 +57,11 @@ namespace WTP.Services.Services
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))
                         .ToListAsync();
-
-                     
+                                             
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
+
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
-                       
+
                         foreach (var image in managerDto)
                         {
                             imgName = image.ImageName;
@@ -81,7 +81,15 @@ namespace WTP.Services.Services
                             .Where(u => u.UserId == new Guid(user.Id.ToString()))
                             .ToListAsync();
                         var employeeDto = _mapper.Map<List<EmployeeInformationDto>>(employee);
+
                         employeeDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+
+                        foreach (var image in employeeDto)
+                        {
+                            imgName = image.ImageName;
+                            image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                        }
+
                         var employeeActive = employeeDto.Any(i => i.IsActive == true);
 
                         if (employeeDto != null && employeeActive)
