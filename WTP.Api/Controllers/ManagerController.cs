@@ -97,6 +97,7 @@ namespace WTP.Api.Controllers
                 await _managerRepository.UpdateManager(updateManagerDto);
 
                 var manager = _mapper.Map<ReturnManagerDto>(updateManagerDto);
+
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);
 

@@ -60,14 +60,12 @@ namespace WTP.Data.Repositorys
             manager.Name = updateManagerDto.Name;
             manager.Surname = updateManagerDto.Surname;
             manager.Occupation = updateManagerDto.Occupation;
-            manager.PhoneNumber = updateManagerDto.PhoneNumber;
             manager.DateUpdated = updateManagerDto.DateUpdated;
-            manager.ImageName = updateManagerDto.ImageName;
-
-
-
-            //Manager user = _mapper.Map<Manager>(updateManagerDto);
-
+            if (updateManagerDto.ImageName != null)
+            {
+                manager.ImageName = updateManagerDto.ImageName;
+            }
+            
             _context.Entry(manager).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();

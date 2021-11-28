@@ -14,5 +14,7 @@ namespace WTP.Domain.Dtos.UpdateDto
         public string ImageName { get; set; }
         public IFormFile ImageFile { get; set; }
         public string ImageSrc { get; set; }
+        public string Role { get; set; }
+        public string  Email { get; set; }
     }
 }

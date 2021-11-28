@@ -50,44 +50,6 @@ namespace WTP.Api.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("Update")]
-        //public async Task<ActionResult<List<T>>> Update(IFormCollection formCollection)
-        //{
-        //    foreach (var key in formCollection)
-        //    {
-        //        var value = formCollection[key.ToString()]; // etc.
-        //    }
-
-        //    foreach (var key in formCollection.Keys)
-        //    {
-        //        var value = formCollection[key.ToString()]; // etc.
-        //    }
-        //    return Ok();
-            //try
-            //{
-            //    var userId = new Guid(data["id"]);
-
-            //    if (!ModelState.IsValid)
-            //        return BadRequest(ModelState);
-
-            //    if (t.ImageFile != null)
-            //    {
-            //        var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", t.ImageName);
-            //        _baseServices.DeleteImage(imagePath);
-            //        t.ImageName = _imagesService.SaveImage(t.ImageFile, imagePath);
-            //    }
-
-            //    await _baseServices.UpdateItem(new Guid(data["id"]), data);
-            //    return CreatedAtAction("GetManager", new { t.Id }, t);
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError,
-            //        "Error upadte data");
-            //}
-        //}
-
         [HttpGet("Search")]
         [Authorize(Roles = "Manager, Administrator")]
         public async Task<ActionResult<IEnumerable<T>>> Search(string name)
