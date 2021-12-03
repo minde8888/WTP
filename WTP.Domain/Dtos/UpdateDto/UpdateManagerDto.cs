@@ -16,5 +16,8 @@ namespace WTP.Domain.Dtos.UpdateDto
         public string ImageSrc { get; set; }
         public string Role { get; set; }
         public string  Email { get; set; }
+        public string Height { get; set; }
+        public string Width { get; set; }
+        public AddressDto Address { get; set; }
     }
 }

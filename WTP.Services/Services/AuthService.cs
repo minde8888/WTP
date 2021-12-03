@@ -53,11 +53,12 @@ namespace WTP.Services.Services
                         string imgName = "";
 
                         var manager = await _context.Manager
+                        .Include(address => address.Address)
                         .Include(employee => employee.Employees)
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))
                         .ToListAsync();
-                                             
+
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
 
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
@@ -67,7 +68,7 @@ namespace WTP.Services.Services
                             imgName = image.ImageName;
                             image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
                         }
-                            
+
                         var managerActive = managerDto.Any(i => i.IsActive == true);
 
                         if (managerDto != null && managerActive)
@@ -105,7 +106,7 @@ namespace WTP.Services.Services
             throw new ArgumentException("Can not get data from DB. Role dose not exisit");
         }
 
-         public async Task<bool> NewPassword(ResetPasswordRequest model)
+        public async Task<bool> NewPassword(ResetPasswordRequest model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -113,7 +114,7 @@ namespace WTP.Services.Services
                 return false;
             }
             else if (user.ResetToken != model.Token
-                && user.ResetTokenExpires < DateTime.UtcNow) 
+                && user.ResetTokenExpires < DateTime.UtcNow)
             {
                 return false;
             }

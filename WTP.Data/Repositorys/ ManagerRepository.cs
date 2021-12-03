@@ -26,7 +26,7 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _userManager = userManager;
         }
-  
+
         public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
         {
             var items = await _context.Manager.Include(manager => manager.Address).Include(employee => employee.Employees)
@@ -45,17 +45,19 @@ namespace WTP.Data.Repositorys
             return null;
         }
 
-        public async Task AddManager(Manager manager, string  UserId)
+        public async Task AddManager(Manager manager, string UserId)
         {
             var user = await _userManager.FindByIdAsync(UserId);
-            manager.UserId =  new Guid(user.Id.ToString());
+            manager.UserId = new Guid(user.Id.ToString());
             await _context.AddAsync(manager);
-            await _context.SaveChangesAsync();   
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateManager(UpdateManagerDto updateManagerDto)
         {
-            var manager = _context.Manager.FirstOrDefault(m => m.Id == updateManagerDto.Id);
+            var manager = _context.Manager.Include(maneger => maneger.Address).ThenInclude(e => e.Employee).ThenInclude(p => p.Posts).Where(m => m.Id == updateManagerDto.Id).FirstOrDefault(); ;
+
+
 
             manager.Name = updateManagerDto.Name;
             manager.Surname = updateManagerDto.Surname;
@@ -65,7 +67,28 @@ namespace WTP.Data.Repositorys
             {
                 manager.ImageName = updateManagerDto.ImageName;
             }
-            
+
+            if (manager.Address != null)
+            {
+                manager.Address.City = updateManagerDto.Address.City;
+                manager.Address.Country = updateManagerDto.Address.Country;
+                manager.Address.Street = updateManagerDto.Address.Street;
+                manager.Address.Zip = updateManagerDto.Address.Zip;
+                _context.Entry(manager.Address).State = EntityState.Modified;
+            }
+            else
+            {
+                Address address = new()
+                {
+                    City = updateManagerDto.Address.City,
+                    Country = updateManagerDto.Address.Country,
+                    Street = updateManagerDto.Address.Street,
+                    Zip = updateManagerDto.Address.Zip,
+                    ManagerId = updateManagerDto.Id
+                };
+                _context.Address.Add(address);
+            }
+
             _context.Entry(manager).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();

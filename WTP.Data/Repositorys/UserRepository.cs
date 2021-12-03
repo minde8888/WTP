@@ -27,14 +27,14 @@ namespace WTP.Data.Repositorys
 
         public async Task AddUser(UserRegistrationDto user)
         {
-            if (user.Roles == "Manager")
+            if (user.Role == "Manager")
             {
-                Manager manager = _mapper.Map<Manager>(user);
+                Manager manager = _mapper.Map<Manager>(user);//nesaugoti prie klaidos !!!!!!!!!!!!!
 
                 await _context.AddAsync(manager);
                 await _context.SaveChangesAsync();
             }
-            if (user.Roles == "Employee")
+            if (user.Role == "Employee")
             {
                 Employee employee = _mapper.Map<Employee>(user);
 

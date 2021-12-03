@@ -61,34 +61,34 @@ namespace WTP.Api.Controllers
 
                 var newUser = new ApplicationUser()
                 {
-                    Roles = user.Roles,
+                    Roles = user.Role,
                     Email = user.Email,
                     UserName = _authService.StringRandom(),
                     PhoneNumber = user.PhoneNumber
                 };
 
-                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
+                var isCreated = await _userManager.CreateAsync(newUser, user.Password);//tvarkyti
 
                 if (isCreated.Succeeded)
                 {
                     try
                     {
-                        await _userManager.AddToRoleAsync (newUser, user.Roles.ToString());
+                        await _userManager.AddToRoleAsync (newUser, user.Role.ToString());
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 
                         //return Ok(await _authService.GenerateJwtToken(newUser));
                         return Ok();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         return BadRequest(new RegistrationResponse()
                         {
                             Errors = new List<string>() {
-                                "Error to add user in the DB !!!"
+                                "Error to add user in the DB !!!  " + ex
                             },
                             Success = false
-                        });
+                        }); ;
                     }
                 }
                 else

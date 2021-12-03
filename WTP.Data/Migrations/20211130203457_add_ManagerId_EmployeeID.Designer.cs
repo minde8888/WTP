@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,9 +10,10 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211130203457_add_ManagerId_EmployeeID")]
+    partial class add_ManagerId_EmployeeID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +157,9 @@ namespace WTP.Data.Migrations
 
                     b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("Phone")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Street")
                         .HasColumnType("text");
@@ -308,7 +313,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.Employee", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("EmployeeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -348,7 +353,7 @@ namespace WTP.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("EmployeeId");
 
                     b.HasIndex("ManagerId");
 
@@ -360,7 +365,7 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ManagerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -397,7 +402,7 @@ namespace WTP.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("ManagerId");
 
                     b.HasIndex("UserId")
                         .IsUnique();

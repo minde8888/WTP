@@ -28,27 +28,27 @@ namespace WTP.Api.Controllers
             _imagesService = imagesService;
         }
 
-        [HttpGet("id")]
-        public async Task<ActionResult<List<T>>> Get(String id)
-        {
-            try
-            {
-                var userId = new Guid(id);
-                if (userId == Guid.Empty)
-                    return BadRequest();
+        //[HttpGet("id")]
+        //public async Task<ActionResult<List<T>>> Get(String id)
+        //{
+        //    try
+        //    {
+        //        var userId = new Guid(id);
+        //        if (userId == Guid.Empty)
+        //            return BadRequest();
 
-                var result = await _baseRepository.GetItemIdAsync(userId);
-                if (result == null)
-                    return NotFound();
+        //        var result = await _baseRepository.GetItemIdAsync(userId);
+        //        if (result == null)
+        //            return NotFound();
 
-                return result;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Could not find web user account");
-            }
-        }
+        //        return result;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            "Could not find web user account");
+        //    }
+        //}
 
         [HttpGet("Search")]
         [Authorize(Roles = "Manager, Administrator")]
@@ -70,24 +70,24 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            try
-            {
-                var ItemToDelete = await _baseRepository.GetItemIdAsync(id);
-                if (ItemToDelete == null)
-                {
-                    return NotFound($"Manager with Id = {id} not found");
-                }
-                await _baseRepository.DeleteItem(id);
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error deleting data");
-            }
-        }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //    try
+        //    {
+        //        var ItemToDelete = await _baseRepository.GetItemIdAsync(id);
+        //        if (ItemToDelete == null)
+        //        {
+        //            return NotFound($"Manager with Id = {id} not found");
+        //        }
+        //        await _baseRepository.DeleteItem(id);
+        //        return Ok();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            "Error deleting data");
+        //    }
+        //}
     }
 }

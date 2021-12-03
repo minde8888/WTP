@@ -46,27 +46,27 @@ namespace WTP.Api.Controllers
 
    
      
-        [HttpGet("id")]
-        [Authorize(Roles = "Administrator, Manager")]
-        public async Task<ActionResult<List<Post>>> GetPost(Guid id)
-        {
-            try
-            {
-                if (id == Guid.Empty)
-                    return BadRequest();
+        //[HttpGet("id")]
+        //[Authorize(Roles = "Administrator, Manager")]
+        //public async Task<ActionResult<List<Post>>> GetPost(Guid id)
+        //{
+        //    try
+        //    {
+        //        if (id == Guid.Empty)
+        //            return BadRequest();
 
-                var result = await _post.GetItemIdAsync(id);
-                if (result == null)
-                    return NotFound();
+        //        var result = await _post.GetItemIdAsync(id);
+        //        if (result == null)
+        //            return NotFound();
 
-                return result;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error Get by id data from the database");
-            }
-        }
+        //        return result;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            "Error Get by id data from the database");
+        //    }
+        //}
 
         [HttpPost]
         [Authorize(Roles = "Administrator, Manager")]

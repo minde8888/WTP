@@ -18,7 +18,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("v1/api/[controller]")]
     public class ManagerController : BaseController<Manager>

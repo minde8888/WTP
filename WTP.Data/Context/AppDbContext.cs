@@ -27,6 +27,9 @@ namespace WTP.Data.Context
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.HasDefaultSchema("Identity");
 
+            //builder.Entity<Manager>().OwnsOne(a => a.Address);
+            //builder.Entity<Employee>().OwnsOne(a => a.Address);
+
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
                 entity.HasNoKey();

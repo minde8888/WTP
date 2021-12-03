@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WTP.Domain.Dtos;
+using WTP.Domain.Dtos.Requests;
 using WTP.Domain.Dtos.UpdateDto;
 using WTP.Domain.Entities;
 using WTP.Services.Services.Dtos;
@@ -12,8 +13,9 @@ namespace WTP.Data.Helpers
         {
             CreateMap<Manager, ManagerDto> ().ReverseMap();
             CreateMap<Manager, UpdateManagerDto>().ReverseMap();
+            CreateMap<Manager, UserRegistrationDto>().ReverseMap();            
             CreateMap<ReturnManagerDto, UpdateManagerDto>().ReverseMap();
-
+ 
             CreateMap<Manager, EmployeeInformationDto>().ReverseMap();          
             CreateMap<Employee, EmployeeInformationDto>().ReverseMap();
 

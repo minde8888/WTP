@@ -13,5 +13,6 @@ namespace WTP.Domain.Dtos
         public string ImageSrc { get; set; }
         public string Role { get; set; }
         public string Email { get; set; }
+        public AddressDto Address { get; set; }
     }
 }

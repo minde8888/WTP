@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WTP.Data.Context;
@@ -9,9 +10,10 @@ using WTP.Data.Context;
 namespace WTP.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211129212959_addrss-update")]
+    partial class addrssupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +157,9 @@ namespace WTP.Data.Migrations
 
                     b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("Phone")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Street")
                         .HasColumnType("text");

@@ -41,10 +41,10 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> GetItemIdAsync(Guid Id)
-        {
-            return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync();
-        }
+        //public async Task<List<T>> GetItemIdAsync(Guid Id)
+        //{
+        //    return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync();
+        //}
 
         public async Task<List<T>> GetItemAsync(string ImageSrc)
         {
