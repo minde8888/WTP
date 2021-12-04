@@ -36,7 +36,7 @@ namespace WTP.Data.Repositorys
             }
             if (user.Role == "Employee")
             {
-                Employee employee = _mapper.Map<Employee>(user);
+                Employee employee = _mapper.Map<Employee>(user);              
 
                 await _context.AddAsync(employee);
                 await _context.SaveChangesAsync();

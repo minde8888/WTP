@@ -17,13 +17,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using WTP.Api.Configuration;
 using WTP.Data.Context;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Roles;
 using WTP.Domain.Entities.Settings;
 using WTP.Services.Services;
+using WTP.Services.Services.AppMapper;
 
 namespace WTP.Api
 {

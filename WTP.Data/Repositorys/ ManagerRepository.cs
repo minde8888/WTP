@@ -26,10 +26,19 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _userManager = userManager;
         }
-
+        public async Task<List<Manager>> GetItemIdAsync(Guid Id)
+        {
+            return await _context.Manager.
+                Include(t => t.Address).
+                Include(e => e.Employees).
+                Include(p => p.Posts).
+                Where(x => x.Id == Id).ToListAsync();
+        }
         public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
         {
-            var items = await _context.Manager.Include(manager => manager.Address).Include(employee => employee.Employees)
+            var items = await _context.Manager.
+                Include(manager => manager.Address).
+                Include(employee => employee.Employees)
                 .ToListAsync();
 
             var i = _mapper.Map<List<ManagerDto>>(items);
@@ -55,9 +64,10 @@ namespace WTP.Data.Repositorys
 
         public async Task UpdateManager(UpdateManagerDto updateManagerDto)
         {
-            var manager = _context.Manager.Include(maneger => maneger.Address).ThenInclude(e => e.Employee).ThenInclude(p => p.Posts).Where(m => m.Id == updateManagerDto.Id).FirstOrDefault(); ;
-
-
+            var manager = _context.Manager.
+                Include(manager => manager.Address).
+                Include(employee => employee.Employees).
+                Where(m => m.Id == updateManagerDto.Id).FirstOrDefault(); 
 
             manager.Name = updateManagerDto.Name;
             manager.Surname = updateManagerDto.Surname;

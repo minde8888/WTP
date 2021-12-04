@@ -18,7 +18,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("v1/api/[controller]")]
     public class ManagerController : BaseController<Manager>
@@ -39,6 +39,29 @@ namespace WTP.Api.Controllers
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
             _mapper = mapper;
+        }
+
+        [HttpGet("id")]
+        public async Task<ActionResult<List<ManagerDto>>> Get(String id)
+        {
+            try
+            {
+                var userId = new Guid(id);
+                if (userId == Guid.Empty)
+                    return BadRequest();
+
+                var result = await _managerRepository.GetItemIdAsync(userId);
+                if (result == null)
+                    return NotFound();
+
+                var manager = _mapper.Map<List<Manager>>(result);
+                return Ok(manager);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Could not find web user account");
+            }
         }
 
         [HttpGet]
@@ -96,7 +119,7 @@ namespace WTP.Api.Controllers
 
                 await _managerRepository.UpdateManager(updateManagerDto);
 
-                var manager = _mapper.Map<ReturnManagerDto>(updateManagerDto);
+                var manager = _mapper.Map<UpdateManagerDto, ReturnManagerDto>(updateManagerDto);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);

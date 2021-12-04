@@ -77,7 +77,6 @@ namespace WTP.Api.Controllers
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 
-                        //return Ok(await _authService.GenerateJwtToken(newUser));
                         return Ok();
                     }
                     catch (Exception ex)

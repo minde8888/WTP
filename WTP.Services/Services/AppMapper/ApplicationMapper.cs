@@ -5,19 +5,21 @@ using WTP.Domain.Dtos.UpdateDto;
 using WTP.Domain.Entities;
 using WTP.Services.Services.Dtos;
 
-namespace WTP.Data.Helpers
+namespace WTP.Services.Services.AppMapper
 {
     public class ApplicationMapper : Profile
     {
         public ApplicationMapper()
         {
-            CreateMap<Manager, ManagerDto> ().ReverseMap();
+            CreateMap<Manager, ManagerDto>().ReverseMap();
             CreateMap<Manager, UpdateManagerDto>().ReverseMap();
-            CreateMap<Manager, UserRegistrationDto>().ReverseMap();            
-            CreateMap<ReturnManagerDto, UpdateManagerDto>().ReverseMap();
- 
-            CreateMap<Manager, EmployeeInformationDto>().ReverseMap();          
-            CreateMap<Employee, EmployeeInformationDto>().ReverseMap();
+            CreateMap<Manager, UserRegistrationDto>().ReverseMap();
+            CreateMap<UpdateManagerDto, ReturnManagerDto>().ReverseMap()
+            .ForMember(m => m.Address, opt =>
+            opt.MapFrom(m => m.Address));
+            CreateMap<Manager, EmployeeInformationDto>().ReverseMap();
+
+            CreateMap<UserRegistrationDto, Employee>().ReverseMap();
 
             CreateMap<AddressDto, Address>().ReverseMap();
 
