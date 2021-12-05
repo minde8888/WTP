@@ -27,18 +27,21 @@ namespace WTP.Api.Controllers
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
         private readonly IMapper _mapper;
+        private readonly ManagerService _managerService;
 
         public ManagerController(IManagerRepository managerRepository,
             IBaseRepository<Manager> manager,
             IWebHostEnvironment hostEnvironment,
             ImagesService imagesService,
-            IMapper mapper)
+            IMapper mapper,
+            ManagerService managerService)
             : base(manager, hostEnvironment, imagesService)
         {
             _managerRepository = managerRepository;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
             _mapper = mapper;
+            _managerService = managerService;
         }
 
         [HttpGet("id")]
@@ -50,12 +53,16 @@ namespace WTP.Api.Controllers
                 if (userId == Guid.Empty)
                     return BadRequest();
 
-                var result = await _managerRepository.GetItemIdAsync(userId);
-                if (result == null)
+                var manager = await _managerRepository.GetItemIdAsync(userId);
+                if (manager == null)
                     return NotFound();
 
-                var manager = _mapper.Map<List<Manager>>(result);
-                return Ok(manager);
+                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+
+                var managerDto = _mapper.Map<List<ManagerDto>>(manager);
+                var result = _managerService.GetImagesAsync(managerDto, ImageSrc);
+
+                return Ok(managerDto);
             }
             catch (Exception)
             {

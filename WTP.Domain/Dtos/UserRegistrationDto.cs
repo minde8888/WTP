@@ -16,5 +16,6 @@ namespace WTP.Domain.Dtos.Requests
         public string Occupation { get; set; }
         public AddressDto Address { get; set; }
         public Guid? ManagerId { get; set; }
+        public Guid? EmployeeId { get; set; }
     }
 }

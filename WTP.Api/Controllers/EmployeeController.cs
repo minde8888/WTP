@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,17 +23,44 @@ namespace WTP.Api.Controllers
         private readonly IEmployeesRepository _employeeRepository;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
+        private readonly IMapper _mapper;
 
         public EmployeeController(IEmployeesRepository employeeRepository,
             IBaseRepository<Employee> employee,
             IWebHostEnvironment hostEnvironment,
-             ImagesService imagesService)
+             ImagesService imagesService,
+             IMapper mapper)
             : base(employee, hostEnvironment, imagesService)
         {
             _employee = employee;
             _employeeRepository = employeeRepository;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
+            _mapper = mapper;
+        }
+
+        [HttpGet("id")]
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult<List<EmployeeDto>>> Get(String id)
+        {
+            try
+            {
+                var userId = new Guid(id);
+                if (userId == Guid.Empty)
+                    return BadRequest();
+
+                var result = await _employeeRepository.GetItemIdAsync(userId);
+                if (result == null)
+                    return NotFound();
+
+                var employee = _mapper.Map<List<EmployeeDto>>(result);
+                return Ok(employee);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Could not find web user account");
+            }
         }
 
         [HttpGet]

@@ -63,10 +63,16 @@ namespace WTP.Services.Services
 
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
 
-                        foreach (var image in managerDto)
+                        foreach (var managerImage in managerDto)
                         {
-                            imgName = image.ImageName;
-                            image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                            imgName = managerImage.ImageName;
+                            managerImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+
+                            foreach (var employeeImage in managerImage.Employees)
+                            {
+                                imgName = employeeImage.ImageName;
+                                employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                            }
                         }
 
                         var managerActive = managerDto.Any(i => i.IsActive == true);

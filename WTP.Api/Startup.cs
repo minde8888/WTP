@@ -98,7 +98,8 @@ namespace WTP.Api
 
             services.AddScoped<AuthService>();
             services.AddScoped<ImagesService>();
- 
+            services.AddScoped<ManagerService>();
+
             services.AddTransient<IAdminRepository, AdminRepository>();
 
             

@@ -73,7 +73,7 @@ namespace WTP.Api.Controllers
                 {
                     try
                     {
-                        await _userManager.AddToRoleAsync (newUser, user.Role.ToString());
+                        await _userManager.AddToRoleAsync(newUser, user.Role.ToString());
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 
@@ -145,8 +145,8 @@ namespace WTP.Api.Controllers
                     var token = await _authService.GenerateJwtToken(existingUser);
                     String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                     var result = await _authService.GetUserInfo(existingUser, token, ImageSrc);
-                    var json = JsonSerializer.Serialize(result);
-                    return Ok(json);
+
+                    return Ok(result);
                 }
                 catch (Exception)
                 {

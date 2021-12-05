@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
@@ -23,6 +26,14 @@ namespace WTP.Data.Repositorys
             _context = context;
             _userManager = userManager;
             _mapper = mapper;
+        }
+
+        public async Task<List<Employee>> GetItemIdAsync(Guid Id)
+        {
+            return await _context.Employee.
+               Include(t => t.Address).
+               Include(p => p.Posts).
+               Where(x => x.Id == Id).ToListAsync();
         }
 
         public async Task AddEmployee(string UserId, EmployeeDto employee)

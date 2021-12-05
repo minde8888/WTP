@@ -29,9 +29,9 @@ namespace WTP.Data.Repositorys
         public async Task<List<Manager>> GetItemIdAsync(Guid Id)
         {
             return await _context.Manager.
-                Include(t => t.Address).
-                Include(e => e.Employees).
-                Include(p => p.Posts).
+                Include(address => address.Address).
+                Include(employee => employee.Employees).
+                Include(post => post.Posts).
                 Where(x => x.Id == Id).ToListAsync();
         }
         public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)

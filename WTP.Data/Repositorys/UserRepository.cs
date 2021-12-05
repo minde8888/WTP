@@ -31,13 +31,21 @@ namespace WTP.Data.Repositorys
             {
                 Manager manager = _mapper.Map<Manager>(user);//nesaugoti prie klaidos !!!!!!!!!!!!!
 
+                manager.Id = Guid.NewGuid();
+                Address addres = new();
+                addres.ManagerId = manager.Id;
+                await _context.AddAsync(addres);
                 await _context.AddAsync(manager);
                 await _context.SaveChangesAsync();
             }
             if (user.Role == "Employee")
             {
-                Employee employee = _mapper.Map<Employee>(user);              
+                Employee employee = _mapper.Map<Employee>(user);
 
+                employee.Id = Guid.NewGuid();
+                Address addres = new();
+                addres.EmployeeId = employee.Id;
+                await _context.AddAsync(addres);
                 await _context.AddAsync(employee);
                 await _context.SaveChangesAsync();
             }
