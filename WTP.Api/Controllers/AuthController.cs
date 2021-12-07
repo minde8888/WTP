@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WTP.Api.Configuration.Requests;
 using WTP.Data.Interfaces;

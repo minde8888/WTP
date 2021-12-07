@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using WTP.Domain.Dtos;
 
 namespace WTP.Services.Services
