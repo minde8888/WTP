@@ -23,7 +23,7 @@ namespace WTP.Api.Controllers
             IBaseRepository<Manager> manager, 
             IWebHostEnvironment hostEnvironment,
             ImagesService imagesService) 
-            : base(manager, hostEnvironment, imagesService)
+            : base(manager)
         {
             _adminServices = adminServices;
         }

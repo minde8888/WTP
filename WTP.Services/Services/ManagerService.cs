@@ -6,7 +6,7 @@ namespace WTP.Services.Services
 {
     public class ManagerService
     {
-        public List<ManagerDto> GetImagesAsync(List<ManagerDto> managerDto, string ImageSrc)
+        public void GetImagesAsync(List<ManagerDto> managerDto, string ImageSrc)
         {
             
             foreach (var managerImage in managerDto)
@@ -20,7 +20,6 @@ namespace WTP.Services.Services
                     employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, employeeImageName);
                 }
             }
-            return  managerDto;
         }
     }
 }

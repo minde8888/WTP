@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Entities;
@@ -65,28 +64,28 @@ namespace WTP.Api.Controllers
         //    }
         //}
 
-        [HttpPost]
-        [Authorize(Roles = "Administrator, Manager")]
-        public async Task<IActionResult> Createmanager([FromForm] Post post)
-        {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
-            post.ImageName = _imagesService.SaveImage(post.ImageFile);
+        //[HttpPost]
+        //[Authorize(Roles = "Administrator, Manager")]
+        //public async Task<IActionResult> Createmanager([FromForm] Post post)
+        //{
+        //    var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", post.ImageName);
+        //    post.ImageName = _imagesService.SaveImage(post.ImageFile);
 
-            try
-            {
-                if (!String.IsNullOrEmpty(post.ImageName))
-                {
-                    await _post.AddItem(post);
-                    return CreatedAtAction("GetManager", new { post.PostId }, post);
-                }
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error post data");
-            }
+        //    try
+        //    {
+        //        if (!String.IsNullOrEmpty(post.ImageName))
+        //        {
+        //            await _post.AddItem(post);
+        //            return CreatedAtAction("GetManager", new { post.PostId }, post);
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, "Error post data");
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         //[HttpPut("{id}")]
         //[Authorize(Roles = "Administrator, Manager")]

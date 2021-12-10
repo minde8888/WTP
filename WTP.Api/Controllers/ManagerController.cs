@@ -35,7 +35,7 @@ namespace WTP.Api.Controllers
             ImagesService imagesService,
             IMapper mapper,
             ManagerService managerService)
-            : base(manager, hostEnvironment, imagesService)
+            : base(manager)
         {
             _managerRepository = managerRepository;
             _hostEnvironment = hostEnvironment;
@@ -60,7 +60,7 @@ namespace WTP.Api.Controllers
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
 
                 var managerDto = _mapper.Map<List<ManagerDto>>(manager);
-                var result = _managerService.GetImagesAsync(managerDto, ImageSrc);
+                _managerService.GetImagesAsync(managerDto, ImageSrc);
 
                 return Ok(managerDto);
             }
@@ -121,12 +121,12 @@ namespace WTP.Api.Controllers
                 {
                     string imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", updateManagerDto.ImageName);
                     _imagesService.DeleteImage(imagePath);
-                    updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile);
+                    updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile, updateManagerDto.Height, updateManagerDto.Width);
                 }
 
                 await _managerRepository.UpdateManager(updateManagerDto);
 
-                var manager = _mapper.Map<UpdateManagerDto, ReturnManagerDto>(updateManagerDto);
+                var manager = _mapper.Map<UpdateManagerDto, ReturnUserDto>(updateManagerDto);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);

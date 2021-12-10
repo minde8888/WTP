@@ -84,6 +84,7 @@ namespace WTP.Services.Services
 
                     case "Employee":
                         var employee = await _context.Employee
+                            .Include(address => address.Address)
                             .Include(post => post.Posts)
                             .Where(u => u.UserId == new Guid(user.Id.ToString()))
                             .ToListAsync();

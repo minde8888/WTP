@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
+using WTP.Domain.Dtos.UpdateDto;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 
@@ -49,6 +50,47 @@ namespace WTP.Data.Repositorys
                 await _context.AddAsync(newEmploy);
                 await _context.SaveChangesAsync();
             }
-        } 
+        }
+
+        public async Task UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+        {
+            var employee = _context.Employee.
+                Include(employee => employee.Address).
+                Where(m => m.Id == updateEmployeeDto.Id).FirstOrDefault();
+
+            employee.Name = updateEmployeeDto.Name;
+            employee.Surname = updateEmployeeDto.Surname;
+            employee.Occupation = updateEmployeeDto.Occupation;
+            employee.DateUpdated = updateEmployeeDto.DateUpdated;
+            if (updateEmployeeDto.ImageName != null)
+            {
+                employee.ImageName = updateEmployeeDto.ImageName;
+            }
+
+            if (employee.Address != null)
+            {
+                employee.Address.City = updateEmployeeDto.Address.City;
+                employee.Address.Country = updateEmployeeDto.Address.Country;
+                employee.Address.Street = updateEmployeeDto.Address.Street;
+                employee.Address.Zip = updateEmployeeDto.Address.Zip;
+                _context.Entry(employee.Address).State = EntityState.Modified;
+            }
+            else
+            {
+                Address address = new()
+                {
+                    City = updateEmployeeDto.Address.City,
+                    Country = updateEmployeeDto.Address.Country,
+                    Street = updateEmployeeDto.Address.Street,
+                    Zip = updateEmployeeDto.Address.Zip,
+                    ManagerId = updateEmployeeDto.Id
+                };
+                _context.Address.Add(address);
+            }
+
+            _context.Entry(employee).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

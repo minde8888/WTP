@@ -16,42 +16,15 @@ namespace WTP.Api.Controllers
     public class BaseController<T> : ControllerBase where T : BaseEntity
     {
         private readonly IBaseRepository<T> _baseRepository;
-        private readonly IWebHostEnvironment _hostEnvironment;
-        private readonly ImagesService _imagesService;
 
-        public BaseController(IBaseRepository<T> itemServices,
-            IWebHostEnvironment hostEnvironment,
-            ImagesService imagesService)
+        public BaseController(IBaseRepository<T> itemServices)
         {
             _baseRepository = itemServices;
-            _hostEnvironment = hostEnvironment;
-            _imagesService = imagesService;
         }
 
-        //[HttpGet("id")]
-        //public async Task<ActionResult<List<T>>> Get(String id)
-        //{
-        //    try
-        //    {
-        //        var userId = new Guid(id);
-        //        if (userId == Guid.Empty)
-        //            return BadRequest();
-
-        //        var result = await _baseRepository.GetItemIdAsync(userId);
-        //        if (result == null)
-        //            return NotFound();
-
-        //        return result;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            "Could not find web user account");
-        //    }
-        //}
 
         [HttpGet("Search")]
-        [Authorize(Roles = "Manager, Administrator")]
+        [Authorize(Roles = "Manager, Admin, Employee")]
         public async Task<ActionResult<IEnumerable<T>>> Search(string name)
         {
             try
@@ -69,25 +42,5 @@ namespace WTP.Api.Controllers
                     "Error retrieving data from the database");
             }
         }
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(Guid id)
-        //{
-        //    try
-        //    {
-        //        var ItemToDelete = await _baseRepository.GetItemIdAsync(id);
-        //        if (ItemToDelete == null)
-        //        {
-        //            return NotFound($"Manager with Id = {id} not found");
-        //        }
-        //        await _baseRepository.DeleteItem(id);
-        //        return Ok();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            "Error deleting data");
-        //    }
-        //}
     }
 }
