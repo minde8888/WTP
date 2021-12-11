@@ -54,7 +54,8 @@ namespace WTP.Services.Services
 
                         var manager = await _context.Manager
                         .Include(address => address.Address)
-                        .Include(employee => employee.Employees)
+                        .Include(employee => employee.Employees)  //.FirstOrDefault(x => x.IsDeleted == false)
+                        .OrderBy(e => e.Name)
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))
                         .ToListAsync();
@@ -68,14 +69,22 @@ namespace WTP.Services.Services
                             imgName = managerImage.ImageName;
                             managerImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
 
-                            foreach (var employeeImage in managerImage.Employees)
+                           //var employees = managerImage.Employees.FirstOrDefault(x => x.IsDeleted == false);
+                            if (managerImage.Employees.Any(i => i.IsDeleted == false))
                             {
-                                imgName = employeeImage.ImageName;
-                                employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                                foreach (var employeeImage in managerImage.Employees)
+                                {
+                                    imgName = employeeImage.ImageName;
+                                    employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                                }
+                            }
+                            else
+                            {
+                                managerImage.Employees = null;
                             }
                         }
 
-                        var managerActive = managerDto.Any(i => i.IsActive == true);
+                        var managerActive = managerDto.Any(i => i.IsDeleted == false);
 
                         if (managerDto != null && managerActive)
                             return managerDto;
@@ -98,7 +107,7 @@ namespace WTP.Services.Services
                             image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
                         }
 
-                        var employeeActive = employeeDto.Any(i => i.IsActive == true);
+                        var employeeActive = employeeDto.Any(i => i.IsDeleted == false);
 
                         if (employeeDto != null && employeeActive)
                             return employeeDto;

@@ -16,12 +16,12 @@ namespace WTP.Api.Controllers
     public class BaseController<T> : ControllerBase where T : BaseEntity
     {
         private readonly IBaseRepository<T> _baseRepository;
+        //private readonly _context;
 
         public BaseController(IBaseRepository<T> itemServices)
         {
             _baseRepository = itemServices;
         }
-
 
         [HttpGet("Search")]
         [Authorize(Roles = "Manager, Admin, Employee")]
@@ -42,5 +42,11 @@ namespace WTP.Api.Controllers
                     "Error retrieving data from the database");
             }
         }
+
+        //public async Task Remove<T>(T entity) 
+        //{
+        //    await  _context.Set<T>().Remove(entity));
+
+        //}
     }
 }

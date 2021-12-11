@@ -26,6 +26,7 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _userManager = userManager;
         }
+
         public async Task<List<Manager>> GetItemIdAsync(Guid Id)
         {
             return await _context.Manager.
@@ -34,6 +35,7 @@ namespace WTP.Data.Repositorys
                 Include(post => post.Posts).
                 Where(x => x.Id == Id).ToListAsync();
         }
+
         public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
         {
             var items = await _context.Manager.
@@ -62,12 +64,12 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateManager(UpdateManagerDto updateManagerDto)
+        public async Task UpdateManager(RequestManagerDto updateManagerDto)
         {
             var manager = _context.Manager.
                 Include(manager => manager.Address).
                 Include(employee => employee.Employees).
-                Where(m => m.Id == updateManagerDto.Id).FirstOrDefault(); 
+                Where(m => m.Id == updateManagerDto.Id).FirstOrDefault();
 
             manager.Name = updateManagerDto.Name;
             manager.Surname = updateManagerDto.Surname;
@@ -77,7 +79,6 @@ namespace WTP.Data.Repositorys
             {
                 manager.ImageName = updateManagerDto.ImageName;
             }
-
             if (manager.Address != null)
             {
                 manager.Address.City = updateManagerDto.Address.City;
@@ -101,6 +102,15 @@ namespace WTP.Data.Repositorys
 
             _context.Entry(manager).State = EntityState.Modified;
 
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveManagerAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var manager = _context.Manager.Where(x => x.UserId == new Guid(userId)).FirstOrDefault();
+            manager.IsDeleted = true;
+            user.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
     }

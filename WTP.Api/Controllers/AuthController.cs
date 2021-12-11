@@ -126,6 +126,16 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
+                if (existingUser.IsDeleted)
+                {
+                    return BadRequest(new RegistrationResponse()
+                    {
+                        Errors = new List<string>() {
+                                "User account was deleted "
+                            },
+                        Success = false
+                    });
+                }
 
                 var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
 

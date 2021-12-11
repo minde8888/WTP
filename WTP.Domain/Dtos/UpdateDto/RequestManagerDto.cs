@@ -3,7 +3,7 @@ using System;
 
 namespace WTP.Domain.Dtos.UpdateDto
 {
-    public class UpdateManagerDto
+    public class RequestManagerDto
     {
         public Guid Id { get; set; }
         public DateTime? DateUpdated { get; set; } = DateTime.Now;

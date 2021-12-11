@@ -12,16 +12,16 @@ namespace WTP.Services.Services.AppMapper
         public ApplicationMapper()
         {
             CreateMap<Manager, ManagerDto>().ReverseMap();
-            CreateMap<Manager, UpdateManagerDto>().ReverseMap();
+            CreateMap<Manager, RequestManagerDto>().ReverseMap();
             CreateMap<Manager, UserRegistrationDto>().ReverseMap();
-            CreateMap<UpdateManagerDto, ReturnUserDto>().ReverseMap()
+            CreateMap<RequestManagerDto, ReturnUserDto>().ReverseMap()
             .ForMember(m => m.Address, opt =>
             opt.MapFrom(m => m.Address));
             CreateMap<Manager, EmployeeInformationDto>().ReverseMap();
 
             CreateMap<Employee, EmployeeInformationDto>().ReverseMap();
             CreateMap<UserRegistrationDto, Employee>().ReverseMap();
-            CreateMap<UpdateEmployeeDto, ReturnUserDto>().ReverseMap()
+            CreateMap<RequestEmployeeDto, ReturnUserDto>().ReverseMap()
             .ForMember(m => m.Address, opt =>
             opt.MapFrom(m => m.Address)); ;
 

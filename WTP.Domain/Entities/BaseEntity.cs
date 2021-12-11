@@ -20,6 +20,7 @@ namespace WTP.Domain.Entities
         public string Role { get; set; }
         public string PhoneNumber { get; set; }
         public string ImageName { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
 

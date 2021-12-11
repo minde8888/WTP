@@ -10,7 +10,8 @@ namespace WTP.Data.Interfaces
     public interface IEmployeesRepository 
     {
         Task<List<Employee>> GetItemIdAsync(Guid Id);
-        public Task AddEmployee(string UserId, EmployeeDto employee);
-        public Task UpdateEmployee(UpdateEmployeeDto updateManagerDto);
+        public Task AddEmployee(string userId, RequestEmployeeDto employee);
+        public Task UpdateEmployee(RequestEmployeeDto updateManagerDto);
+        public Task RemoveEmployeeAsync(string userId);
     }
 }

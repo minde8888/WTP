@@ -37,11 +37,11 @@ namespace WTP.Data.Repositorys
                Where(x => x.Id == Id).ToListAsync();
         }
 
-        public async Task AddEmployee(string UserId, EmployeeDto employee)
+        public async Task AddEmployee(string UserId, RequestEmployeeDto employee)
         {          
             var user = await _userManager.FindByIdAsync(UserId);
             
-            if (user.Roles == "Manager")
+            if (user.Roles == "Employee")
             {
                 employee.ManagerId = new Guid(UserId.ToString());
 
@@ -52,7 +52,7 @@ namespace WTP.Data.Repositorys
             }
         }
 
-        public async Task UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+        public async Task UpdateEmployee(RequestEmployeeDto updateEmployeeDto)
         {
             var employee = _context.Employee.
                 Include(employee => employee.Address).
@@ -90,6 +90,14 @@ namespace WTP.Data.Repositorys
 
             _context.Entry(employee).State = EntityState.Modified;
 
+            await _context.SaveChangesAsync();
+        }
+        public async Task RemoveEmployeeAsync(string userId)
+        {
+            var employee =  _context.Employee.Where(x => x.Id == Guid.Parse(userId)).FirstOrDefault();
+            var user = await _userManager.FindByEmailAsync(employee.Email);
+            employee.IsDeleted = true;
+            user.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
     }

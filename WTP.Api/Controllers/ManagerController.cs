@@ -45,6 +45,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet("id")]
+        [Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult<List<ManagerDto>>> Get(String id)
         {
             try
@@ -72,7 +73,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult<List<ManagerDto>>> GetAll()
         {
             try
@@ -105,7 +106,8 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] UpdateManagerDto updateManagerDto)
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] RequestManagerDto updateManagerDto)
         {
             try
             {
@@ -126,7 +128,7 @@ namespace WTP.Api.Controllers
 
                 await _managerRepository.UpdateManager(updateManagerDto);
 
-                var manager = _mapper.Map<UpdateManagerDto, ReturnUserDto>(updateManagerDto);
+                var manager = _mapper.Map<RequestManagerDto, ReturnUserDto>(updateManagerDto);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);
@@ -143,6 +145,17 @@ namespace WTP.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    ex);
             }
+        }
+
+        [HttpDelete("Delete/{id}")]
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult> DeleteManager(String id)
+        {
+            if (id == String.Empty)
+                return BadRequest();
+
+            await _managerRepository.RemoveManagerAsync(id);
+            return Ok();
         }
     }
 }

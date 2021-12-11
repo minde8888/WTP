@@ -18,7 +18,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("v1/api/[controller]")]
     [ApiController]
     public class EmployeeController : BaseController<Employee>
@@ -75,7 +75,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult<List<Employee>>> GetAllEmployee()
         {
             try
@@ -91,15 +91,15 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AddNewEmployee([FromForm] EmployeeDto employee)
+        [Authorize(Roles = "Manager, Admin")]
+        public IActionResult AddNewEmployee([FromForm] RequestEmployeeDto employee)
         {
             try
             {
                 if (!String.IsNullOrEmpty(employee.ImageName))
                 {
                     string path = _hostEnvironment.ContentRootPath;
-                    //var imageName = _imagesService.SaveImage(employee.ImageFile);
+                    var imageName = _imagesService.SaveImage(employee.ImageFile, employee.Height,  employee.Width);
                 }
                 string UserId = HttpContext.User.FindFirstValue("id");
                 _employeeRepository.AddEmployee(UserId, employee);
@@ -115,7 +115,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update/{id}")]
         [Authorize(Roles = "Admin, Employee")]
-        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] UpdateEmployeeDto updateEmployeeDto)
+        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] RequestEmployeeDto updateEmployeeDto)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace WTP.Api.Controllers
 
                 await _employeeRepository.UpdateEmployee(updateEmployeeDto);
 
-                var employee = _mapper.Map<UpdateEmployeeDto, ReturnUserDto>(updateEmployeeDto);
+                var employee = _mapper.Map<RequestEmployeeDto, ReturnUserDto>(updateEmployeeDto);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 employee.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, employee.ImageName);
@@ -153,6 +153,17 @@ namespace WTP.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                    ex);
             }
+        }
+
+        [HttpDelete("Delete/{id}")]
+        //[Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult> DeleteEmployee(String id)
+        {
+            if (id == String.Empty)
+                return BadRequest();
+
+            await _employeeRepository.RemoveEmployeeAsync(id);
+            return Ok();
         }
     }
 }

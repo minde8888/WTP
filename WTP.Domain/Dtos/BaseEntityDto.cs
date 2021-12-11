@@ -21,6 +21,7 @@ namespace WTP.Domain.Dtos
         public string Role { get; set; }
         public string ImageName { get; set; } 
         public string ImageSrc { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public AddressDto Address { get; set; }
         public ICollection<PostDto> Posts { get; set; }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos.UpdateDto
 {
-    public class UpdateEmployeeDto
+    public class RequestEmployeeDto
     {
         public Guid Id { get; set; }
         public DateTime? DateUpdated { get; set; } = DateTime.Now;
@@ -22,6 +22,7 @@ namespace WTP.Domain.Dtos.UpdateDto
         public string Email { get; set; }
         public string Height { get; set; }
         public string Width { get; set; }
+        public Guid? ManagerId { get; set; }
         public AddressDto Address { get; set; }
     }
 }
