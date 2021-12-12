@@ -75,6 +75,7 @@ namespace WTP.Data.Repositorys
             manager.Surname = updateManagerDto.Surname;
             manager.Occupation = updateManagerDto.Occupation;
             manager.DateUpdated = updateManagerDto.DateUpdated;
+
             if (updateManagerDto.ImageName != null)
             {
                 manager.ImageName = updateManagerDto.ImageName;

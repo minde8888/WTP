@@ -9,10 +9,14 @@ namespace WTP.Data.Interfaces
 {
     public interface IManagerRepository
     {
-        Task<List<Manager>> GetItemIdAsync(Guid Id);
+        public Task<List<Manager>> GetItemIdAsync(Guid Id);
+
         Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
-        public Task AddManager(Manager manager, string  UserId);
+
+        public Task AddManager(Manager manager, string UserId);
+
         public Task UpdateManager(RequestManagerDto updateManagerDto);
+
         public Task RemoveManagerAsync(string userId);
     }
 }

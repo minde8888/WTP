@@ -18,7 +18,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("v1/api/[controller]")]
     [ApiController]
     public class EmployeeController : BaseController<Employee>
@@ -156,7 +156,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        //[Authorize(Roles = "Manager, Admin")]
+        [Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult> DeleteEmployee(String id)
         {
             if (id == String.Empty)

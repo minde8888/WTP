@@ -54,7 +54,7 @@ namespace WTP.Services.Services
 
                         var manager = await _context.Manager
                         .Include(address => address.Address)
-                        .Include(employee => employee.Employees)  //.FirstOrDefault(x => x.IsDeleted == false)
+                        .Include(employee => employee.Employees)
                         .OrderBy(e => e.Name)
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))
@@ -69,18 +69,28 @@ namespace WTP.Services.Services
                             imgName = managerImage.ImageName;
                             managerImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
 
-                           //var employees = managerImage.Employees.FirstOrDefault(x => x.IsDeleted == false);
-                            if (managerImage.Employees.Any(i => i.IsDeleted == false))
+                            var employees = managerImage.Employees.Where(i => i.IsDeleted == false);
+                            foreach (var employeeImage in employees)
                             {
-                                foreach (var employeeImage in managerImage.Employees)
-                                {
-                                    imgName = employeeImage.ImageName;
-                                    employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
-                                }
+                                imgName = employeeImage.ImageName;
+                                employeeImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
                             }
-                            else
+                            var hidenEmployees = managerImage.Employees.Where(i => i.IsDeleted == true);
+                            foreach (var hide in hidenEmployees)
                             {
-                                managerImage.Employees = null;
+                                hide.Email = null;
+                                hide.ImageName = null;
+                                hide.Address = null;
+                                hide.ImageSrc = null;
+                                hide.ManagerId = null;
+                                hide.Name = null;
+                                hide.Occupation = null;
+                                hide.PhoneNumber = null;
+                                hide.Posts = null;
+                                hide.Role = null;
+                                hide.Surname = null;
+                                hide.IsActive = false;
+                                hide.Id = Guid.Empty;
                             }
                         }
 
