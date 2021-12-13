@@ -27,8 +27,9 @@ namespace WTP.Data.Context
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.HasDefaultSchema("Identity");
 
-            //builder.Entity<Manager>().OwnsOne(a => a.Address);
-            //builder.Entity<Employee>().OwnsOne(a => a.Address);
+            //Global Query Filters
+            builder.Entity<Manager>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<Employee>().HasQueryFilter(p => p.IsDeleted == false);
 
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
