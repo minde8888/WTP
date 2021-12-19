@@ -11,7 +11,7 @@ namespace WTP.Data.Interfaces
     {
         public Task<List<Manager>> GetItemIdAsync(Guid Id);
 
-        Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
+        public Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
 
         public Task AddManager(Manager manager, string UserId);
 

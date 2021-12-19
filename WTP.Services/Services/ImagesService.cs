@@ -3,9 +3,11 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 
 namespace WTP.Services.Services
 {
+    [SupportedOSPlatform("windows")]
     public class ImagesService
     {
         public string SaveImage(IFormFile imageFile, string height, string width )
@@ -28,7 +30,6 @@ namespace WTP.Services.Services
             }
             throw new Exception();
         }
-
         private void ResizeImage(string imagePath, IFormFile imageFile, int height, int width)
         {
             Image image = Image.FromStream(imageFile.OpenReadStream(), true, true);

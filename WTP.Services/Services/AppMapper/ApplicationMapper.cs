@@ -30,6 +30,8 @@ namespace WTP.Services.Services.AppMapper
             CreateMap<Employee, EmployeeDto>().ReverseMap();
 
             CreateMap<Post, PostDto>().ReverseMap();
+
+            CreateMap<Project, ProjectDto>().ReverseMap();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace WTP.Domain.Dtos.UpdateDto
     public class RequestEmployeeDto
     {
         public Guid Id { get; set; }
-        public DateTime? DateUpdated { get; set; } = DateTime.Now;
+        public DateTime? DateUpdated { get; set; } = DateTime.UtcNow;
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }

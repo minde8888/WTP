@@ -6,7 +6,6 @@ namespace WTP.Domain.Dtos.UpdateDto
     public class RequestManagerDto
     {
         public Guid Id { get; set; }
-        public DateTime? DateUpdated { get; set; } = DateTime.Now;
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }

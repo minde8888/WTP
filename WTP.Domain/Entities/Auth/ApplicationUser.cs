@@ -17,7 +17,7 @@ namespace WTP.Domain.Entities.Auth
         public string ResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; }
         public DateTime? PasswordReset { get; set; }
-        public DateTime Created { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
 

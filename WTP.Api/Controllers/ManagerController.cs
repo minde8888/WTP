@@ -101,7 +101,7 @@ namespace WTP.Api.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                "Error Get data from the database -> AddNewEmployee");
+                "Error Add data to the database -> AddNewManager");
             }
         }
 

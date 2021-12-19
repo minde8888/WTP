@@ -92,6 +92,7 @@ namespace WTP.Api
             services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
             services.AddScoped(typeof(IEmployeesRepository), typeof(EmployeesRepository));
             services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
+            services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
@@ -102,6 +103,7 @@ namespace WTP.Api
             services.AddScoped<EmployeeService>();
 
             services.AddTransient<IAdminRepository, AdminRepository>();
+
 
             
             services.AddSwaggerGen(c =>

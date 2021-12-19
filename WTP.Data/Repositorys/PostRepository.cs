@@ -41,7 +41,7 @@ namespace WTP.Data.Repositorys
             var items = await _context.Posts.ToListAsync();
             foreach (var item in items)
             {
-                item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
+                //item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
             }
             return items;
         }

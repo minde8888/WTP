@@ -18,7 +18,9 @@ namespace WTP.Data.Context
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Address> Address { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Project> Project { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -30,6 +32,7 @@ namespace WTP.Data.Context
             //Global Query Filters
             builder.Entity<Manager>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<Employee>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<ApplicationUser>().HasQueryFilter(p => p.IsDeleted == false);
 
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
@@ -37,6 +40,5 @@ namespace WTP.Data.Context
                 entity.ToTable("UserLogins");
             });
         }
-
     }
 }
