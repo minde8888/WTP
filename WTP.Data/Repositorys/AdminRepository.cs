@@ -27,7 +27,7 @@ namespace WTP.Data.Repositorys
             {
                 foreach (var item in items)
                 {
-                    item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
+                    //item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
                 }
                 return items;
             }
@@ -42,7 +42,7 @@ namespace WTP.Data.Repositorys
             {
                 foreach (var item in items)
                 {
-                    item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
+                    //item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
                 }
                 return items;
             }

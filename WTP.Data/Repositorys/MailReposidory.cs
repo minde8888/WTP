@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using MimeKit;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using System;
+using Microsoft.Extensions.Options;
+using MimeKit;
 using System.IO;
 using System.Threading.Tasks;
 using WTP.Domain.Entities;
 using WTP.Domain.Entities.Settings;
-
 
 namespace WTP.Data.Repositorys
 {
@@ -45,7 +43,7 @@ namespace WTP.Data.Repositorys
             }
             builder.HtmlBody = mailRequest.Body;
             email.Body = builder.ToMessageBody();
-            using SmtpClient smtp = new SmtpClient();   
+            using SmtpClient smtp = new SmtpClient();
             smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.Auto);
             smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
@@ -56,7 +54,7 @@ namespace WTP.Data.Repositorys
         public async Task SendWelcomeEmailAsync(WelcomeRequest request)
         {
             string FilePath = Directory.GetCurrentDirectory() + "\\Templates\\WelcomeTemplate.html";
-            StreamReader str = new StreamReader(FilePath);
+            StreamReader str = new(FilePath);
             string MailText = str.ReadToEnd();
             str.Close();
             MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail);
@@ -75,6 +73,4 @@ namespace WTP.Data.Repositorys
             smtp.Disconnect(true);
         }
     }
-
-
 }

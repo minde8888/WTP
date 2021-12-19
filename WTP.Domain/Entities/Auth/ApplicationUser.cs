@@ -9,6 +9,7 @@ namespace WTP.Domain.Entities.Auth
         public Employee Employees { get; set; }
         public Manager Manager { get; set; }
         public string Roles { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public bool AcceptTerms { get; set; }
         public string VerificationToken { get; set; }
         public DateTime? Verified { get; set; }
@@ -16,7 +17,7 @@ namespace WTP.Domain.Entities.Auth
         public string ResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; }
         public DateTime? PasswordReset { get; set; }
-        public DateTime Created { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
 

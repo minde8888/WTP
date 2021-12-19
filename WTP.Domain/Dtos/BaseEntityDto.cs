@@ -16,14 +16,14 @@ namespace WTP.Domain.Dtos
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Occupation { get; set; }
-        public long MobileNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
         public string ImageName { get; set; } 
-        [NotMapped]
-        public IFormFile ImageFile { get; set; }
-        [NotMapped]
         public string ImageSrc { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public Guid ProjectId { get; set; }
+        public ICollection<Project> Project { get; set; }
         public AddressDto Address { get; set; }
         public ICollection<PostDto> Posts { get; set; }
     }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
+using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 using WTP.Services.Services;
 
@@ -22,7 +23,7 @@ namespace WTP.Api.Controllers
             IBaseRepository<Manager> manager, 
             IWebHostEnvironment hostEnvironment,
             ImagesService imagesService) 
-            : base(manager, hostEnvironment, imagesService)
+            : base(manager)
         {
             _adminServices = adminServices;
         }

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WTP.Api.Configuration.Requests;
 using WTP.Data.Interfaces;
@@ -61,34 +60,33 @@ namespace WTP.Api.Controllers
 
                 var newUser = new ApplicationUser()
                 {
-                    Roles = user.Roles,
+                    Roles = user.Role,
                     Email = user.Email,
                     UserName = _authService.StringRandom(),
                     PhoneNumber = user.PhoneNumber
                 };
 
-                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
+                var isCreated = await _userManager.CreateAsync(newUser, user.Password);//tvarkyti
 
                 if (isCreated.Succeeded)
                 {
                     try
                     {
-                        await _userManager.AddToRoleAsync (newUser, user.Roles.ToString());
+                        await _userManager.AddToRoleAsync(newUser, user.Role.ToString());
                         user.UserId = newUser.Id;
                         await _userRepository.AddUser(user);
 
-                        //return Ok(await _authService.GenerateJwtToken(newUser));
                         return Ok();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         return BadRequest(new RegistrationResponse()
                         {
                             Errors = new List<string>() {
-                                "Error to add user in the DB !!!"
+                                "Error to add user in the DB !!!  " + ex
                             },
                             Success = false
-                        });
+                        }); ;
                     }
                 }
                 else
@@ -128,6 +126,16 @@ namespace WTP.Api.Controllers
                         Success = false
                     });
                 }
+                if (existingUser.IsDeleted)
+                {
+                    return BadRequest(new RegistrationResponse()
+                    {
+                        Errors = new List<string>() {
+                                "User account was deleted "
+                            },
+                        Success = false
+                    });
+                }
 
                 var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
 
@@ -144,9 +152,10 @@ namespace WTP.Api.Controllers
                 try
                 {
                     var token = await _authService.GenerateJwtToken(existingUser);
-                    var result = await _authService.GetUserInfo(existingUser, token);
-                    var json = JsonSerializer.Serialize(result);
-                    return Ok(json);
+                    String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+                    var result = await _authService.GetUserInfo(existingUser, token, ImageSrc);
+
+                    return Ok(result);
                 }
                 catch (Exception)
                 {

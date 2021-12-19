@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WTP.Domain.Entities
 {
-    public class Post
+    public class Project
     {
-        public Guid PostId { get; set; }
+        public Guid ProjectId { get; set; }
         public string Title { get; set; }
         public string Context { get; set; }
-        public Guid? ManagerId { get; set; }
-        public Guid? EmployeeId { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         public DateTime? DateUpdated { get; set; }
-        public string ImageName { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public ICollection<Employee> Employees { get; set; }
+        public ICollection<Manager> Manager { get; set; }
     }
 }

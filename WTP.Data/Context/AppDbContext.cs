@@ -18,7 +18,9 @@ namespace WTP.Data.Context
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Address> Address { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Project> Project { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -27,12 +29,16 @@ namespace WTP.Data.Context
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.HasDefaultSchema("Identity");
 
+            //Global Query Filters
+            builder.Entity<Manager>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<Employee>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<ApplicationUser>().HasQueryFilter(p => p.IsDeleted == false);
+
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
                 entity.HasNoKey();
                 entity.ToTable("UserLogins");
             });
         }
-
     }
 }

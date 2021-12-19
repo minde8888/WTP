@@ -9,7 +9,7 @@ namespace WTP.Api.Configuration.Roles
     {
         public enum Roles
         {
-            Administrator,
+            Admin,
             Moderator,
             Manager,
             Employee

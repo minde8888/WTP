@@ -17,13 +17,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using WTP.Api.Configuration;
 using WTP.Data.Context;
-using WTP.Data.Helpers;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Roles;
 using WTP.Domain.Entities.Settings;
 using WTP.Services.Services;
+using WTP.Services.Services.AppMapper;
 
 namespace WTP.Api
 {
@@ -92,26 +92,33 @@ namespace WTP.Api
             services.AddScoped(typeof(IManagerRepository), typeof(ManagerRepository));
             services.AddScoped(typeof(IEmployeesRepository), typeof(EmployeesRepository));
             services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
+            services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             services.AddScoped<AuthService>();
             services.AddScoped<ImagesService>();
- 
+            services.AddScoped<ManagerService>();
+            services.AddScoped<EmployeeService>();
+
             services.AddTransient<IAdminRepository, AdminRepository>();
 
-            services.AddControllers();
+
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WTP.Api", Version = "v1" });
             });
+
             services.AddControllers(options =>
             {
                 options.OutputFormatters.RemoveType<SystemTextJsonOutputFormatter>();
                 options.OutputFormatters.Add(new SystemTextJsonOutputFormatter(new JsonSerializerOptions(JsonSerializerDefaults.Web)
                 {
+                    
                     ReferenceHandler = ReferenceHandler.Preserve,
+           
                 }));
             });
         }

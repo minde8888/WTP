@@ -14,7 +14,7 @@ namespace WTP.Data.Context
         public static async Task SeedEssentialsAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             //Seed Roles
-            await roleManager.CreateAsync(new ApplicationRole(Authorization.Roles.Administrator.ToString()));
+            await roleManager.CreateAsync(new ApplicationRole(Authorization.Roles.Admin.ToString()));
             await roleManager.CreateAsync(new ApplicationRole(Authorization.Roles.Moderator.ToString()));
             await roleManager.CreateAsync(new ApplicationRole(Authorization.Roles.Manager.ToString()));
             await roleManager.CreateAsync(new ApplicationRole(Authorization.Roles.Employee.ToString()));
