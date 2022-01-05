@@ -32,6 +32,7 @@ namespace WTP.Data.Context
             //Global Query Filters
             builder.Entity<Manager>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<Employee>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<Project>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<ApplicationUser>().HasQueryFilter(p => p.IsDeleted == false);
 
             builder.Entity<IdentityUserLogin<string>>(entity =>

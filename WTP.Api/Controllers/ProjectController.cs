@@ -92,7 +92,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update/{id}")]
         [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult<List<ProjectDto>>> Update([FromBody] ProjectDto project)
+        public ActionResult<List<ProjectDto>> Update([FromBody] ProjectDto project)
         {
             if (project.ProjectId == Guid.Empty)
                 return BadRequest("This project can not by updated");

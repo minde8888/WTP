@@ -62,13 +62,16 @@ namespace WTP.Data.Repositorys
                .Where(x => x.ProjectId == project.ProjectId).FirstOrDefault();
 
             if (prosjectToReturn != null)
+            {
+                prosjectToReturn.Nummber = prosjectToReturn.Nummber;
                 prosjectToReturn.Title = project.Title;
-                prosjectToReturn.Context = project.Context;
+                prosjectToReturn.Place = project.Place;
+                prosjectToReturn.Status = project.Status;
                 prosjectToReturn.DateUpdated = DateTime.UtcNow;
-
+            }
             if (project.ManagerId != null)
             {
-               var manager = _context.Manager.Where(x => x.Id == project.ManagerId).FirstOrDefault();   
+                var manager = _context.Manager.Where(x => x.Id == project.ManagerId).FirstOrDefault();
                 manager.ProjectId = prosjectToReturn.ProjectId;
                 _context.Entry(manager).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
