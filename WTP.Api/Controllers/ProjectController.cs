@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("v1/api/[controller]")]
     public class ProjectController : Controller
@@ -36,7 +37,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddNewProject([FromBody] ProjectDto project)
+        public IActionResult AddNewProject([FromForm] ProjectDto project)
         {
             try
             {

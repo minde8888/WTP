@@ -507,7 +507,7 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("Nummber")
+                    b.Property<int>("Number")
                         .HasColumnType("integer");
 
                     b.Property<string>("Place")
