@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
@@ -117,15 +118,20 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpPost("Delete")]
         [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult> DeleteManager(String id)
-        {
-            var projectId = new Guid(id);
-            if (projectId == Guid.Empty)
-                return BadRequest();
+        public async Task<ActionResult> DeleteManager([FromBody] List<object> ids)
+        {        
 
-            await _projectRepository.RemoveProjectAsync(projectId);
+            foreach (var p in ids)
+            {                    
+                var id = new Guid(p.ToString());
+
+                if (id == Guid.Empty)
+                    return BadRequest();
+
+                await _projectRepository.RemoveProjectAsync(id);
+            }
             return Ok();
         }
     }
