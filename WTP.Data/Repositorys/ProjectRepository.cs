@@ -63,26 +63,13 @@ namespace WTP.Data.Repositorys
 
             if (prosjectToReturn != null)
             {
-                prosjectToReturn.Number = prosjectToReturn.Number;
-                prosjectToReturn.Title = project.Title;
-                prosjectToReturn.Place = project.Place;
-                prosjectToReturn.Status = project.Status;
+                prosjectToReturn.Number = Convert.ToInt32(project.Number) != 0 ? Convert.ToInt32(project.Number) : prosjectToReturn.Number;
+                prosjectToReturn.Title = project.Title ?? prosjectToReturn.Title;
+                prosjectToReturn.Place = project.Place ?? prosjectToReturn.Place;
+                prosjectToReturn.Status = project.Status ?? prosjectToReturn.Status;
                 prosjectToReturn.DateUpdated = DateTime.UtcNow;
             }
-            //if (project.ManagerId != null)
-            //{
-            //    var manager = _context.Manager.Where(x => x.Id == project.ManagerId).FirstOrDefault();
-            //    manager.ProjectId = prosjectToReturn.ProjectId;
-            //    _context.Entry(manager).State = EntityState.Modified;
-            //    await _context.SaveChangesAsync();
-            //}
-            //if (project.EmployeeId != null)
-            //{
-            //    var employee = _context.Employee.Where(x => x.Id == project.EmployeeId).FirstOrDefault();
-            //    employee.ProjectId = prosjectToReturn.ProjectId;
-            //    _context.Entry(employee).State = EntityState.Modified;
-            //    await _context.SaveChangesAsync();
-            //}
+
             _context.Entry(prosjectToReturn).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

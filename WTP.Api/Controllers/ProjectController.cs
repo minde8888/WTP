@@ -92,7 +92,7 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpPut("Update/{id}")]
+        [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
         public ActionResult<List<ProjectDto>> Update([FromBody] ProjectDto project)
         {
