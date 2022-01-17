@@ -126,14 +126,15 @@ namespace WTP.Api.Controllers
                     updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile, updateManagerDto.Height, updateManagerDto.Width);
                 }
 
-                await _managerRepository.UpdateManager(updateManagerDto);
+               var updatedManger = await _managerRepository.UpdateManager(updateManagerDto);
 
-                var manager = _mapper.Map<RequestManagerDto, ReturnUserDto>(updateManagerDto);
+                var manager = _mapper.Map<ReturnManagerDto>(updatedManger);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);
 
-                return CreatedAtAction("Get", new { manager.Id }, manager);
+
+                return Ok(manager);
             }
             catch (DbUpdateConcurrencyException)
             {
