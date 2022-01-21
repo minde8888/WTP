@@ -64,11 +64,10 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateManager(RequestManagerDto updateManagerDto)
+        public async Task<Manager> UpdateManager(RequestManagerDto updateManagerDto)
         {
             var manager = _context.Manager.
                 Include(manager => manager.Address).
-                Include(employee => employee.Employees).
                 Where(m => m.Id == updateManagerDto.Id).FirstOrDefault();
 
             manager.Name = updateManagerDto.Name;
@@ -104,6 +103,8 @@ namespace WTP.Data.Repositorys
             _context.Entry(manager).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
+
+            return manager;
         }
 
         public async Task RemoveManagerAsync(string userId)

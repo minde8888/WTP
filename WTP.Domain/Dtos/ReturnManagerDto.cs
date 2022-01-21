@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos
 {
-    public class ReturnUserDto
+    public class ReturnManagerDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

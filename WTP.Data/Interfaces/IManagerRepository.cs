@@ -15,7 +15,7 @@ namespace WTP.Data.Interfaces
 
         public Task AddManager(Manager manager, string UserId);
 
-        public Task UpdateManager(RequestManagerDto updateManagerDto);
+        public Task<Manager> UpdateManager(RequestManagerDto updateManagerDto);
 
         public Task RemoveManagerAsync(string userId);
     }

@@ -136,7 +136,7 @@ namespace WTP.Api.Controllers
 
                 await _employeeRepository.UpdateEmployee(updateEmployeeDto);
 
-                var employee = _mapper.Map<RequestEmployeeDto, ReturnUserDto>(updateEmployeeDto);
+                var employee = _mapper.Map<RequestEmployeeDto, ReturnEmployeeDto>(updateEmployeeDto);
 
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 employee.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, employee.ImageName);
