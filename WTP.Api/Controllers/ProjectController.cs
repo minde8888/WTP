@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
 using WTP.Services.Services;
@@ -24,17 +24,20 @@ namespace WTP.Api.Controllers
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly ImagesService _imagesService;
         private readonly IMapper _mapper;
+        private readonly AppDbContext _context;
 
         public ProjectController(IProjectRepository projectRepository,
             IWebHostEnvironment hostEnvironment,
             ImagesService imagesService,
-            IMapper mapper)
+            IMapper mapper,
+            AppDbContext context)
 
         {
             _projectRepository = projectRepository;
             _hostEnvironment = hostEnvironment;
             _imagesService = imagesService;
             _mapper = mapper;
+            _context = context;
         }
 
         [HttpPost]
@@ -42,6 +45,7 @@ namespace WTP.Api.Controllers
         {
             try
             {
+                project.ProjectId = Guid.NewGuid();
                 _projectRepository.AddProject(project);
                 return CreatedAtAction("Get", new { project.ProjectId }, project);
             }
@@ -103,8 +107,10 @@ namespace WTP.Api.Controllers
                 return BadRequest(ModelState);
             try
             {
-                _projectRepository.UpdateProjectAsync(project);
-                return CreatedAtAction("Get", new { project.ProjectId }, project);
+                var a = _projectRepository.UpdateProjectAsync(project);
+                var projectUpdated = _context.Project.Find(project.ProjectId);
+                var projectToReturn = _mapper.Map<ProjectDto>(projectUpdated);
+                return Ok(projectToReturn);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -121,10 +127,9 @@ namespace WTP.Api.Controllers
         [HttpPost("Delete")]
         [Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult> DeleteManager([FromBody] List<object> ids)
-        {        
-
+        {
             foreach (var p in ids)
-            {                    
+            {
                 var id = new Guid(p.ToString());
 
                 if (id == Guid.Empty)
