@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
 using WTP.Services.Services;
@@ -21,23 +19,17 @@ namespace WTP.Api.Controllers
     public class ProjectController : Controller
     {
         private readonly IProjectRepository _projectRepository;
-        private readonly IWebHostEnvironment _hostEnvironment;
-        private readonly ImagesService _imagesService;
+        private readonly ProjectService _projectService;
         private readonly IMapper _mapper;
-        private readonly AppDbContext _context;
 
         public ProjectController(IProjectRepository projectRepository,
-            IWebHostEnvironment hostEnvironment,
-            ImagesService imagesService,
             IMapper mapper,
-            AppDbContext context)
+            ProjectService projectService)
 
         {
             _projectRepository = projectRepository;
-            _hostEnvironment = hostEnvironment;
-            _imagesService = imagesService;
             _mapper = mapper;
-            _context = context;
+            _projectService = projectService;
         }
 
         [HttpPost]
@@ -47,7 +39,8 @@ namespace WTP.Api.Controllers
             {
                 project.ProjectId = Guid.NewGuid();
                 _projectRepository.AddProject(project);
-                return CreatedAtAction("Get", new { project.ProjectId }, project);
+                var projectToReturn = _projectService.GetOneProject(project);
+                return Ok(projectToReturn);
             }
             catch (Exception)
             {
@@ -107,9 +100,8 @@ namespace WTP.Api.Controllers
                 return BadRequest(ModelState);
             try
             {
-                var a = _projectRepository.UpdateProjectAsync(project);
-                var projectUpdated = _context.Project.Find(project.ProjectId);
-                var projectToReturn = _mapper.Map<ProjectDto>(projectUpdated);
+                _projectRepository.UpdateProjectAsync(project);
+                var projectToReturn = _projectService.GetOneProject(project);
                 return Ok(projectToReturn);
             }
             catch (DbUpdateConcurrencyException)

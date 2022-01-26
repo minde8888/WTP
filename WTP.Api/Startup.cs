@@ -101,6 +101,7 @@ namespace WTP.Api
             services.AddScoped<ImagesService>();
             services.AddScoped<ManagerService>();
             services.AddScoped<EmployeeService>();
+            services.AddScoped<ProjectService>();
 
             services.AddTransient<IAdminRepository, AdminRepository>();
 
