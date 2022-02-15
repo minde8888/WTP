@@ -12,6 +12,8 @@ namespace WTP.Data.Context
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         }
 
         public DbSet<Manager> Manager { get; set; }
@@ -19,6 +21,7 @@ namespace WTP.Data.Context
         public DbSet<Address> Address { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Project> Project { get; set; }
+        public DbSet<ProgressPlan> ProgressPlan { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

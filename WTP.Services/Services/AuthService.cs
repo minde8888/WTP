@@ -200,7 +200,7 @@ namespace WTP.Services.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
-                Expires = DateTime.UtcNow.AddSeconds(30), // 5-10
+                Expires = DateTime.UtcNow.AddSeconds(120), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

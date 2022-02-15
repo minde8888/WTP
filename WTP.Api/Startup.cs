@@ -19,6 +19,7 @@ using WTP.Api.Configuration;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
+using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Roles;
 using WTP.Domain.Entities.Settings;
@@ -83,7 +84,7 @@ namespace WTP.Api
             });
 
             services.Configure<DataProtectionTokenProviderOptions>(o =>
-                o.TokenLifespan = TimeSpan.FromHours(1));
+                o.TokenLifespan = TimeSpan.FromHours(3));
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailReposidory, MailReposidory>();
@@ -95,17 +96,17 @@ namespace WTP.Api
             services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IProgressPlan), typeof(ProgressPlan));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));    
 
             services.AddScoped<AuthService>();
             services.AddScoped<ImagesService>();
             services.AddScoped<ManagerService>();
             services.AddScoped<EmployeeService>();
             services.AddScoped<ProjectService>();
+            services.AddScoped<ProgressPlanService>();
 
             services.AddTransient<IAdminRepository, AdminRepository>();
-
-
             
             services.AddSwaggerGen(c =>
             {
@@ -116,10 +117,8 @@ namespace WTP.Api
             {
                 options.OutputFormatters.RemoveType<SystemTextJsonOutputFormatter>();
                 options.OutputFormatters.Add(new SystemTextJsonOutputFormatter(new JsonSerializerOptions(JsonSerializerDefaults.Web)
-                {
-                    
-                    ReferenceHandler = ReferenceHandler.Preserve,
-           
+                {                    
+                    ReferenceHandler = ReferenceHandler.Preserve           
                 }));
             });
         }
