@@ -10,7 +10,7 @@ namespace WTP.Domain.Entities
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public bool IsActive { get; set; } = true;
-        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+        public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }

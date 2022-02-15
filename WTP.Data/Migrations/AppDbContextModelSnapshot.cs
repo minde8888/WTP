@@ -225,7 +225,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -255,7 +255,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("PasswordReset")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
@@ -267,7 +267,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Roles")
                         .HasColumnType("text");
@@ -279,7 +279,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("Updated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -289,7 +289,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("Verified")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -312,13 +312,13 @@ namespace WTP.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("Expires")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("boolean");
@@ -330,7 +330,7 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("Revoked")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Token")
                         .HasColumnType("text");
@@ -352,10 +352,10 @@ namespace WTP.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -410,10 +410,10 @@ namespace WTP.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -466,10 +466,10 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uuid");
@@ -492,6 +492,43 @@ namespace WTP.Data.Migrations
                     b.ToTable("Posts", "Identity");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.ProgressPlan", b =>
+                {
+                    b.Property<Guid>("ProgressPlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("End")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Index")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Start")
+                        .HasColumnType("text");
+
+                    b.HasKey("ProgressPlanId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("ProgressPlan", "Identity");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Project", b =>
                 {
                     b.Property<Guid>("ProjectId")
@@ -499,16 +536,16 @@ namespace WTP.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("Number")
-                        .HasColumnType("integer");
+                    b.Property<string>("Number")
+                        .HasColumnType("text");
 
                     b.Property<string>("Place")
                         .HasColumnType("text");
@@ -693,6 +730,17 @@ namespace WTP.Data.Migrations
                     b.HasOne("WTP.Domain.Entities.Manager", null)
                         .WithMany("Posts")
                         .HasForeignKey("ManagerId");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.ProgressPlan", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>

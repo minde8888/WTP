@@ -63,7 +63,7 @@ namespace WTP.Data.Repositorys
 
             if (prosjectToReturn != null)
             {
-                prosjectToReturn.Number = Convert.ToInt32(project.Number) != 0 ? Convert.ToInt32(project.Number) : prosjectToReturn.Number;
+                prosjectToReturn.Number = project.Number ?? prosjectToReturn.Number;
                 prosjectToReturn.Title = project.Title ?? prosjectToReturn.Title;
                 prosjectToReturn.Place = project.Place ?? prosjectToReturn.Place;
                 prosjectToReturn.Status = project.Status ?? prosjectToReturn.Status;
