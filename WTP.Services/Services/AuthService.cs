@@ -168,8 +168,9 @@ namespace WTP.Services.Services
                 JwtId = token.Id,
                 IsUsed = false,
                 UserId = user.Id,
-                AddedDate = DateTime.UtcNow,
+                AddedDate = token.ValidFrom,
                 ExpiryDate = DateTime.UtcNow.AddYears(1),
+                Expires = token.ValidTo,
                 IsRevoked = false,
                 Token = rand
             };
@@ -194,13 +195,13 @@ namespace WTP.Services.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("Id", user.Id.ToString()),
+                    new Claim("Id", user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
-                Expires = DateTime.UtcNow.AddSeconds(120), // 5-10
+                Expires = DateTime.UtcNow.AddMinutes(1), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

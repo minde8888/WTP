@@ -19,7 +19,6 @@ using WTP.Api.Configuration;
 using WTP.Data.Context;
 using WTP.Data.Interfaces;
 using WTP.Data.Repositorys;
-using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Roles;
 using WTP.Domain.Entities.Settings;
@@ -52,15 +51,15 @@ namespace WTP.Api
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                IssuerSigningKey = key,
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = false,
+                ValidateLifetime = true,
                 RequireExpirationTime = true,
 
                 // Allow to use seconds for expiration of token
@@ -96,7 +95,7 @@ namespace WTP.Api
             services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            services.AddScoped(typeof(IProgressPlan), typeof(ProgressPlan));
+            services.AddScoped(typeof(IProgressPlan), typeof(ProgressPlanRepository));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));    
 
             services.AddScoped<AuthService>();

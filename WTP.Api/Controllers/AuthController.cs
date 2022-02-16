@@ -155,7 +155,8 @@ namespace WTP.Api.Controllers
                     String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                     var result = await _authService.GetUserInfo(existingUser, token, ImageSrc);
 
-                    return Ok(result);
+                    return Ok(await _authService.GenerateJwtToken(existingUser));
+                    //return Ok(result);
                 }
                 catch (Exception)
                 {
@@ -258,13 +259,12 @@ namespace WTP.Api.Controllers
                         return BadRequest(new RegistrationResponse()
                         {
                             Errors = new List<string>() {
-                    "Invalid tokens"
-                    },
+                            "Invalid tokens"
+                            },
                             Success = false
                         });
                     }
-
-                    return Ok(res);
+                        return Ok(res);
                 }
                 catch (Exception)
                 {
