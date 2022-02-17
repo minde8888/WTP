@@ -61,6 +61,8 @@ namespace WTP.Api
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 RequireExpirationTime = true,
+                ValidIssuer = Configuration["JwtConfig:Issuer"],
+                ValidAudience = Configuration["JwtConfig:Audience"],
 
                 // Allow to use seconds for expiration of token
                 // Required only when token lifetime less than 5 minutes

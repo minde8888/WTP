@@ -10,5 +10,6 @@ namespace WTP.Services.Services.Dtos
         public Guid? EmployeeId { get; set; }
         public ICollection<EmployeeDto> Employees { get; set; }
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
     }
 }
