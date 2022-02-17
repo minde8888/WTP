@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos
 {
@@ -14,6 +11,6 @@ namespace WTP.Domain.Dtos
         public string Start { get; set; }
         public string End { get; set; }
         public string Index { get; set; }
-        public Guid ManagerId { get; set; }
+        public ICollection<EmployeeDto> Employees { get; set; }
     }
 }

@@ -61,6 +61,8 @@ namespace WTP.Api
                 ValidateAudience = false,
                 ValidateLifetime = true,
                 RequireExpirationTime = true,
+                ValidIssuer = Configuration["JwtConfig:Issuer"],
+                ValidAudience = Configuration["JwtConfig:Audience"],
 
                 // Allow to use seconds for expiration of token
                 // Required only when token lifetime less than 5 minutes
@@ -95,7 +97,7 @@ namespace WTP.Api
             services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            services.AddScoped(typeof(IProgressPlan), typeof(ProgressPlanRepository));
+            services.AddScoped(typeof(IProgressPlanRepository), typeof(ProgressPlanRepository));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));    
 
             services.AddScoped<AuthService>();
