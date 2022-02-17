@@ -29,7 +29,7 @@ namespace WTP.Data.Repositorys
         {
             if (user.Role == "Manager")
             {
-                Manager manager = _mapper.Map<Manager>(user);//nesaugoti prie klaidos !!!!!!!!!!!!!
+                Manager manager = _mapper.Map<Manager>(user);
 
                 manager.Id = Guid.NewGuid();
                 Address addres = new();

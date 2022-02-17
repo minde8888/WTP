@@ -63,11 +63,12 @@ namespace WTP.Services.Services
                         var managerDto = _mapper.Map<List<EmployeeInformationDto>>(manager);
 
                         managerDto.Where(t => t.Token == null).ToList().ForEach(t => t.Token = token.Token);
+                        managerDto.Where(t => t.RefreshToken == null).ToList().ForEach(t => t.RefreshToken = token.RefreshToken);
 
                         foreach (var managerImage in managerDto)
                         {
                             imgName = managerImage.ImageName;
-                            managerImage.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                            managerImage.ImageSrc = string.Format("{0}/Images/{1}", ImageSrc, imgName);
 
                             var employees = managerImage.Employees.Where(i => i.IsDeleted == false);
                             foreach (var employeeImage in employees)
@@ -77,9 +78,7 @@ namespace WTP.Services.Services
                             }
                         }
 
-                        var managerActive = managerDto.Any(i => i.IsDeleted == false);
-
-                        if (managerDto != null && managerActive)
+                        if (managerDto != null)
                             return managerDto;
 
                         throw new Exception("User does not exist");
@@ -97,12 +96,10 @@ namespace WTP.Services.Services
                         foreach (var image in employeeDto)
                         {
                             imgName = image.ImageName;
-                            image.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, imgName);
+                            image.ImageSrc = string.Format("{0}/Images/{1}", ImageSrc, imgName);
                         }
 
-                        var employeeActive = employeeDto.Any(i => i.IsDeleted == false);
-
-                        if (employeeDto != null && employeeActive)
+                       if (employeeDto != null )
                             return employeeDto;
 
                         throw new ArgumentException("User does not exist");
@@ -168,8 +165,9 @@ namespace WTP.Services.Services
                 JwtId = token.Id,
                 IsUsed = false,
                 UserId = user.Id,
-                AddedDate = DateTime.UtcNow,
+                AddedDate = token.ValidFrom,
                 ExpiryDate = DateTime.UtcNow.AddYears(1),
+                Expires = token.ValidTo,
                 IsRevoked = false,
                 Token = rand
             };
@@ -194,13 +192,13 @@ namespace WTP.Services.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("Id", user.Id.ToString()),
+                    new Claim("Id", user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
-                Expires = DateTime.UtcNow.AddSeconds(120), // 5-10
+                Expires = DateTime.UtcNow.AddMinutes(1), // 5-10
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

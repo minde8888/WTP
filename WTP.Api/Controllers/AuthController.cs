@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using WTP.Api.Configuration;
 using WTP.Api.Configuration.Requests;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos.Requests;
@@ -25,17 +28,20 @@ namespace WTP.Api.Controllers
         private readonly TokenValidationParameters _tokenValidationParams;
         private readonly IUserRepository _userRepository;
         private readonly AuthService _authService;
+        private readonly JwtConfig _jwtConfig;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             TokenValidationParameters tokenValidationsParams,
             IUserRepository userRepository,
-            AuthService authService)
+            AuthService authService,
+            IOptionsMonitor<JwtConfig> optionsMonitor)
               
         {
             _userManager = userManager;
             _tokenValidationParams = tokenValidationsParams;
             _userRepository = userRepository;
             _authService = authService;
+            _jwtConfig = optionsMonitor.CurrentValue;
         }
 
         [HttpPost]
@@ -248,27 +254,39 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    JwtSecurityTokenHandler jwtTokenHandler = new();
-                    var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out var validatedToken);
+                JwtSecurityTokenHandler jwtTokenHandler = new();
+                try                {
+                    // This validation function will make sure that the token meets the validation parameters
+                    // and its an actual jwt token not just a random string
+                    var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+                    var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                        RequireExpirationTime = true,
+                        ValidIssuer = _jwtConfig.Issuer,
+                        ValidAudience = _jwtConfig.Audience,
+                        // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                        ClockSkew = TimeSpan.Zero
+                    }, out var validatedToken);
                     var res = await _authService.VerifyToken(tokenRequest, principal, validatedToken);
                     if (res == null)
                     {
                         return BadRequest(new RegistrationResponse()
                         {
                             Errors = new List<string>() {
-                    "Invalid tokens"
-                    },
+                            "Invalid tokens"
+                            },
                             Success = false
                         });
                     }
-
-                    return Ok(res);
+                        return Ok(res);
                 }
-                catch (Exception)
-                {
-                    return BadRequest(new { message = "ValidateToken or VerifyToken Error !!!" });
+                catch (Exception ex)                {
+                    return BadRequest(ex);
                 }
             }
 

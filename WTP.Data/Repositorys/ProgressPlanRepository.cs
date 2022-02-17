@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using System.Threading.Tasks;
 using WTP.Data.Context;
+using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
 using WTP.Domain.Entities;
 
 namespace WTP.Data.Repositorys
 {
-    public class ProgressPlanRepository
+    public class ProgressPlanRepository: IProgressPlan
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
