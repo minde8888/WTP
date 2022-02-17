@@ -35,7 +35,7 @@ namespace WTP.Api.Controllers
             IUserRepository userRepository,
             AuthService authService,
             IOptionsMonitor<JwtConfig> optionsMonitor)
-              
+
         {
             _userManager = userManager;
             _tokenValidationParams = tokenValidationsParams;
@@ -50,7 +50,7 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var exist = _userManager.Users.Any(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email);             
+                var exist = _userManager.Users.Any(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email);
 
                 if (exist)
                 {
@@ -92,7 +92,7 @@ namespace WTP.Api.Controllers
                                 "Error to add user in the DB !!!  " + ex
                             },
                             Success = false
-                        }); ;
+                        });
                     }
                 }
                 else
@@ -255,10 +255,11 @@ namespace WTP.Api.Controllers
             if (ModelState.IsValid)
             {
                 JwtSecurityTokenHandler jwtTokenHandler = new();
-                try                {
+                try
+                {
+                    var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
                     // This validation function will make sure that the token meets the validation parameters
                     // and its an actual jwt token not just a random string
-                    var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
                     var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
@@ -283,9 +284,10 @@ namespace WTP.Api.Controllers
                             Success = false
                         });
                     }
-                        return Ok(res);
+                    return Ok(res);
                 }
-                catch (Exception ex)                {
+                catch (Exception ex)
+                {
                     return BadRequest(ex);
                 }
             }

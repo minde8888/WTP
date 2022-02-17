@@ -34,7 +34,7 @@ namespace WTP.Data.Repositorys
                 .Where(x => x.ProgressPlanId == Id).ToListAsync();
         }
 
-        public async Task<List<ProgressPlanDto>> GetAllProgressPlans()
+        public async Task<List<ProgressPlanDto>> GetAllProgressPlansAsync()
         {
             var plan = await _context.ProgressPlan
                 .Include(e => e.Employees)
