@@ -33,6 +33,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Manager, Admin")]
         public IActionResult AddNewProject([FromForm] ProjectDto project)
         {
             try

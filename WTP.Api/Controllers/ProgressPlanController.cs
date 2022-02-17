@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
 using WTP.Services.Services;
@@ -15,11 +17,11 @@ namespace WTP.Api.Controllers
     [Route("v1/api/[controller]")]
     public class ProgressPlanController : Controller
     {
-        private readonly IProgressPlan _progressPlanRepository;
+        private readonly IProgressPlanRepository _progressPlanRepository;
         private readonly ProgressPlanService _progressPlanService;
         private readonly IMapper _mapper;
 
-        public ProgressPlanController(IProgressPlan progressPlanRepository, ProgressPlanService progressPlanService, IMapper mapper)
+        public ProgressPlanController(IProgressPlanRepository progressPlanRepository, ProgressPlanService progressPlanService, IMapper mapper)
         {
             _progressPlanRepository = progressPlanRepository;
             _progressPlanService = progressPlanService;
@@ -39,6 +41,31 @@ namespace WTP.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                 "Error Add data to the database -> AddNewProjec");
+            }
+        }
+
+        [HttpGet("id")]
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult<List<ProgressPlanDto>>> Get(String id)
+        {
+            try
+            {
+                var projectId = new Guid(id);
+                if (projectId == Guid.Empty)
+                    return BadRequest();
+
+                var progressPlan = await _progressPlanRepository.GetProgressPlanAsync(projectId);
+                if (progressPlan == null)
+                    return NotFound();
+
+                var getProject = _mapper.Map<List<ProgressPlanDto>>(progressPlan);
+
+                return Ok(getProject);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Could not find Project info ");
             }
         }
     }

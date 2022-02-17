@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WTP.Domain.Entities
 {
@@ -12,7 +13,7 @@ namespace WTP.Domain.Entities
         public string Index { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
-        public Guid ManagerId { get; set; }
-        public Manager Manager { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public ICollection<Employee> Employees { get; set; }
     }
 }
