@@ -18,39 +18,24 @@ namespace WTP.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Identity")
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EmployeeProject", b =>
+            modelBuilder.Entity("EmployeeProgressPlan", b =>
                 {
                     b.Property<Guid>("EmployeesId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<Guid>("ProgressPlanId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("EmployeesId", "ProjectId");
+                    b.HasKey("EmployeesId", "ProgressPlanId");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProgressPlanId");
 
-                    b.ToTable("EmployeeProject", "Identity");
-                });
-
-            modelBuilder.Entity("ManagerProject", b =>
-                {
-                    b.Property<Guid>("ManagerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ManagerId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ManagerProject", "Identity");
+                    b.ToTable("EmployeeProgressPlan", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -381,7 +366,7 @@ namespace WTP.Data.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<Guid?>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Role")
@@ -436,7 +421,7 @@ namespace WTP.Data.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<Guid?>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Role")
@@ -513,8 +498,8 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Index")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ManagerId")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -523,8 +508,6 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ProgressPlanId");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("ProgressPlan", "Identity");
                 });
@@ -544,6 +527,9 @@ namespace WTP.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Number")
                         .HasColumnType("text");
 
@@ -557,6 +543,8 @@ namespace WTP.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ProjectId");
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("Project", "Identity");
                 });
@@ -588,7 +576,7 @@ namespace WTP.Data.Migrations
                     b.ToTable("AspNetRoles", "Identity");
                 });
 
-            modelBuilder.Entity("EmployeeProject", b =>
+            modelBuilder.Entity("EmployeeProgressPlan", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Employee", null)
                         .WithMany()
@@ -596,24 +584,9 @@ namespace WTP.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WTP.Domain.Entities.Project", null)
+                    b.HasOne("WTP.Domain.Entities.ProgressPlan", null)
                         .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ManagerProject", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.Manager", null)
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WTP.Domain.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("ProgressPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -732,10 +705,10 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
-            modelBuilder.Entity("WTP.Domain.Entities.ProgressPlan", b =>
+            modelBuilder.Entity("WTP.Domain.Entities.Project", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Manager", "Manager")
-                        .WithMany()
+                        .WithMany("Project")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -766,6 +739,8 @@ namespace WTP.Data.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("Project");
                 });
 #pragma warning restore 612, 618
         }
