@@ -22,8 +22,6 @@ namespace WTP.Domain.Entities
         public bool IsDeleted { get; set; } = false;
         public Address Address { get; set; }
         public ICollection<Post> Posts { get; set; }
-        public Guid ProjectId { get; set; }
-        public ICollection<Project> Project { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public ApplicationUser ApplicationUser { get; set; }

@@ -33,7 +33,6 @@ namespace WTP.Data.Repositorys
         {
             return await _context.Project
                 .Include(m => m.Manager)
-                .Include(e => e.Employees)
                 .Where(x => x.ProjectId == Id).ToListAsync();
         }
 
@@ -41,7 +40,6 @@ namespace WTP.Data.Repositorys
         {
             var project = await _context.Project
                 .Include(m => m.Manager)
-                .Include(e => e.Employees)
                 .ToListAsync(); ;
 
             var prosjectToReturn = _mapper.Map<List<ProjectDto>>(project);

@@ -97,7 +97,7 @@ namespace WTP.Api
             services.AddScoped(typeof(IProjectRepository), typeof(ProjectRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IEmailPassword), typeof(EmailPassword));
-            services.AddScoped(typeof(IProgressPlan), typeof(ProgressPlanRepository));
+            services.AddScoped(typeof(IProgressPlanRepository), typeof(ProgressPlanRepository));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));    
 
             services.AddScoped<AuthService>();
