@@ -9,9 +9,6 @@ namespace WTP.Data.Interfaces
     public interface IUserRepository
     {
         public Task AddUser(UserRegistrationDto user);
-
-        public Task<bool> RemoveRefreshToken(string rawUserId);
-
     }
 }
 

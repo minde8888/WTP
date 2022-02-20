@@ -50,23 +50,5 @@ namespace WTP.Data.Repositorys
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<bool> RemoveRefreshToken(string rawUserId)
-        {
-            IEnumerable<RefreshToken> refreshTokens = await _context.RefreshToken
-           .Where(t => t.UserId.ToString() == rawUserId)
-           .ToListAsync();
-
-            if (refreshTokens == null)
-            {
-                throw new Exception();
-            }
-            else
-            {
-                _context.RefreshToken.RemoveRange(refreshTokens);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-        }
     }
 }

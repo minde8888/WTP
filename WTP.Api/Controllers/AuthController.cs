@@ -184,30 +184,6 @@ namespace WTP.Api.Controllers
             });
         }
 
-        [Authorize]
-        [HttpDelete("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            try
-            {
-                string rawUserId = HttpContext.User.FindFirstValue("id");
-
-                if (!Guid.TryParse(rawUserId, out Guid userId))
-                {
-                    return Unauthorized();
-                }
-
-                bool result = await _userRepository.RemoveRefreshToken(rawUserId);
-                if (result)
-                    return NoContent();
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { message = "Can not to remove RefreshToken !!!" });
-            }
-            return BadRequest(new { message = "Problems with Logout !!!" });
-        }
-
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
