@@ -31,19 +31,19 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewPlan([FromBody] ProgressPlanDto progressPlan)
+        public IActionResult AddNewPlan([FromForm] ProgressPlanDto progressPlan)
         {
             try
             {
                 progressPlan.ProgressPlanId = Guid.NewGuid();
                 _progressPlanRepository.AddPlan(progressPlan);
-                var projectToReturn = _progressPlanService.GetOnePlan(progressPlan); 
+                var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
                 return Ok(projectToReturn);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                "Error Add data to the database -> AddNewProjec");
+                ex);
             }
         }
 
@@ -80,10 +80,10 @@ namespace WTP.Api.Controllers
             {
                 return await _progressPlanRepository.GetAllProgressPlansAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get project data from the database");
+                  ex);
             }
         }
 

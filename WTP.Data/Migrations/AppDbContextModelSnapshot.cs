@@ -23,21 +23,6 @@ namespace WTP.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EmployeeProgressPlan", b =>
-                {
-                    b.Property<Guid>("EmployeesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProgressPlanId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EmployeesId", "ProgressPlanId");
-
-                    b.HasIndex("ProgressPlanId");
-
-                    b.ToTable("EmployeeProgressPlan", "Identity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -388,6 +373,21 @@ namespace WTP.Data.Migrations
                     b.ToTable("Employee", "Identity");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.EmployeeProgressPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProgressPlanId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id", "ProgressPlanId");
+
+                    b.HasIndex("ProgressPlanId");
+
+                    b.ToTable("EmployeeProgressPlan", "Identity");
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
                 {
                     b.Property<Guid>("Id")
@@ -576,21 +576,6 @@ namespace WTP.Data.Migrations
                     b.ToTable("AspNetRoles", "Identity");
                 });
 
-            modelBuilder.Entity("EmployeeProgressPlan", b =>
-                {
-                    b.HasOne("WTP.Domain.Entities.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WTP.Domain.Entities.ProgressPlan", null)
-                        .WithMany()
-                        .HasForeignKey("ProgressPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Roles.ApplicationRole", null)
@@ -681,6 +666,25 @@ namespace WTP.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.EmployeeProgressPlan", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WTP.Domain.Entities.ProgressPlan", "ProgressPlan")
+                        .WithMany()
+                        .HasForeignKey("ProgressPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("ProgressPlan");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Manager", b =>
