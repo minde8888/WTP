@@ -184,30 +184,6 @@ namespace WTP.Api.Controllers
             });
         }
 
-        [Authorize]
-        [HttpDelete("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            try
-            {
-                string rawUserId = HttpContext.User.FindFirstValue("id");
-
-                if (!Guid.TryParse(rawUserId, out Guid userId))
-                {
-                    return Unauthorized();
-                }
-
-                bool result = await _userRepository.RemoveRefreshToken(rawUserId);
-                if (result)
-                    return NoContent();
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { message = "Can not to remove RefreshToken !!!" });
-            }
-            return BadRequest(new { message = "Problems with Logout !!!" });
-        }
-
         [AllowAnonymous]
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPassword model)
@@ -248,31 +224,20 @@ namespace WTP.Api.Controllers
             return BadRequest(new { message = "The email you tried to reach does not exist !!!" });
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequests tokenRequest)
         {
             if (ModelState.IsValid)
-            {
-                JwtSecurityTokenHandler jwtTokenHandler = new();
+            {   
                 try
                 {
-                    var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
-                    // This validation function will make sure that the token meets the validation parameters
-                    // and its an actual jwt token not just a random string
-                    var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                        RequireExpirationTime = true,
-                        ValidIssuer = _jwtConfig.Issuer,
-                        ValidAudience = _jwtConfig.Audience,
-                        // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                        ClockSkew = TimeSpan.Zero
-                    }, out var validatedToken);
+                    JwtSecurityTokenHandler jwtTokenHandler = new();
+
+                    _tokenValidationParams.ValidateLifetime = false;
+                    var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParams, out var validatedToken);
+                    _tokenValidationParams.ValidateLifetime = true;
                     var res = await _authService.VerifyToken(tokenRequest, principal, validatedToken);
                     if (res == null)
                     {

@@ -11,6 +11,5 @@ namespace WTP.Domain.Dtos
         public string Place { get; set; }
         public string Status { get; set; }
         public Guid ManagerId { get; set; }
-        public ManagerDto Manager { get; set; }
     }
 }

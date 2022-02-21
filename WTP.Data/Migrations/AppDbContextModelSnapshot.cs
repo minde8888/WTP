@@ -498,6 +498,9 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Index")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
