@@ -92,7 +92,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult<List<ProjectDto>> Update([FromBody] ProjectDto project)
+        public ActionResult<List<ProjectDto>> Update([FormData] ProjectDto project)
         {
             if (project.ProjectId == Guid.Empty)
                 return BadRequest("This project can not by updated");

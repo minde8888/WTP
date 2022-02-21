@@ -31,7 +31,7 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewPlan([FromBody] ProgressPlanDto progressPlan)
+        public IActionResult AddNewPlan([FormData] ProgressPlanDto progressPlan)
         {
             try
             {
