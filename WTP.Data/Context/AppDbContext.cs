@@ -23,6 +23,7 @@ namespace WTP.Data.Context
         public DbSet<Project> Project { get; set; }
         public DbSet<ProgressPlan> ProgressPlan { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
+        public DbSet<EmployeeProgressPlan> EmployeeProgressPlan { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,14 +46,14 @@ namespace WTP.Data.Context
                 entity.ToTable("UserLogins");
             });
 
-            builder.Entity<EmployeeProgressPlan>().HasKey(i => new { i.Id, i.ProgressPlanId });
+            builder.Entity<EmployeeProgressPlan>().HasKey(i => new { i.EmployeesId, i.ProgressPlanId });
 
             builder.Entity<ProgressPlan>()
                 .HasMany(x => x.Employees)
                 .WithMany(x => x.ProgressPlan)
                 .UsingEntity<EmployeeProgressPlan>(
                     x => x.HasOne(x => x.Employee)
-                    .WithMany().HasForeignKey(x => x.Id),
+                    .WithMany().HasForeignKey(x => x.EmployeesId),
                     x => x.HasOne(x => x.ProgressPlan)
                    .WithMany().HasForeignKey(x => x.ProgressPlanId));
         }

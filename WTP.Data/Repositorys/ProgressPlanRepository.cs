@@ -24,19 +24,20 @@ namespace WTP.Data.Repositorys
         public async Task AddPlan(ProgressPlanDto progressPlan)
         {
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
+            
+            var employeeeId = _context.Employee.First().Id;
 
-            Employee employee = new();
-            employee.Id = Guid.NewGuid();
-            projectToSave.Employees.Add(employee);
+            _context.ProgressPlan.Add(projectToSave);
+
+            await _context.SaveChangesAsync();
 
             var employeeProgressPlan = new EmployeeProgressPlan
             {
-                Id = employee.Id,
-                ProgressPlanId = projectToSave.ProgressPlanId,
-                ProgressPlan = projectToSave,
+                EmployeesId = employeeeId,
+                ProgressPlanId = projectToSave.ProgressPlanId
             };
   
-            await _context.AddAsync(employeeProgressPlan);
+            _context.EmployeeProgressPlan.Add(employeeProgressPlan);
             await _context.SaveChangesAsync();
         }
 

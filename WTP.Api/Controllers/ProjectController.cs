@@ -34,12 +34,11 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewProject([FromForm] ProjectDto project)
+        public async Task<IActionResult> AddNewProject([FromForm] ProjectDto project)
         {
             try
             {
-                project.ProjectId = Guid.NewGuid();
-                _projectRepository.AddProject(project);
+                await _projectRepository.AddProject(project);
                 var projectToReturn = _projectService.GetOneProject(project);
                 return Ok(projectToReturn);
             }

@@ -25,8 +25,9 @@ namespace WTP.Data.Repositorys
         public async Task AddProject(ProjectDto project)
         {
             var projectToSave = _mapper.Map<Project>(project);
-            await _context.AddAsync(projectToSave);
+            _context.Add(projectToSave);
             await _context.SaveChangesAsync();
+
         }
 
         public async Task<List<Project>> GetProjectAsync(Guid Id)
