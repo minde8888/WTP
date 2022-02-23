@@ -375,13 +375,13 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.EmployeeProgressPlan", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("EmployeesId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProgressPlanId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id", "ProgressPlanId");
+                    b.HasKey("EmployeesId", "ProgressPlanId");
 
                     b.HasIndex("ProgressPlanId");
 
@@ -672,7 +672,7 @@ namespace WTP.Data.Migrations
                 {
                     b.HasOne("WTP.Domain.Entities.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("Id")
+                        .HasForeignKey("EmployeesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

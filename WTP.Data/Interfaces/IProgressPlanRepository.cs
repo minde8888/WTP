@@ -8,7 +8,7 @@ namespace WTP.Data.Interfaces
 {
     public interface IProgressPlanRepository
     {
-        public Task AddPlan(ProgressPlanDto progressPlan);
+        public Task AddPlanAsync(ProgressPlanDto progressPlan);
         public Task<List<ProgressPlan>> GetProgressPlanAsync(Guid Id);
         public Task<List<ProgressPlanDto>> GetAllProgressPlansAsync();
         public Task RemoveProgressPlanAsync(Guid id);

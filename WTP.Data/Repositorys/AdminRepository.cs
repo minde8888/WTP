@@ -10,7 +10,7 @@ using WTP.Domain.Entities;
 
 namespace WTP.Data.Repositorys
 {
-    public class AdminRepository: IAdminRepository
+    public class AdminRepository : IAdminRepository
     {
         private readonly AppDbContext _context;
 
@@ -49,9 +49,9 @@ namespace WTP.Data.Repositorys
             return null;
         }
 
-        public async Task AddItem(Manager manager)
+        public async Task AddItemAsync(Manager manager)
         {
-            await _context.AddAsync(manager);
+            _context.Add(manager);
             await _context.SaveChangesAsync();
         }
     }

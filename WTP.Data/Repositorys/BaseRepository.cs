@@ -23,11 +23,9 @@ namespace WTP.Data.Repositorys
             _userManager = userManager;
         }
 
-        public async Task AddItem(T t)
+        public async Task AddItemAsync(T t)
         {
-            // var userId = t.Id;
-            //_userManager.
-            await _context.AddAsync(t);
+            _context.Add(t);
             await _context.SaveChangesAsync();
         }
 

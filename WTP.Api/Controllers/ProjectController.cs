@@ -38,8 +38,8 @@ namespace WTP.Api.Controllers
         {
             try
             {
-                await _projectRepository.AddProject(project);
-                var projectToReturn = _projectService.GetOneProject(project);
+                var id = await _projectRepository.AddProject(project);
+                var projectToReturn = _projectService.GetOneProject(id);
                 return Ok(projectToReturn);
             }
             catch (Exception)
@@ -101,7 +101,7 @@ namespace WTP.Api.Controllers
             try
             {
                 _projectRepository.UpdateProjectAsync(project);
-                var projectToReturn = _projectService.GetOneProject(project);
+                var projectToReturn = _projectService.GetOneProject(project.ProjectId);
                 return Ok(projectToReturn);
             }
             catch (DbUpdateConcurrencyException)

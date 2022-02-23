@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WTP.Api.Configuration.Roles;
-using WTP.Domain.Entities;
 using WTP.Domain.Entities.Auth;
 using WTP.Domain.Entities.Roles;
 

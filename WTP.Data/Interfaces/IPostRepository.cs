@@ -9,7 +9,7 @@ namespace WTP.Data.Interfaces
 {
     public interface IPostRepository
     {
-        public Task AddItem(Post post);
+        public Task AddItemAsync(Post post);
         public Task DeleteItem(Guid Id);
         public Task<List<Post>> GetItemIdAsync(Guid Id);
         public Task<List<Post>> GetItemAsync(string ImageSrc);

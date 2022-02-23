@@ -35,8 +35,7 @@ namespace WTP.Api.Controllers
         {
             try
             {
-                //progressPlan.ProgressPlanId = Guid.NewGuid();
-                await _progressPlanRepository.AddPlan(progressPlan);
+                await _progressPlanRepository.AddPlanAsync(progressPlan);
                 var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
                 return Ok(projectToReturn);
             }

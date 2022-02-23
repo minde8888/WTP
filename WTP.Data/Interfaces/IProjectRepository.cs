@@ -8,7 +8,7 @@ namespace WTP.Data.Interfaces
 {
     public interface IProjectRepository
     {
-        public Task AddProject(ProjectDto project);
+        public Task<Guid> AddProject(ProjectDto project);
         public Task<List<Project>> GetProjectAsync(Guid Id);
         public Task<List<ProjectDto>> GetAllProjects();
         public Task UpdateProjectAsync(ProjectDto project);

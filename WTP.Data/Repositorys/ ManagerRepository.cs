@@ -56,11 +56,11 @@ namespace WTP.Data.Repositorys
             return null;
         }
 
-        public async Task AddManager(Manager manager, string UserId)
+        public async Task AddManagerAsync(Manager manager, string UserId)
         {
             var user = await _userManager.FindByIdAsync(UserId);
             manager.UserId = new Guid(user.Id.ToString());
-            await _context.AddAsync(manager);
+            _context.Add(manager);
             await _context.SaveChangesAsync();
         }
 
