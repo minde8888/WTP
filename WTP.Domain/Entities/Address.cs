@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WTP.Domain.Entities
 {
-    public class Address 
+    public class Address
     {
         public Guid Id { get; set; }
         public string Street { get; set; }

@@ -26,20 +26,20 @@ namespace WTP.Api.Controllers
             _imagesService = imagesService;
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Administrator")]
-        public async Task<ActionResult<List<Post>>> GetAllPosts()
-        {
-            try
-            {
-                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _post.GetItemAsync(ImageSrc);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get data from the database");
-            }
-        }
+        //[HttpGet]
+        //[Authorize(Roles = "Administrator")]
+        //public async Task<ActionResult<List<Post>>> GetAllPosts()
+        //{
+        //    try
+        //    {
+        //        String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+        //        return await _post.GetItemAsync(ImageSrc);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //          "Error Get data from the database");
+        //    }
+        //}
     }
 }

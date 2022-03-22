@@ -74,21 +74,22 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult<List<Employee>>> GetAllEmployee()
-        {
-            try
-            {
-                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _employee.GetItemAsync(ImageSrc);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get data from the database -> NewItem");
-            }
-        }
+        //[HttpGet]
+        //[Authorize(Roles = "Manager, Admin")]
+        //public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployee()
+        //{
+        //    try
+        //    {
+        //        var employeeDto = new EmployeeDto();
+        //        String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+        //        return await _employeeService.GetImagesAsync(employeeDto, ImageSrc);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //          "Error Get data from the database -> NewItem");
+        //    }
+        //}
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]

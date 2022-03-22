@@ -24,6 +24,7 @@ namespace WTP.Data.Context
         public DbSet<ProgressPlan> ProgressPlan { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<EmployeeProgressPlan> EmployeeProgressPlan { get; set; }
+        public DbSet<Rent> Rent { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
