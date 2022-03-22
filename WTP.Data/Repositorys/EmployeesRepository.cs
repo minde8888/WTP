@@ -20,7 +20,7 @@ namespace WTP.Data.Repositorys
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public EmployeesRepository(AppDbContext context, 
+        public EmployeesRepository(AppDbContext context,
             UserManager<ApplicationUser> userManager,
             IMapper mapper)
         {
@@ -37,17 +37,17 @@ namespace WTP.Data.Repositorys
                Where(x => x.Id == Id).ToListAsync();
         }
 
-        public async Task AddEmployee(string UserId, RequestEmployeeDto employee)
-        {          
+        public async Task AddEmployeeAsync(string UserId, RequestEmployeeDto employee)
+        {
             var user = await _userManager.FindByIdAsync(UserId);
-            
+
             if (user.Roles == "Employee")
             {
                 employee.ManagerId = new Guid(UserId.ToString());
 
                 Employee newEmploy = _mapper.Map<Employee>(employee);
 
-                await _context.AddAsync(newEmploy);
+                _context.Add(newEmploy);
                 await _context.SaveChangesAsync();
             }
         }
@@ -94,7 +94,7 @@ namespace WTP.Data.Repositorys
         }
         public async Task RemoveEmployeeAsync(string userId)
         {
-            var employee =  _context.Employee.Where(x => x.Id == Guid.Parse(userId)).FirstOrDefault();
+            var employee = _context.Employee.Where(x => x.Id == Guid.Parse(userId)).FirstOrDefault();
             var user = await _userManager.FindByEmailAsync(employee.Email);
             employee.IsDeleted = true;
             user.IsDeleted = true;

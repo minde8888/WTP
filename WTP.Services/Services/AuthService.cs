@@ -99,7 +99,7 @@ namespace WTP.Services.Services
                             image.ImageSrc = string.Format("{0}/Images/{1}", ImageSrc, imgName);
                         }
 
-                       if (employeeDto != null )
+                        if (employeeDto != null)
                             return employeeDto;
 
                         throw new ArgumentException("User does not exist");
@@ -174,7 +174,7 @@ namespace WTP.Services.Services
             return refreshToken;
         }
 
-        public async Task<AuthResult> GenerateJwtToken(ApplicationUser user)
+        public async Task<AuthResult> GenerateJwtTokenAsync(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -198,7 +198,7 @@ namespace WTP.Services.Services
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("guid", user.Id.ToString()),
                 }.Union(roleClaims)),
-                Expires = DateTime.UtcNow.AddMinutes(1), // 5-10
+                Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -208,7 +208,7 @@ namespace WTP.Services.Services
             string rand = RandomString.RandString(25) + Guid.NewGuid();
             var refreshToken = GetrefreshToken(token, rand, user);
 
-            await _context.RefreshToken.AddAsync(refreshToken);
+            _context.RefreshToken.Add(refreshToken);
             await _context.SaveChangesAsync();
 
             return new AuthResult()
@@ -312,7 +312,7 @@ namespace WTP.Services.Services
             await _context.SaveChangesAsync();
 
             var dbUser = await _userManager.FindByIdAsync(storedRefreshToken.UserId.ToString());
-            return await GenerateJwtToken(dbUser);
+            return await GenerateJwtTokenAsync(dbUser);
         }
 
         public string StringRandom()

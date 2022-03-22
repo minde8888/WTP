@@ -63,7 +63,7 @@ namespace WTP.Api.Controllers
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
 
                 var employeeDto = _mapper.Map<List<EmployeeDto>>(result);
-                 _employeeService.GetImagesAsync(employeeDto, ImageSrc);
+                _employeeService.GetImagesAsync(employeeDto, ImageSrc);
 
                 return Ok(employeeDto);
             }
@@ -74,35 +74,36 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult<List<Employee>>> GetAllEmployee()
-        {
-            try
-            {
-                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _employee.GetItemAsync(ImageSrc);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  "Error Get data from the database -> NewItem");
-            }
-        }
+        //[HttpGet]
+        //[Authorize(Roles = "Manager, Admin")]
+        //public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployee()
+        //{
+        //    try
+        //    {
+        //        var employeeDto = new EmployeeDto();
+        //        String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+        //        return await _employeeService.GetImagesAsync(employeeDto, ImageSrc);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //          "Error Get data from the database -> NewItem");
+        //    }
+        //}
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewEmployee([FromForm] RequestEmployeeDto employee)
+        public async Task<IActionResult> AddNewEmployee([FromForm] RequestEmployeeDto employee)
         {
             try
             {
                 if (!String.IsNullOrEmpty(employee.ImageName))
                 {
                     string path = _hostEnvironment.ContentRootPath;
-                    var imageName = _imagesService.SaveImage(employee.ImageFile, employee.Height,  employee.Width);
+                    var imageName = _imagesService.SaveImage(employee.ImageFile, employee.Height, employee.Width);
                 }
                 string UserId = HttpContext.User.FindFirstValue("id");
-                _employeeRepository.AddEmployee(UserId, employee);
+                await _employeeRepository.AddEmployeeAsync(UserId, employee);
 
                 return CreatedAtAction("Get", new { employee.Id }, employee);
             }

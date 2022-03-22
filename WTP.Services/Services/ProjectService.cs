@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 using WTP.Data.Context;
 using WTP.Domain.Dtos;
 
@@ -16,9 +17,9 @@ namespace WTP.Services.Services
             _context = context;
         }
 
-        public ProjectDto GetOneProject(ProjectDto project)
+        public ProjectDto GetOneProject(Guid id)
         {
-            var projectUpdated = _context.Project.Find(project.ProjectId);
+            var projectUpdated = _context.Project.Find(id);
             var projectToReturn = _mapper.Map<ProjectDto>(projectUpdated);
             return projectToReturn;
         }

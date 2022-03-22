@@ -31,12 +31,11 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewPlan([FromForm] ProgressPlanDto progressPlan)
+        public async Task<IActionResult> AddNewPlan([FromForm] ProgressPlanDto progressPlan)
         {
             try
             {
-                progressPlan.ProgressPlanId = Guid.NewGuid();
-                _progressPlanRepository.AddPlan(progressPlan);
+                await _progressPlanRepository.AddPlanAsync(progressPlan);
                 var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
                 return Ok(projectToReturn);
             }

@@ -13,7 +13,7 @@ namespace WTP.Data.Interfaces
 
         public Task<List<ManagerDto>> GetItemAsync(string ImageSrc);
 
-        public Task AddManager(Manager manager, string UserId);
+        public Task AddManagerAsync(Manager manager, string UserId);
 
         public Task<Manager> UpdateManager(RequestManagerDto updateManagerDto);
 

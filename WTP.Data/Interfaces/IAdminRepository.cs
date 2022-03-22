@@ -11,7 +11,7 @@ namespace WTP.Data.Interfaces
     {
         Task<List<Manager>> GetManagerAsync(string ImageSrc);
         //Task<List<Employee>> GetEmployeeAsync(string ImageSrc);
-        public Task AddItem(Manager manager);
+        public Task AddItemAsync(Manager manager);
     }
 }
 

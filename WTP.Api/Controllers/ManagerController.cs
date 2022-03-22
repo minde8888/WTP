@@ -90,13 +90,16 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult AddNewManagere([FromForm] Manager manager)
+        public async Task<IActionResult> AddNewManagere([FromForm] Manager manager)
         {
             try
             {
                 string UserId = HttpContext.User.FindFirstValue("id");
-                _managerRepository.AddManager(manager, UserId);
-                return CreatedAtAction("Get", new { manager.Id }, manager);
+                await _managerRepository.AddManagerAsync(manager, UserId);
+                return CreatedAtAction("Get", new
+                {
+                    manager.Id
+                }, manager);
             }
             catch (Exception)
             {
@@ -126,7 +129,7 @@ namespace WTP.Api.Controllers
                     updateManagerDto.ImageName = _imagesService.SaveImage(updateManagerDto.ImageFile, updateManagerDto.Height, updateManagerDto.Width);
                 }
 
-               var updatedManger = await _managerRepository.UpdateManager(updateManagerDto);
+                var updatedManger = await _managerRepository.UpdateManager(updateManagerDto);
 
                 var manager = _mapper.Map<ReturnManagerDto>(updatedManger);
 

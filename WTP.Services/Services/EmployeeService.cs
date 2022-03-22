@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WTP.Domain.Dtos;
 
 namespace WTP.Services.Services
@@ -17,5 +19,9 @@ namespace WTP.Services.Services
             
         }
 
+        public Task<ActionResult<List<EmployeeDto>>> GetImagesAsync(EmployeeDto employeeDto, string imageSrc)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,9 +11,10 @@ namespace WTP.Domain.Entities
         public string Start { get; set; }
         public string End { get; set; }
         public string Index { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
-        public bool IsDeleted { get; set; } = false;
+
         public ICollection<Employee> Employees { get; set; }
     }
 }

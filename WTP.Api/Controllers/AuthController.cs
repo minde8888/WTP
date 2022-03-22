@@ -28,20 +28,17 @@ namespace WTP.Api.Controllers
         private readonly TokenValidationParameters _tokenValidationParams;
         private readonly IUserRepository _userRepository;
         private readonly AuthService _authService;
-        private readonly JwtConfig _jwtConfig;
 
         public AuthController(UserManager<ApplicationUser> userManager,
             TokenValidationParameters tokenValidationsParams,
             IUserRepository userRepository,
-            AuthService authService,
-            IOptionsMonitor<JwtConfig> optionsMonitor)
+            AuthService authService)
 
         {
             _userManager = userManager;
             _tokenValidationParams = tokenValidationsParams;
             _userRepository = userRepository;
             _authService = authService;
-            _jwtConfig = optionsMonitor.CurrentValue;
         }
 
         [HttpPost]
@@ -80,7 +77,7 @@ namespace WTP.Api.Controllers
                     {
                         await _userManager.AddToRoleAsync(newUser, user.Role.ToString());
                         user.UserId = newUser.Id;
-                        await _userRepository.AddUser(user);
+                        await _userRepository.AddUserAsync(user);
 
                         return Ok();
                     }
@@ -157,7 +154,7 @@ namespace WTP.Api.Controllers
                 }
                 try
                 {
-                    var token = await _authService.GenerateJwtToken(existingUser);
+                    var token = await _authService.GenerateJwtTokenAsync(existingUser);
                     String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                     var result = await _authService.GetUserInfo(existingUser, token, ImageSrc);
 
@@ -230,7 +227,7 @@ namespace WTP.Api.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequests tokenRequest)
         {
             if (ModelState.IsValid)
-            {   
+            {
                 try
                 {
                     JwtSecurityTokenHandler jwtTokenHandler = new();

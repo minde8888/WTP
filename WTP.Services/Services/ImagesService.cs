@@ -41,8 +41,8 @@ namespace WTP.Services.Services
 
         public void DeleteImage(string imagePath)
         {
-            if (System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
+            if (File.Exists(imagePath))
+                File.Delete(imagePath);
         }
     }
 }

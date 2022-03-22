@@ -34,13 +34,12 @@ namespace WTP.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Admin")]
-        public IActionResult AddNewProject([FromForm] ProjectDto project)
+        public async Task<IActionResult> AddNewProject([FromForm] ProjectDto project)
         {
             try
             {
-                project.ProjectId = Guid.NewGuid();
-                _projectRepository.AddProject(project);
-                var projectToReturn = _projectService.GetOneProject(project);
+                var id = await _projectRepository.AddProject(project);
+                var projectToReturn = _projectService.GetOneProject(id);
                 return Ok(projectToReturn);
             }
             catch (Exception)
@@ -92,7 +91,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult<List<ProjectDto>> Update([FromBody] ProjectDto project)
+        public ActionResult<List<ProjectDto>> Update([FormData] ProjectDto project)
         {
             if (project.ProjectId == Guid.Empty)
                 return BadRequest("This project can not by updated");
@@ -102,7 +101,7 @@ namespace WTP.Api.Controllers
             try
             {
                 _projectRepository.UpdateProjectAsync(project);
-                var projectToReturn = _projectService.GetOneProject(project);
+                var projectToReturn = _projectService.GetOneProject(project.ProjectId);
                 return Ok(projectToReturn);
             }
             catch (DbUpdateConcurrencyException)

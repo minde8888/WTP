@@ -9,7 +9,7 @@ using WTP.Domain.Entities;
 
 namespace WTP.Data.Repositorys
 {
-   public  class PostRepository: IPostRepository
+    public class PostRepository : IPostRepository
     {
         private readonly AppDbContext _context;
 
@@ -17,15 +17,15 @@ namespace WTP.Data.Repositorys
         {
             _context = context;
         }
-        public async Task AddItem(Post post)
+        public async Task AddItemAsync(Post post)
         {
-            await _context.AddAsync(post);
+            _context.Add(post);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteItem(Guid Id)
         {
-            var post = await _context.Posts.FindAsync(Id);       
+            var post = await _context.Posts.FindAsync(Id);
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
@@ -33,7 +33,7 @@ namespace WTP.Data.Repositorys
 
         public async Task<List<Post>> GetItemIdAsync(Guid Id)
         {
-            return await _context.Posts.Where(x => x.PostId == Id).ToListAsync(); 
+            return await _context.Posts.Where(x => x.PostId == Id).ToListAsync();
         }
 
         public async Task<List<Post>> GetItemAsync(string ImageSrc)

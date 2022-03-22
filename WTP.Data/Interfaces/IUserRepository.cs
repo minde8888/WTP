@@ -8,7 +8,7 @@ namespace WTP.Data.Interfaces
 {
     public interface IUserRepository
     {
-        public Task AddUser(UserRegistrationDto user);
+        public Task AddUserAsync(UserRegistrationDto user);
     }
 }
 

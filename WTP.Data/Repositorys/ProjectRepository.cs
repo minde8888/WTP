@@ -22,11 +22,12 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
         }
 
-        public async Task AddProject(ProjectDto project)
+        public async Task<Guid> AddProject(ProjectDto project)
         {
             var projectToSave = _mapper.Map<Project>(project);
-            await _context.AddAsync(projectToSave);
+            _context.Project.Add(projectToSave);
             await _context.SaveChangesAsync();
+            return projectToSave.ProjectId;
         }
 
         public async Task<List<Project>> GetProjectAsync(Guid Id)

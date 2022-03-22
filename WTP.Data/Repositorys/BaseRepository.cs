@@ -23,11 +23,9 @@ namespace WTP.Data.Repositorys
             _userManager = userManager;
         }
 
-        public async Task AddItem(T t)
+        public async Task AddItemAsync(T t)
         {
-            // var userId = t.Id;
-            //_userManager.
-            await _context.AddAsync(t);
+            _context.Add(t);
             await _context.SaveChangesAsync();
         }
 
@@ -40,30 +38,6 @@ namespace WTP.Data.Repositorys
             _context.Address.Remove(address);
             await _context.SaveChangesAsync();
         }
-
-        //public async Task<List<T>> GetItemIdAsync(Guid Id)
-        //{
-        //    return await _context.Set<T>().Include(t => t.Address).Where(x => x.Id == Id).ToListAsync();
-        //}
-
-        public async Task<List<T>> GetItemAsync(string ImageSrc)
-        {
-            var items = await _context.Set<T>().Include(t => t.Address)
-           .ToListAsync();
-
-            foreach (var item in items)
-            {
-                //item.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, item.ImageName);
-            }
-            return items;
-        }
-
-        //public async Task UpdateItem(T t)
-        //{
-        //    _context.Entry(t).State = EntityState.Modified;
-        //    _context.Entry(t.Address).State = EntityState.Modified;
-        //    await _context.SaveChangesAsync();
-        //}
 
         public async Task<IEnumerable<T>> Search(string name)
         {

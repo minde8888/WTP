@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WTP.Domain.Entities
 {
@@ -14,5 +15,6 @@ namespace WTP.Domain.Entities
         public DateTime? DateUpdated { get; set; }
         public bool IsDeleted { get; set; } = false;
         public Manager Manager { get; set; }
+        public ICollection<Rent> Rent { get; set; }
     }
 }
