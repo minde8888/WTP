@@ -104,7 +104,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult<List<ProgressPlanDto>> Update([FromBody] ProgressPlanDto progressPlan)
+        public ActionResult<List<ProgressPlanDto>> Update([FromForm] ProgressPlanDto progressPlan)
         {
             if (progressPlan.ProgressPlanId == Guid.Empty)
                 return BadRequest("This project can not by updated");
