@@ -104,7 +104,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult<List<ProgressPlanDto>> Update([FromBody] ProgressPlanDto progressPlan)
+        public ActionResult<List<ProgressPlanDto>> Update([FromForm] ProgressPlanDto progressPlan)
         {
             if (progressPlan.ProgressPlanId == Guid.Empty)
                 return BadRequest("This project can not by updated");
@@ -115,7 +115,7 @@ namespace WTP.Api.Controllers
             {
                 _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
                 var planToReturn = _progressPlanService.GetOnePlan(progressPlan);
-                return Ok(planToReturn);
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
