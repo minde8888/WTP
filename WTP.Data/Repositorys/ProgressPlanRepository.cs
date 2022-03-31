@@ -25,7 +25,6 @@ namespace WTP.Data.Repositorys
         {
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
 
-
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
 
