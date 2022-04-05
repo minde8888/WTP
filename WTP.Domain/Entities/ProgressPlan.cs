@@ -14,7 +14,8 @@ namespace WTP.Domain.Entities
         public bool IsDeleted { get; set; } = false;
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime? DateUpdated { get; set; }
-
+        public Project Project { get; set; }
+        public Guid? ProjectId { get; set; }
         public ICollection<Employee> Employees { get; set; }
     }
 }

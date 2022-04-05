@@ -16,5 +16,6 @@ namespace WTP.Domain.Entities
         public bool IsDeleted { get; set; } = false;
         public Manager Manager { get; set; }
         public ICollection<Rent> Rent { get; set; }
+        public ProgressPlan ProgressPlan { get; set; }
     }
 }
