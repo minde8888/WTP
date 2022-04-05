@@ -26,6 +26,11 @@ namespace WTP.Data.Repositorys
         {
             var projectToSave = _mapper.Map<Project>(project);
             _context.Project.Add(projectToSave);
+   
+            ProgressPlan progress = new();
+            progress.ProjectId = projectToSave.ProjectId;
+            _context.ProgressPlan.Add(progress);
+
             await _context.SaveChangesAsync();
             return projectToSave.ProjectId;
         }
@@ -51,6 +56,8 @@ namespace WTP.Data.Repositorys
         {
             var project = _context.Project.Where(x => x.ProjectId == id).FirstOrDefault();
             project.IsDeleted = true;
+            var progress = _context.ProgressPlan.Where(x => x.ProjectId == id).FirstOrDefault();
+            progress.IsDeleted = true;
 
             await _context.SaveChangesAsync();
         }
