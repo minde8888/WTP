@@ -13,9 +13,6 @@ namespace WTP.Domain.Dtos
         public string Height { get; set; }
         public string Width { get; set; }
         public string Title { get; set; }
-        public DateTime DateCreated { get; set; } = DateTime.Now;
-        public DateTime? DateUpdated { get; set; }
-        public bool IsDeleted { get; set; } = false;
         public Project Project { get; set; }
     }
 }

@@ -25,7 +25,6 @@ namespace WTP.Data.Repositorys
         {
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
 
-
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
 
@@ -69,11 +68,11 @@ namespace WTP.Data.Repositorys
 
             if (planToReturn != null)
             {
-                planToReturn.Name ??= progressPlan.Name;
-                planToReturn.Color ??= progressPlan.Color;
-                planToReturn.Start ??= progressPlan.Start;
-                planToReturn.End ??= progressPlan.End;
-                planToReturn.Index ??= progressPlan.Index;
+                planToReturn.Name = progressPlan.Name ?? planToReturn.Name;
+                planToReturn.Color = progressPlan.Color ?? planToReturn.Color;
+                planToReturn.Start = progressPlan.Start ?? planToReturn.Start; 
+                planToReturn.End = progressPlan.End ?? planToReturn.End;
+                planToReturn.Index = progressPlan.Index ?? planToReturn.Index;
                 planToReturn.DateUpdated = DateTime.UtcNow;
             }
 

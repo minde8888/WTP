@@ -11,6 +11,8 @@ using WTP.Data.Interfaces;
 using System.Collections.Generic;
 using AutoMapper;
 using WTP.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace WTP.Api.Controllers
 {
@@ -101,6 +103,47 @@ namespace WTP.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                 "Error Get data from the database -> AddNewEmployee");
+            }
+        }
+
+        [HttpPut("Update/{id}")]
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult<List<ManagerDto>>> UpdateAddressAsync(string id, [FromForm] RentDto rent)
+        {
+            try
+            {
+                if (id == null)
+                    return BadRequest("This user can not by updated");
+
+                rent.RentId = new Guid(id);
+
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                if (rent.ImageFile != null && rent.ImageName != null)
+                {
+                    string imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", rent.ImageName);
+                    _imagesService.DeleteImage(imagePath);
+                    rent.ImageName = _imagesService.SaveImage(rent.ImageFile, rent.Height, rent.Width);
+                }
+
+                var updatedRent = await _rentRepository.UpdateRent(rent);
+
+                String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
+                rent.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, rent.ImageName);
+
+
+                return Ok(rent);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   "Error save DB");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   ex);
             }
         }
 

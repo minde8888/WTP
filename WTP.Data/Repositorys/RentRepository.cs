@@ -53,6 +53,26 @@ namespace WTP.Data.Repositorys
             return null;
         }
 
+        public async Task<Rent> UpdateRent(RentDto rentDto)
+        {
+            var rent = _context.Rent.
+                Include(p => p.Project).
+                Where(r => r.RentId == rentDto.RentId).FirstOrDefault();
+
+            rent.Title = rentDto.Title;
+            rent.DateUpdated = DateTime.UtcNow;
+
+            if (rentDto.ImageName != null)
+            {
+                rent.ImageName = rentDto.ImageName;
+            }
+
+            _context.Entry(rent).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return rent;
+        }
+
         public async Task RemoveRetedToolAsync(string Id)
         {
             var rented = _context.Rent.Where(x => x.RentId == new Guid(Id)).FirstOrDefault();
