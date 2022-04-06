@@ -114,7 +114,7 @@ namespace WTP.Api.Controllers
             try
             {
                 _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
-                var planToReturn = _progressPlanService.GetOnePlan(progressPlan);
+
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)
