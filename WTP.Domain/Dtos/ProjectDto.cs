@@ -1,5 +1,5 @@
 ﻿using System;
-using WTP.Domain.Entities;
+using System.Collections.Generic;
 
 namespace WTP.Domain.Dtos
 {
@@ -10,7 +10,7 @@ namespace WTP.Domain.Dtos
         public string Title { get; set; }
         public string Place { get; set; }
         public string Status { get; set; }
-        public Guid ManagerId { get; set; }
-        public ProgressPlan ProgressPlan { get; set; }
+        public Guid? ManagerId { get; set; }
+        public ICollection<ProgressPlanDto> ProgressPlan { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("v1/api/[controller]")]
     public class ProjectController : Controller
@@ -75,7 +75,7 @@ namespace WTP.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager, Admin")]
+        //[Authorize(Roles = "Manager, Admin")]
         public async Task<ActionResult<List<ProjectDto>>> GetAll()
         {
             try
