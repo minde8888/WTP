@@ -77,7 +77,7 @@ namespace WTP.Api.Controllers
 
         [HttpGet]
         //[Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult<List<Project>>> GetAll()
+        public async Task<ActionResult<List<ProjectDto>>> GetAll()
         {
             try
             {
