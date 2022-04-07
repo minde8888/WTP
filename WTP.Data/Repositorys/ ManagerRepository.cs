@@ -36,16 +36,16 @@ namespace WTP.Data.Repositorys
                 Where(x => x.Id == Id).ToListAsync();
         }
 
-        public async Task<List<ManagerDto>> GetItemAsync(string ImageSrc)
+        public async Task<List<ManagerDto>> GetManagerAsync(string ImageSrc)
         {
-            var items = await _context.Manager.
+            var manager = await _context.Manager.
                 Include(manager => manager.Address).
                 Include(employee => employee.Employees)
                 .ToListAsync();
 
-            var i = _mapper.Map<List<ManagerDto>>(items);
+            var i = _mapper.Map<List<ManagerDto>>(manager);
 
-            if (items != null)
+            if (manager != null)
             {
                 foreach (var item in i)
                 {

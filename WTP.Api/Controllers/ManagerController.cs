@@ -79,7 +79,7 @@ namespace WTP.Api.Controllers
             try
             {
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
-                return await _managerRepository.GetItemAsync(ImageSrc);
+                return await _managerRepository.GetManagerAsync(ImageSrc);
             }
             catch (Exception)
             {

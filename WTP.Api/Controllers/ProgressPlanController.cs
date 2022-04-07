@@ -35,8 +35,8 @@ namespace WTP.Api.Controllers
         {
             try
             {
-                await _progressPlanRepository.AddPlanAsync(progressPlan);
-                var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
+                var projectToReturn = await _progressPlanRepository.AddPlanAsync(progressPlan);
+                //var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
                 return Ok(projectToReturn);
             }
             catch (Exception ex)
