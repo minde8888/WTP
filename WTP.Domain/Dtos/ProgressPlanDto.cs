@@ -11,8 +11,11 @@ namespace WTP.Domain.Dtos
         public string Start { get; set; }
         public string End { get; set; }
         public string Index { get; set; }
-        public ICollection<EmployeeDto> Employees { get; set; }
-        public ProjectDto Project { get; set; }
         public Guid? ProjectId { get; set; }
+        public ProjectDto ProjectDto { get; set; }      
+        public ICollection<EmployeeDto> Employees { get; set; }
+
+
+      
     }
 }
