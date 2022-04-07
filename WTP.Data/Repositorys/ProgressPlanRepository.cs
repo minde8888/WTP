@@ -22,9 +22,13 @@ namespace WTP.Data.Repositorys
             _context = context;
         }
         public async Task AddPlanAsync(ProgressPlanDto progressPlan)
-        {
+        {          
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
-
+            //var employeeProgressPlan = new EmployeeProgressPlan
+            //{
+            //    EmployeesId = new Guid(),
+            //    ProgressPlanId = projectToSave.ProgressPlanId
+            //};
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
 

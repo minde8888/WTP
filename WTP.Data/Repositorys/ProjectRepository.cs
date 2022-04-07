@@ -42,7 +42,7 @@ namespace WTP.Data.Repositorys
                 .Where(x => x.ProjectId == Id).ToListAsync();
         }
 
-        public async Task<List<Project>> GetAllProjects()
+        public async Task<List<ProjectDto>> GetAllProjects()
         {
             var project = await _context.Project
                 .Include(m => m.Manager)
@@ -50,7 +50,7 @@ namespace WTP.Data.Repositorys
                 .ToListAsync(); 
 
             var prosjectToReturn = _mapper.Map<List<ProjectDto>>(project);
-            return project;
+            return prosjectToReturn;
         }
 
         public async Task RemoveProjectAsync(Guid id)
