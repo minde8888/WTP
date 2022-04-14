@@ -68,6 +68,7 @@ namespace WTP.Data.Repositorys
         {
             var manager = _context.Manager.
                 Include(manager => manager.Address).
+                Include(manager => manager.Employees).
                 Where(m => m.Id == updateManagerDto.Id).FirstOrDefault();
 
             manager.Name = updateManagerDto.Name;
