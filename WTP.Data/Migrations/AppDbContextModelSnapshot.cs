@@ -504,10 +504,15 @@ namespace WTP.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Start")
                         .HasColumnType("text");
 
                     b.HasKey("ProgressPlanId");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProgressPlan", "Identity");
                 });
@@ -547,6 +552,37 @@ namespace WTP.Data.Migrations
                     b.HasIndex("ManagerId");
 
                     b.ToTable("Project", "Identity");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Rent", b =>
+                {
+                    b.Property<Guid>("RentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("RentId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Rent", "Identity");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Roles.ApplicationRole", b =>
@@ -709,6 +745,15 @@ namespace WTP.Data.Migrations
                         .HasForeignKey("ManagerId");
                 });
 
+            modelBuilder.Entity("WTP.Domain.Entities.ProgressPlan", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Project", null)
+                        .WithMany("ProgressPlan")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WTP.Domain.Entities.Project", b =>
                 {
                     b.HasOne("WTP.Domain.Entities.Manager", "Manager")
@@ -718,6 +763,15 @@ namespace WTP.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Rent", b =>
+                {
+                    b.HasOne("WTP.Domain.Entities.Project", "Project")
+                        .WithMany("Rent")
+                        .HasForeignKey("ProjectId");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Auth.ApplicationUser", b =>
@@ -745,6 +799,13 @@ namespace WTP.Data.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("WTP.Domain.Entities.Project", b =>
+                {
+                    b.Navigation("ProgressPlan");
+
+                    b.Navigation("Rent");
                 });
 #pragma warning restore 612, 618
         }
