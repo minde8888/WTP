@@ -747,11 +747,13 @@ namespace WTP.Data.Migrations
 
             modelBuilder.Entity("WTP.Domain.Entities.ProgressPlan", b =>
                 {
-                    b.HasOne("WTP.Domain.Entities.Project", null)
+                    b.HasOne("WTP.Domain.Entities.Project", "Project")
                         .WithMany("ProgressPlan")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("WTP.Domain.Entities.Project", b =>
