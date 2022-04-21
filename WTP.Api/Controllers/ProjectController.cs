@@ -119,7 +119,7 @@ namespace WTP.Api.Controllers
 
         [HttpPost("Delete")]
         [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult> DeleteManager([FromBody] List<object> ids)
+        public async Task<ActionResult> DeleteProject([FromBody] List<object> ids)
         {
             foreach (var p in ids)
             {

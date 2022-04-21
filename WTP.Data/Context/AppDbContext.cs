@@ -38,6 +38,7 @@ namespace WTP.Data.Context
             builder.Entity<Manager>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<Employee>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<Project>().HasQueryFilter(p => p.IsDeleted == false);
+            builder.Entity<ProgressPlan>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<ApplicationUser>().HasQueryFilter(p => p.IsDeleted == false);
 
 

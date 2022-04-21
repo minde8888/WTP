@@ -54,8 +54,8 @@ namespace WTP.Data.Repositorys
 
         public async Task RemoveProgressPlanAsync(Guid id)
         {
-            var project = _context.ProgressPlan.Where(x => x.ProgressPlanId == id).FirstOrDefault();
-            //project.IsDeleted = true;
+            var progress = _context.ProgressPlan.Where(x => x.ProgressPlanId == id).FirstOrDefault();
+            progress.IsDeleted = true;
 
             await _context.SaveChangesAsync();
         }
