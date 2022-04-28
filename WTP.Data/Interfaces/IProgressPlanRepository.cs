@@ -13,5 +13,7 @@ namespace WTP.Data.Interfaces
         public Task<List<ProgressPlanDto>> GetAllProgressPlansAsync();
         public Task RemoveProgressPlanAsync(Guid id);
         public Task UpdateProgressPlanAsync(ProgressPlanDto progressPlan);
+
+        public Task AddEmployeeToPtrogress(List<object> ids);
     }
 }

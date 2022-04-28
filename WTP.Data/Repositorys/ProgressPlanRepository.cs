@@ -27,15 +27,6 @@ namespace WTP.Data.Repositorys
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
             return projectToSave;
-            //var employeeeId = _context.Employee.First().Id; remove after finsh
-            //var employeeProgressPlan = new EmployeeProgressPlan
-            //{
-            //    EmployeesId = employeeeId,
-            //    ProgressPlanId = projectToSave.ProgressPlanId
-            //};
-
-            //_context.EmployeeProgressPlan.Add(employeeProgressPlan);
-            //await _context.SaveChangesAsync();
         }
 
         public async Task<List<ProgressPlan>> GetProgressPlanAsync(Guid Id)
@@ -74,9 +65,33 @@ namespace WTP.Data.Repositorys
                 planToReturn.Index = progressPlan.Index ?? planToReturn.Index;
                 planToReturn.DateUpdated = DateTime.UtcNow;
             }
+            //if (planToReturn != null)
+            //{
+                //var employeeeId = _context.Employee.First().Id; remove after finsh
+                //var employeeProgressPlan = new EmployeeProgressPlan
+                //{
+                //    EmployeesId = employeeeId,
+                //    ProgressPlanId = projectToSave.ProgressPlanId
+                //};
+
+                //_context.EmployeeProgressPlan.Add(employeeProgressPlan);
+                //await _context.SaveChangesAsync();
+            //}
 
             _context.Entry(planToReturn).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+        public async Task AddEmployeeToPtrogress(List<object> ids)
+        {
+            foreach (var p in ids)
+            {
+                var id = new Guid(p.ToString());
+
+    
+
+
+            }
+        }
+
     }
 }

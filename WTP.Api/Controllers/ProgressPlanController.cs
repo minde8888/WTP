@@ -120,5 +120,13 @@ namespace WTP.Api.Controllers
                    ex);
             }
         }
+
+        [HttpPut("AddEmployee")]
+        [Authorize(Roles = "Manager, Admin")]
+        public async Task<ActionResult> AddEmployees([FromBody] List<object> ids)
+        {
+            await _progressPlanRepository.AddEmployeeToPtrogress(ids);
+            return Ok();
+        }
     }
 }
