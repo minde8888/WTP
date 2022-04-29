@@ -48,7 +48,8 @@ namespace WTP.Data.Context
                 entity.ToTable("UserLogins");
             });
 
-            builder.Entity<EmployeeProgressPlan>().HasKey(i => new { i.EmployeesId, i.ProgressPlanId });
+            builder.Entity<EmployeeProgressPlan>()
+                .HasKey(i => new { i.EmployeesId, i.ProgressPlanId });
 
             builder.Entity<ProgressPlan>()
                 .HasMany(x => x.Employees)
