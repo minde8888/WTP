@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
+using WTP.Domain.Entities;
 using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
@@ -118,7 +119,7 @@ namespace WTP.Api.Controllers
 
         [HttpPost("Delete")]
         [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult> DeleteManager([FromBody] List<object> ids)
+        public async Task<ActionResult> DeleteProject([FromBody] List<object> ids)
         {
             foreach (var p in ids)
             {

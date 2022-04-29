@@ -29,6 +29,11 @@ namespace WTP.Data.Repositorys
    
             ProgressPlan progress = new();
             progress.ProjectId = projectToSave.ProjectId;
+            progress.Color = project.Color;
+            progress.Start = project.Date;
+            progress.End = project.Date;
+            progress.Index = "0";
+            progress.Name = "grey";
             _context.ProgressPlan.Add(progress);
 
             await _context.SaveChangesAsync();
@@ -47,7 +52,7 @@ namespace WTP.Data.Repositorys
             var project = await _context.Project
                 .Include(m => m.Manager)
                 .Include(p => p.ProgressPlan)
-                .ToListAsync(); ;
+                .ToListAsync(); 
 
             var prosjectToReturn = _mapper.Map<List<ProjectDto>>(project);
             return prosjectToReturn;

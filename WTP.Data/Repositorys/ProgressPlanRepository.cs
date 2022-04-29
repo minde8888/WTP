@@ -21,13 +21,12 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _context = context;
         }
-        public async Task AddPlanAsync(ProgressPlanDto progressPlan)
-        {
+        public async Task<ProgressPlan> AddPlanAsync(ProgressPlanDto progressPlan)
+        {          
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
-
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
-
+            return projectToSave;
             //var employeeeId = _context.Employee.First().Id; remove after finsh
             //var employeeProgressPlan = new EmployeeProgressPlan
             //{
@@ -55,8 +54,8 @@ namespace WTP.Data.Repositorys
 
         public async Task RemoveProgressPlanAsync(Guid id)
         {
-            var project = _context.ProgressPlan.Where(x => x.ProgressPlanId == id).FirstOrDefault();
-            //project.IsDeleted = true;
+            var progress = _context.ProgressPlan.Where(x => x.ProgressPlanId == id).FirstOrDefault();
+            progress.IsDeleted = true;
 
             await _context.SaveChangesAsync();
         }

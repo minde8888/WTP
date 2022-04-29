@@ -35,8 +35,7 @@ namespace WTP.Api.Controllers
         {
             try
             {
-                await _progressPlanRepository.AddPlanAsync(progressPlan);
-                var projectToReturn = _progressPlanService.GetOnePlan(progressPlan);
+                var projectToReturn = await _progressPlanRepository.AddPlanAsync(progressPlan);
                 return Ok(projectToReturn);
             }
             catch (Exception ex)
@@ -86,19 +85,12 @@ namespace WTP.Api.Controllers
             }
         }
 
-        [HttpPost("Delete")]
+        [HttpDelete("Delete/{id}")]
         [Authorize(Roles = "Manager, Admin")]
-        public async Task<ActionResult> DeleteManager([FromBody] List<object> ids)
+        public async Task<ActionResult> DeleteProgressPlan(String id)
         {
-            foreach (var p in ids)
-            {
-                var id = new Guid(p.ToString());
-
-                if (id == Guid.Empty)
-                    return BadRequest();
-
-                await _progressPlanRepository.RemoveProgressPlanAsync(id);
-            }
+            var idToDelete = new Guid(id);
+            await _progressPlanRepository.RemoveProgressPlanAsync(idToDelete);
             return Ok();
         }
 
