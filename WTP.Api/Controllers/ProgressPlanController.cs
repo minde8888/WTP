@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WTP.Data.Interfaces;
 using WTP.Domain.Dtos;
+using WTP.Domain.Entities;
 using WTP.Services.Services;
 
 namespace WTP.Api.Controllers
@@ -96,7 +97,7 @@ namespace WTP.Api.Controllers
 
         [HttpPut("Update")]
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult<List<ProgressPlanDto>> Update([FromForm] ProgressPlanDto progressPlan)
+        public async Task<ActionResult<ProgressPlan>> Update([FromForm] ProgressPlanDto progressPlan)
         {
             if (progressPlan.ProgressPlanId == Guid.Empty)
                 return BadRequest("This project can not by updated");
@@ -105,9 +106,9 @@ namespace WTP.Api.Controllers
                 return BadRequest(ModelState);
             try
             {
-                _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
+                var progress =  await _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
 
-                return Ok();
+                return Ok(progress);
             }
             catch (DbUpdateConcurrencyException)
             {
