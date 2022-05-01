@@ -37,6 +37,7 @@ namespace WTP.Services.Services.AppMapper
             CreateMap<Project, ProjectDto>().ReverseMap();
 
             CreateMap<ProgressPlan, ProgressPlanDto>().ReverseMap();
+            CreateMap<ProgressPlan, ProgressPlanReturnDto>().ReverseMap();
 
             CreateMap<Rent, RentDto>().ReverseMap();
         }

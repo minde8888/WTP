@@ -1,16 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WTP.Domain.Dtos
 {
     public class EmployeeDto: BaseEntityDto
     {
         public Guid? ManagerId { get; set; }
-        public ICollection<ProgressPlanDto> ProgressPlan { get; set; }
+        public Guid? ProjectId { get; set; }
+        public  ICollection<ProgressPlanReturnDto> ProgressPlans { get; set; }
     }
 }

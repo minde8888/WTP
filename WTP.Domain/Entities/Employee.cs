@@ -8,6 +8,6 @@ namespace WTP.Domain.Entities
     {
         public Guid? ManagerId { get; set; }
         public Guid? ProjectId { get; set; }
-        public ICollection<ProgressPlan> ProgressPlan { get; set; }
+        public ICollection<ProgressPlan> ProgressPlans { get; set; }
     }
 }

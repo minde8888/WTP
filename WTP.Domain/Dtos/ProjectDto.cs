@@ -13,6 +13,6 @@ namespace WTP.Domain.Dtos
         public string Date { get; set; }    
         public string Color { get; set; }
         public Guid? ManagerId { get; set; }
-        public ICollection<ProgressPlanDto> ProgressPlan { get; set; }
+        public ICollection<ProgressPlanReturnDto> ProgressPlan { get; set; }
     }
 }
