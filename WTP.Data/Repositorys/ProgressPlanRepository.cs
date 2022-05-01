@@ -21,23 +21,24 @@ namespace WTP.Data.Repositorys
             _mapper = mapper;
             _context = context;
         }
+
         public async Task<ProgressPlan> AddPlanAsync(ProgressPlanDto progressPlan)
-        {          
+        {
             var projectToSave = _mapper.Map<ProgressPlan>(progressPlan);
             _context.ProgressPlan.Add(projectToSave);
             await _context.SaveChangesAsync();
-            return projectToSave; 
+            return projectToSave;
         }
 
         public async Task<List<ProgressPlan>> GetProgressPlanAsync(Guid Id)
         {
-            return await _context.ProgressPlan.Include(e => e.Employees)
+            return await _context.ProgressPlan
                 .Where(x => x.ProgressPlanId == Id).ToListAsync();
         }
 
         public async Task<List<ProgressPlanDto>> GetAllProgressPlansAsync()
         {
-            var plan = await _context.ProgressPlan.Include(e => e.Employees).ToListAsync();
+            var plan = await _context.ProgressPlan.ToListAsync();
 
             var planToReturn = _mapper.Map<List<ProgressPlanDto>>(plan);
             return planToReturn;
@@ -51,7 +52,7 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ProgressPlan> UpdateProgressPlanAsync(ProgressPlanDto progressPlan)
+        public async Task<ProgressPlanReturnDto> UpdateProgressPlanAsync(ProgressPlanDto progressPlan)
         {
             var planToReturn = _context.ProgressPlan
                .Where(x => x.ProgressPlanId == progressPlan.ProgressPlanId).FirstOrDefault();
@@ -60,36 +61,34 @@ namespace WTP.Data.Repositorys
             {
                 planToReturn.Name = progressPlan.Name ?? planToReturn.Name;
                 planToReturn.Color = progressPlan.Color ?? planToReturn.Color;
-                planToReturn.Start = progressPlan.Start ?? planToReturn.Start; 
+                planToReturn.Start = progressPlan.Start ?? planToReturn.Start;
                 planToReturn.End = progressPlan.End ?? planToReturn.End;
                 planToReturn.Index = progressPlan.Index ?? planToReturn.Index;
                 planToReturn.DateUpdated = DateTime.UtcNow;
             }
+
             if (progressPlan.EmployeesIds != null)
             {
-                char[] delimiterChar = { ',' };
-                string[] ids = progressPlan.EmployeesIds.Split(delimiterChar);
-        
+                string[] ids = progressPlan.EmployeesIds.Split(',');
+
                 foreach (var p in ids)
                 {
-                    var id = new Guid(p.ToString());
-                    var employeeeId = _context.Employee.First().Id;
+                    var employeeId = new Guid(p.ToString());
                     var employeeProgressPlan = new EmployeeProgressPlan
                     {
-                        EmployeesId = employeeeId,
+                        EmployeesId = employeeId,
                         ProgressPlanId = progressPlan.ProgressPlanId
                     };
                     _context.EmployeeProgressPlan.Add(employeeProgressPlan);
                     await _context.SaveChangesAsync();
-                }            
+                }
             }
 
             _context.Entry(planToReturn).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            //var a = planToReturn;
-            //var progressToReturn = _mapper.Map<List<ProgressPlanDto>>(a);
-            return planToReturn;
 
+            var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
+            return progressToReturn;
         }
     }
 }

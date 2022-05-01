@@ -52,6 +52,7 @@ namespace WTP.Data.Repositorys
             var project = await _context.Project
                 .Include(m => m.Manager)
                 .Include(p => p.ProgressPlan)
+                .ThenInclude(e => e.Employees)
                 .ToListAsync(); 
 
             var prosjectToReturn = _mapper.Map<List<ProjectDto>>(project);

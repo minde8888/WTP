@@ -43,7 +43,11 @@ namespace WTP.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var exist = _userManager.Users.Any(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email);
+                var exist = _userManager.Users.Any(u => 
+                u.PhoneNumber == 
+                user.PhoneNumber || 
+                u.Email == 
+                user.Email);
 
                 if (exist)
                 {
@@ -65,7 +69,7 @@ namespace WTP.Api.Controllers
                     PhoneNumber = user.PhoneNumber
                 };
 
-                var isCreated = await _userManager.CreateAsync(newUser, user.Password);//tvarkyti
+                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
                 if (isCreated.Succeeded)
                 {

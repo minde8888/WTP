@@ -55,6 +55,7 @@ namespace WTP.Services.Services
                         var manager = await _context.Manager
                         .Include(address => address.Address)
                         .Include(employee => employee.Employees)
+                        .ThenInclude(p => p.ProgressPlans)
                         .OrderBy(e => e.Name)
                         .Include(post => post.Posts)
                         .Where(u => u.UserId == new Guid(user.Id.ToString()))

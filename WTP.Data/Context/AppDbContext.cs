@@ -41,7 +41,6 @@ namespace WTP.Data.Context
             builder.Entity<ProgressPlan>().HasQueryFilter(p => p.IsDeleted == false);
             builder.Entity<ApplicationUser>().HasQueryFilter(p => p.IsDeleted == false);
 
-
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
                 entity.HasNoKey();
@@ -50,15 +49,14 @@ namespace WTP.Data.Context
 
             builder.Entity<EmployeeProgressPlan>()
                 .HasKey(i => new { i.EmployeesId, i.ProgressPlanId });
-
-            builder.Entity<ProgressPlan>()
-                .HasMany(x => x.Employees)
-                .WithMany(x => x.ProgressPlan)
-                .UsingEntity<EmployeeProgressPlan>(
-                    x => x.HasOne(x => x.Employee)
-                    .WithMany().HasForeignKey(x => x.EmployeesId),
-                    x => x.HasOne(x => x.ProgressPlan)
-                   .WithMany().HasForeignKey(x => x.ProgressPlanId));
+            builder.Entity<Employee>()
+           .HasMany(x => x.ProgressPlans)
+           .WithMany(x => x.Employees)
+           .UsingEntity<EmployeeProgressPlan>(
+               x => x.HasOne(x => x.ProgressPlans)
+               .WithMany().HasForeignKey(x => x.ProgressPlanId),
+               x => x.HasOne(x => x.Employees)
+              .WithMany().HasForeignKey(x => x.EmployeesId));
         }
     }
 }
