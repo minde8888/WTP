@@ -7,6 +7,6 @@ namespace WTP.Domain.Dtos
     {
         public Guid? ManagerId { get; set; }
         public Guid? ProjectId { get; set; }
-        public  ICollection<ProgressPlanReturnDto> ProgressPlans { get; set; }
+        //public  ICollection<ProgressPlanReturnDto> ProgressPlans { get; set; }
     }
 }
