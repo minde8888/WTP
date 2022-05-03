@@ -66,20 +66,19 @@ namespace WTP.Data.Repositorys
                 planToReturn.Index = progressPlan.Index ?? planToReturn.Index;
                 planToReturn.DateUpdated = DateTime.UtcNow;
             }
+           
 
             if (progressPlan.EmployeesIds != null)
             {
                 string[] ids = progressPlan.EmployeesIds.Split(',');
+                var employeeProgress = new EmployeeProgressPlan();
 
                 foreach (var p in ids)
                 {
-                    var employeeId = new Guid(p.ToString());
-                    var employeeProgressPlan = new EmployeeProgressPlan
-                    {
-                        EmployeesId = employeeId,
-                        ProgressPlanId = progressPlan.ProgressPlanId
-                    };
-                    _context.EmployeeProgressPlan.Add(employeeProgressPlan);
+                    employeeProgress.EmployeesId = new Guid(p.ToString());
+                    employeeProgress.ProgressPlanId = progressPlan.ProgressPlanId;
+              
+                    _context.EmployeeProgressPlan.Add(employeeProgress);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -88,7 +87,12 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
 
             var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
-            progressToReturn.EmployeesIds = progressPlan.EmployeesIds.Split(',');
+            if (progressPlan.EmployeesIds != null)
+            {
+                progressToReturn.EmployeesIds = progressPlan.EmployeesIds.Split(',');
+            }
+                
+
             return  progressToReturn;
         }
     }
