@@ -54,7 +54,7 @@ namespace WTP.Data.Repositorys
 
         public async Task<ProgressPlanReturnDto> UpdateProgressPlanAsync(ProgressPlanDto progressPlan)
         {
-            var planToReturn = _context.ProgressPlan
+            var planToReturn = _context.ProgressPlan.Include(x => x.Employees)
                .Where(x => x.ProgressPlanId == progressPlan.ProgressPlanId).FirstOrDefault();
 
             if (planToReturn != null)
@@ -88,7 +88,8 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
 
             var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
-            return progressToReturn;
+            progressToReturn.EmployeesIds = progressPlan.EmployeesIds.Split(',');
+            return  progressToReturn;
         }
     }
 }
