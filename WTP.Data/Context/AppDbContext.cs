@@ -49,6 +49,7 @@ namespace WTP.Data.Context
 
             builder.Entity<EmployeeProgressPlan>()
                 .HasKey(i => new { i.EmployeesId, i.ProgressPlanId });
+
             builder.Entity<Employee>()
            .HasMany(x => x.ProgressPlans)
            .WithMany(x => x.Employees)

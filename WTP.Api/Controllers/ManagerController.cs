@@ -136,7 +136,6 @@ namespace WTP.Api.Controllers
                 String ImageSrc = String.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.PathBase);
                 manager.ImageSrc = String.Format("{0}/Images/{1}", ImageSrc, manager.ImageName);
 
-
                 return Ok(manager);
             }
             catch (DbUpdateConcurrencyException)

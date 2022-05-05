@@ -12,7 +12,7 @@ namespace WTP.Domain.Dtos
         public string End { get; set; }
         public string Index { get; set; }
         public Guid ProjectId { get; set; }
-        public string EmployeesIds { get; set; }
+        public Guid EmployeesIds { get; set; }
         public ICollection<EmployeeDto> Employees { get; set; }
 
     }
