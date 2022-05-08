@@ -68,18 +68,20 @@ namespace WTP.Data.Repositorys
             }
            
 
-            if (progressPlan.EmployeesIds != null)
+            if (progressPlan.EmployeesIds != null && progressPlan.EmployeesIds != "null")
             {
                 string[] ids = progressPlan.EmployeesIds.Split(',');
-                var employeeProgress = new EmployeeProgressPlan();
 
+                var employeeProgress = new EmployeeProgressPlan();
                 foreach (var p in ids)
                 {
+                    planToReturn.Employees.Add(_context.Employee.Where(x => x.Id == new Guid(p.ToString())).FirstOrDefault());
                     employeeProgress.EmployeesId = new Guid(p.ToString());
                     employeeProgress.ProgressPlanId = progressPlan.ProgressPlanId;
               
                     _context.EmployeeProgressPlan.Add(employeeProgress);
                     await _context.SaveChangesAsync();
+                   
                 }
             }
 
@@ -87,7 +89,7 @@ namespace WTP.Data.Repositorys
             await _context.SaveChangesAsync();
 
             var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
-            if (progressPlan.EmployeesIds != null)
+            if (progressPlan.EmployeesIds != null && progressPlan.EmployeesIds != "null")
             {
                 progressToReturn.EmployeesIds = progressPlan.EmployeesIds.Split(',');
             }
