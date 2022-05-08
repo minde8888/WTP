@@ -108,7 +108,7 @@ namespace WTP.Api.Controllers
                 return BadRequest(ModelState);
             try
             {
-                var progress =  await _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
+                 var progress =  await _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
        
                 return CreatedAtAction("Get", new { progress.ProgressPlanId }, progress);
             }
