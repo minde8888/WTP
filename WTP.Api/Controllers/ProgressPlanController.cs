@@ -109,7 +109,8 @@ namespace WTP.Api.Controllers
             try
             {
                 var progress =  await _progressPlanRepository.UpdateProgressPlanAsync(progressPlan);
-                return Ok(progress);
+       
+                return CreatedAtAction("Get", new { progress.ProgressPlanId }, progress);
             }
             catch (DbUpdateConcurrencyException)
             {
