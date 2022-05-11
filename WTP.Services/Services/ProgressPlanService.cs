@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WTP.Data.Context;
 using WTP.Domain.Dtos;
 
@@ -23,6 +27,5 @@ namespace WTP.Services.Services
             var planToReturn = _mapper.Map<ProgressPlanDto>(planUpdated);
             return planToReturn;
         }
-
     }
 }

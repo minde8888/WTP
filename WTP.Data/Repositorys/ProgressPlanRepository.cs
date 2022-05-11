@@ -66,34 +66,30 @@ namespace WTP.Data.Repositorys
                 planToReturn.Index = progressPlan.Index ?? planToReturn.Index;
                 planToReturn.DateUpdated = DateTime.UtcNow;
             }
-           
 
-            if (progressPlan.EmployeesIds != null)
+            if (progressPlan.EmployeesIds != null && progressPlan.EmployeesIds != "null")
             {
+                var toRemove = _context.EmployeeProgressPlan
+                    .Where(x =>  x.ProgressPlanId == progressPlan.ProgressPlanId);
+                _context.EmployeeProgressPlan.RemoveRange(toRemove);    
+                _context.SaveChanges();
+
                 string[] ids = progressPlan.EmployeesIds.Split(',');
                 var employeeProgress = new EmployeeProgressPlan();
-
-                foreach (var p in ids)
+                foreach (var id in ids)
                 {
-                    employeeProgress.EmployeesId = new Guid(p.ToString());
+                    employeeProgress.EmployeesId = new Guid(id.ToString());
                     employeeProgress.ProgressPlanId = progressPlan.ProgressPlanId;
-              
                     _context.EmployeeProgressPlan.Add(employeeProgress);
                     await _context.SaveChangesAsync();
                 }
             }
-
             _context.Entry(planToReturn).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
-            if (progressPlan.EmployeesIds != null)
-            {
-                progressToReturn.EmployeesIds = progressPlan.EmployeesIds.Split(',');
-            }
-                
 
-            return  progressToReturn;
+            return progressToReturn;
         }
     }
 }
