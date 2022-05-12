@@ -70,22 +70,33 @@ namespace WTP.Data.Repositorys
             if (progressPlan.EmployeesIds != null && progressPlan.EmployeesIds != "null")
             {
                 var toRemove = _context.EmployeeProgressPlan
-                    .Where(x =>  x.ProgressPlanId == progressPlan.ProgressPlanId);
-                _context.EmployeeProgressPlan.RemoveRange(toRemove);    
+                    .Where(x => x.ProgressPlanId == progressPlan.ProgressPlanId);
+                _context.EmployeeProgressPlan.RemoveRange(toRemove);
                 _context.SaveChanges();
 
                 string[] ids = progressPlan.EmployeesIds.Split(',');
-                var employeeProgress = new EmployeeProgressPlan();
+
                 foreach (var id in ids)
                 {
-                    employeeProgress.EmployeesId = new Guid(id.ToString());
-                    employeeProgress.ProgressPlanId = progressPlan.ProgressPlanId;
+                    var employeeProgress = new EmployeeProgressPlan
+                    {
+                        EmployeesId = new Guid(id.ToString()),
+                        ProgressPlanId = progressPlan.ProgressPlanId
+                    };
                     _context.EmployeeProgressPlan.Add(employeeProgress);
                     await _context.SaveChangesAsync();
                 }
+
+                planToReturn = _context.ProgressPlan
+                    .Include(e => e.Employees)
+                    .Single(x => x.ProgressPlanId == progressPlan.ProgressPlanId);
             }
+
             _context.Entry(planToReturn).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+
+
 
             var progressToReturn = _mapper.Map<ProgressPlanReturnDto>(planToReturn);
 
